@@ -1,0 +1,1 @@
+# plugins-decimal-product-quantity-for-woocommerce
