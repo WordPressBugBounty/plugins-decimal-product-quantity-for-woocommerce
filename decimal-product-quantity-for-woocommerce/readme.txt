@@ -3,11 +3,11 @@ Contributors: WPGear
 Donate link: wpgear.xyz/decimal-product-quantity-woo
 Tags: woocommerce,decimal,quantity,step,min,max,piece,product,minimum,maximum,variation
 Requires at least: 5.0
-Tested up to: 6.5.3
+Tested up to: 6.6.2
 Requires PHP: 5.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 12.39
+Stable tag: 12.40
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc..
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Products Supported.
@@ -63,6 +63,12 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 12.40 =
+	2024.10.23
+	* Fix Auto correction (on Disable)
+	* Tested to WP: 6.6.2
+	* Tested to WooCommerce: 9.3.3
+
 = 12.39 =
 	2024.06.04
 	* Show the Stock Threshold as Decimal values with Search and manual Adding Products to the Order.

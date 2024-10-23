@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation.
-Version: 12.39
+Version: 12.40
 Text Domain: decimal_product_quantity_for_woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -45,6 +45,22 @@ License: GPLv2
 		wp_enqueue_script ('woodecimalproduct', $WooDecimalProduct_Plugin_URL .'includes/woodecimalproduct.js');
 	}
 
+	/* AJAX Processing
+	----------------------------------------------------------------- */
+    add_action ('wp_ajax_WooDecimalProductQNT', 'WooDecimalProduct_Ajax');
+    function WooDecimalProduct_Ajax() {
+		include_once ('includes/ajax_quantity.php');
+    }		
+
+	/* Translate.
+	----------------------------------------------------------------- */
+	add_action ('plugins_loaded', 'WooDecimalProduct_Locale');
+	function WooDecimalProduct_Locale() {
+		global $WooDecimalProduct_LocalePath;		
+		
+		load_plugin_textdomain ('decimal_product_quantity_for_woocommerce', false, $WooDecimalProduct_LocalePath);
+	}
+	
     /* Минимальное / Максимально кол-во выбора Товара, Шаг, Значение по-Умолчанию на странице Товара и Корзины.
     ----------------------------------------------------------------- */   
 	add_filter ('woocommerce_quantity_input_args', 'WooDecimalProduct_filter_quantity_input_args', 999999, 2);
@@ -220,7 +236,7 @@ License: GPLv2
 		if ($WooDecimalProduct_Auto_Correction_Quantity) {
 			global $product;
 			
-			$Product_ID = $product->get_id();			
+			$Product_ID = $product -> get_id();			
 			
 			if ($Product_ID) {
 				$No_MaxEmpty = '-1';	// Unlimited
@@ -316,8 +332,7 @@ License: GPLv2
 
 				$contents = ob_get_contents();
 				ob_end_clean();
-				echo $contents;				
-		
+				echo $contents;
 			}			
 		}
 	}
@@ -549,19 +564,3 @@ License: GPLv2
 		
 		return $add_to_cart_html;
 	}
-
-	/* AJAX Processing
-	----------------------------------------------------------------- */
-    add_action ('wp_ajax_WooDecimalProductQNT', 'WooDecimalProduct_Ajax');
-    function WooDecimalProduct_Ajax() {
-		include_once ('includes/ajax_quantity.php');
-    }		
-
-	/* Translate.
-	----------------------------------------------------------------- */
-	add_action ('plugins_loaded', 'WooDecimalProduct_Locale');
-	function WooDecimalProduct_Locale() {
-		global $WooDecimalProduct_LocalePath;		
-		
-		load_plugin_textdomain ('decimal_product_quantity_for_woocommerce', false, $WooDecimalProduct_LocalePath);
-	}	
