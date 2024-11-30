@@ -1,16 +1,15 @@
 <?php
 /*
-* Decimal Product Quantity for WooCommerce
-* Admin Product-Category Setup Page.
-* admin_setup_category.php
-*/
+ * Decimal Product Quantity for WooCommerce
+ * Admin Product-Category Setup Page.
+ * admin_setup_category.php
+ */
 
 	/* DashBoard. WooCommerce. List Product-Categories. 
 	 * Добавляем новые Колонки в Списке Категорий Товаров.
 	----------------------------------------------------------------- */	
 	add_filter ('manage_edit-product_cat_columns', 'WooDecimalProduct_filter_manage_edit_product_cat_columns');
 	function WooDecimalProduct_filter_manage_edit_product_cat_columns ($Columns) {
-
 			$New_Columns = array();
 			
 			foreach ($Columns as $column_name => $column_info) {
@@ -37,10 +36,10 @@
 			$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID, $No_MaxEmpty);
 
 			if ($Term_QuantityData) {
-				echo __('Min:', 'decimal_product_quantity_for_woocommerce') .' ' .$Term_QuantityData['min_qnt'] ."<br>";
-				echo __('Max:', 'decimal_product_quantity_for_woocommerce') .' ' .$Term_QuantityData['max_qnt'] ."<br>";
-				echo __('Step:', 'decimal_product_quantity_for_woocommerce') .' ' .$Term_QuantityData['stp_qnt'] ."<br>";
-				echo __('Set:', 'decimal_product_quantity_for_woocommerce') .' ' .$Term_QuantityData['def_qnt'] ."<br>";
+				echo __('Min:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html ($Term_QuantityData['min_qnt']) ."<br>";
+				echo __('Max:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html ($Term_QuantityData['max_qnt']) ."<br>";
+				echo __('Step:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html ($Term_QuantityData['stp_qnt']) ."<br>";
+				echo __('Set:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html ($Term_QuantityData['def_qnt']) ."<br>";
 			}
 		}
 	}	
@@ -56,13 +55,23 @@
 		$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);
 		$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');
 		$WooDecimalProduct_Price_Unit_Label			= get_option ('woodecimalproduct_price_unit_label', 0);
+		$WooDecimalProduct_RSS_Feed_Enable = false;
 		
-		$Style_and_Title = '';
+		$Style_and_Title_PriceUnitLabel = '';
+		$Style_and_Title_RSSFeedEnable = "style='display:inline-block;'";
 		
 		if (! $WooDecimalProduct_Price_Unit_Label) {
 			$Title = __('Disabled in Global Option.', 'decimal_product_quantity_for_woocommerce');
-			$Style_and_Title = "style='color:red;' title='$Title'";
-		}		
+			$Style_and_Title_PriceUnitLabel = "style='cursor:help; color:red;' title='$Title'";
+		}
+
+		if (! $WooDecimalProduct_RSS_Feed_Enable) {
+			$Title = __('Disabled in Global Option.', 'decimal_product_quantity_for_woocommerce');
+			$Style_and_Title_RSSFeedEnable = "style='display:inline-block; cursor:help; color:red;' title='$Title'";
+		}	
+
+		global $WooDecimalProduct_Plugin_URL;
+		wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css'); // phpcs:ignore		
 		
 		if ($term == 'product_cat') {
 			// Mode: "Add new category"
@@ -73,9 +82,11 @@
 					<p class="description"><?php echo __('This Options will be shown for all Products in this Category.', 'decimal_product_quantity_for_woocommerce'); ?></p>
 					<p class="description"><?php echo __('But each Product can have its own Options.', 'decimal_product_quantity_for_woocommerce'); ?></p>
 					
-					<div style='margin-left: 20px; margin-bottom: 20px;'>
+					<div style='margin-left: 20px; margin-bottom: 20px;'>						
+						<hr>
+						
 						<div class='form-field term-price_unit'>
-							<label for='wdpq_term_price_unit' <?php echo $Style_and_Title; ?>><?php echo __('Price Unit-Label', 'decimal_product_quantity_for_woocommerce'); ?></label>
+							<label for='wdpq_term_price_unit' <?php echo $Style_and_Title_PriceUnitLabel; ?>><?php echo __('Price Unit-Label', 'decimal_product_quantity_for_woocommerce'); ?></label>
 							<input type="text" name="wdpq_term_price_unit" id="wdpq_term_price_unit" value="">
 							<p class="description"><?php echo __('Sample: "Price per Kg." / "Price per Meter". Or leave blank.', 'decimal_product_quantity_for_woocommerce'); ?></p>
 						</div>
@@ -83,27 +94,44 @@
 						<div style='text-align: right; margin-right: 16px;'>
 							<div class='form-field term-min-qnt' style='margin-bottom: 2px;'>
 								<label for='wdpq_term_min_qnt' style='display: inline-block;'><?php echo __('Min Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-								<input type="text" name="wdpq_term_min_qnt" id="wdpq_term_min_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Min_Quantity_Default; ?>" value="">
+								<input type="text" name="wdpq_term_min_qnt" id="wdpq_term_min_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Min_Quantity_Default); ?>" value="">
 							</div>
 							
 							<div class='form-field term-max-qnt' style='margin-top: 2px; margin-bottom: 2px;'>
 								<label for='wdpq_term_max_qnt' style='display: inline-block;'><?php echo __('Max Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-								<input type="text" name="wdpq_term_max_qnt" id="wdpq_term_max_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Max_Quantity_Default; ?>" value="" >
+								<input type="text" name="wdpq_term_max_qnt" id="wdpq_term_max_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Max_Quantity_Default); ?>" value="" >
 							</div>
 
 							<div class='form-field term-step-qnt' style='margin-top: 2px; margin-bottom: 2px;'>
 								<label for='wdpq_term_step_qnt' style='display: inline-block;'><?php echo __('Step Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-								<input type="text" name="wdpq_term_step_qnt" id="wdpq_term_step_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Step_Quantity_Default; ?>" value="" >
+								<input type="text" name="wdpq_term_step_qnt" id="wdpq_term_step_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Step_Quantity_Default); ?>" value="" >
 							</div>
 							
 							<div class='form-field term-set-qnt' style='margin-top: 2px;'>
 								<label for='wdpq_term_set_qnt' style='display: inline-block;'><?php echo __('Default set Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-								<input type="text" name="wdpq_term_set_qnt" id="wdpq_term_set_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Item_Quantity_Default; ?>" value="" >						
+								<input type="text" name="wdpq_term_set_qnt" id="wdpq_term_set_qnt" style="margin-left: 5px; width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Item_Quantity_Default); ?>" value="" >						
 							</div>									
 						</div>
+						
+						<hr>
+						
 						<div>
 							<p class="description"><?php echo __('Sample (Min,Max,Step,Set): 1 or 0.1 or 0.25 or 1.5 etc.', 'decimal_product_quantity_for_woocommerce'); ?></p>
-							<p class="description"><?php echo __('or leave blank for ', 'decimal_product_quantity_for_woocommerce'); ?><a target="_blank" href="/wp-admin/edit.php?post_type=product&page=decimal-product-quantity-for-woocommerce%2Fincludes%2Foptions.php"><?php echo __('General Settings', 'decimal_product_quantity_for_woocommerce'); ?></a></p>
+							<p class="description"><?php echo __('or leave blank for ', 'decimal_product_quantity_for_woocommerce'); ?><a target="_blank" href="/wp-admin/edit.php?post_type=product&page=decimal-product-quantity-for-woocommerce/includes/options.php"><?php echo __('General Settings', 'decimal_product_quantity_for_woocommerce'); ?></a></p>
+						</div>
+						
+						<hr>
+						
+						<div class='form-field'>
+							<label for="wdpq_term_rss_feed_enable" <?php echo $Style_and_Title_RSSFeedEnable; // phpcs:ignore?>>
+								<?php echo __('RSS', 'decimal_product_quantity_for_woocommerce'); ?>
+							</label>
+							<input type="checkbox" name="wdpq_term_rss_feed_enable" id="wdpq_term_rss_feed_enable" <?php if($WooDecimalProduct_RSS_Feed_Enable) {echo 'checked';} ?> <?php if(!$WooDecimalProduct_RSS_Feed_Enable) {echo 'disabled="true"';} ?>>
+							<span class="wdpq_term_options_field_description">
+								<?php echo __('WooCommerce RSS Feed', 'decimal_product_quantity_for_woocommerce'); ?>
+							</span>	
+							<br>
+							<span class="wdpq_options_field_vpro_about"><?php echo __('* PRO Version only!', 'decimal_product_quantity_for_woocommerce'); ?><span>
 						</div>
 					</div>
 				</div>			
@@ -112,7 +140,7 @@
 			$contents = ob_get_contents();
 			ob_end_clean();
 			
-			echo $contents;	
+			echo $contents; // phpcs:ignore 	
 			
 		} else {
 			// Mode: "Edit category"
@@ -127,7 +155,7 @@
 			
 			ob_start();
 				?>				
-				<tr class='form-field term-wdpq' style='border-style: solid; border-width: thin; border-bottom: none;'>
+				<tr class='form-field wdpq-term-header'>
 					<th scope='row' style="text-align: right;">
 						<?php echo __('Decimal Quantity', 'decimal_product_quantity_for_woocommerce'); ?>
 					</th>
@@ -136,60 +164,98 @@
 						<p class="description"><?php echo __('But each Product can have its own Options.', 'decimal_product_quantity_for_woocommerce'); ?></p>
 					</td>
 				</tr>
-
-				<tr class='form-field term-price_unit' style='border-style: solid; border-width: thin; border-top: none; border-bottom: none;'>
-					<th scope='row' style="text-align: right;">
-						<span <?php echo $Style_and_Title; ?>><?php echo __('Price Unit-Label', 'decimal_product_quantity_for_woocommerce'); ?></span>
-					</th>
-					<td>
-						<input type="text" name="wdpq_term_price_unit" id="wdpq_term_price_unit" value="<?php echo $Term_Price_Unit; ?>">
-						<p class="description"><?php echo __('Sample: "Price per Kg." / "Price per Meter". Or leave blank.', 'decimal_product_quantity_for_woocommerce'); ?></p>						
-					</td>
-				</tr>	
-
-				<tr class='form-field term-min-qnt' style='border-style: solid; border-width: thin; border-top: none; border-bottom: none;'>
-					<th scope='row' style="text-align: right; padding-top: 5px; padding-bottom: 2px;">
-						<?php echo __('Min Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-					</th>
-					<td style="padding-top: 2px; padding-bottom: 2px;">
-						<input type="text" name="wdpq_term_min_qnt" id="wdpq_term_min_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Min_Quantity_Default; ?>" value="<?php echo $Term_Min_Qnt; ?>">
-					</td>
-				</tr>	
-
-				<tr class='form-field term-max-qnt'style='border-style: solid; border-width: thin; border-top: none; border-bottom: none;'>
-					<th scope='row' style="text-align: right; padding-top: 5px; padding-bottom: 2px;">
-						<?php echo __('Max Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-					</th>
-					<td style="padding-top: 2px; padding-bottom: 2px;">
-						<input type="text" name="wdpq_term_max_qnt" id="wdpq_term_max_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Max_Quantity_Default; ?>" value="<?php echo $Term_Max_Qnt; ?>">
-					</td>
-				</tr>	
-
-				<tr class='form-field term-step-qnt' style='border-style: solid; border-width: thin; border-top: none; border-bottom: none;'>
-					<th scope='row' style="text-align: right; padding-top: 5px; padding-bottom: 2px;">
-						<?php echo __('Step Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-					</th>
-					<td style="padding-top: 2px; padding-bottom: 2px">
-						<input type="text" name="wdpq_term_step_qnt" id="wdpq_term_step_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Step_Quantity_Default; ?>" value="<?php echo $Term_Step_Qnt; ?>">
-					</td>
-				</tr>	
-
-				<tr class='form-field term-set-qnt' style='border-style: solid; border-width: thin; border-top: none; border-bottom: none;'>
-					<th scope='row' style="text-align: right; padding-top: 5px; padding-bottom: 2px;">
-						<?php echo __('Default set Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
-					</th>
-					<td style="padding-top: 2px; padding-bottom: 2px;">
-						<input type="text" name="wdpq_term_set_qnt" id="wdpq_term_set_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo $WooDecimalProduct_Item_Quantity_Default; ?>" value="<?php echo $Term_Set_Qnt; ?>">
+				
+				<tr class='form-field wdpq-term-item wdpq-term-item-hr'>
+					<td colspan="2">
+						<hr>
 					</td>
 				</tr>
 
-				<tr class='form-field term-wdpq' style='border-style: solid; border-width: thin; border-top: none;'>
-					<th scope='row' style="text-align: right; padding-top: 5px; padding-bottom: 2px;">
+				<tr class='form-field wdpq-term-item'>
+					<th scope='row'>
+						<span <?php echo $Style_and_Title_PriceUnitLabel; ?>><?php echo __('Price Unit-Label', 'decimal_product_quantity_for_woocommerce'); ?></span>
+					</th>
+					<td>
+						<input type="text" name="wdpq_term_price_unit" id="wdpq_term_price_unit" value="<?php echo esc_attr($Term_Price_Unit); ?>">
+						<p class="description"><?php echo __('Sample: "Price per Kg." / "Price per Meter". Or leave blank.', 'decimal_product_quantity_for_woocommerce'); ?></p>						
+					</td>
+				</tr>
+
+				<tr class='form-field wdpq-term-item wdpq-term-item-hr'>
+					<td colspan="2">
+						<hr>
+					</td>
+				</tr>				
+
+				<tr class='form-field wdpq-term-item'>
+					<th scope='row'>
+						<?php echo __('Min Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="wdpq_term_min_qnt" id="wdpq_term_min_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Min_Quantity_Default); ?>" value="<?php echo esc_attr($Term_Min_Qnt); ?>">
+					</td>
+				</tr>	
+
+				<tr class='form-field wdpq-term-item'>
+					<th scope='row'>
+						<?php echo __('Max Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="wdpq_term_max_qnt" id="wdpq_term_max_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Max_Quantity_Default); ?>" value="<?php echo esc_attr($Term_Max_Qnt); ?>">
+					</td>
+				</tr>	
+
+				<tr class='form-field wdpq-term-item'>
+					<th scope='row'>
+						<?php echo __('Step Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="wdpq_term_step_qnt" id="wdpq_term_step_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Step_Quantity_Default); ?>" value="<?php echo esc_attr($Term_Step_Qnt); ?>">
+					</td>
+				</tr>	
+
+				<tr class='form-field wdpq-term-item'>
+					<th scope='row'>
+						<?php echo __('Default set Quantity', 'decimal_product_quantity_for_woocommerce'); ?></label>
+					</th>
+					<td>
+						<input type="text" name="wdpq_term_set_qnt" id="wdpq_term_set_qnt" style="width: 64px; text-align: center;" placeholder="<?php echo esc_attr($WooDecimalProduct_Item_Quantity_Default); ?>" value="<?php echo esc_attr($Term_Set_Qnt); ?>">
+					</td>
+				</tr>
+
+				<tr class='form-field wdpq-term-item'>
+					<th scope='row'>
 						*
 					</th>
-					<td style="padding-top: 2px; padding-bottom: 2px;">
+					<td>
 						<p class="description"><?php echo __('Sample (Min,Max,Step,Set): 1 or 0.1 or 0.25 or 1.5 etc.', 'decimal_product_quantity_for_woocommerce'); ?></p>
-						<p class="description"><?php echo __('or leave blank for ', 'decimal_product_quantity_for_woocommerce'); ?><a target="_blank" href="/wp-admin/edit.php?post_type=product&page=decimal-product-quantity-for-woocommerce%2Fincludes%2Foptions.php"><?php echo __('General Settings', 'decimal_product_quantity_for_woocommerce'); ?></a></p>
+						<p class="description"><?php echo __('or leave blank for ', 'decimal_product_quantity_for_woocommerce'); ?><a target="_blank" href="/wp-admin/edit.php?post_type=product&page=decimal-product-quantity-for-woocommerce/includes/options.php"><?php echo __('General Settings', 'decimal_product_quantity_for_woocommerce'); ?></a></p>
+					</td>
+				</tr>
+
+				<tr class='form-field wdpq-term-item wdpq-term-item-hr'>
+					<td colspan="2">
+						<hr>
+					</td>
+				</tr>	
+
+				<tr class='form-field wdpq-term-item'>
+					<th scope='row' <?php echo $Style_and_Title_RSSFeedEnable; // phpcs:ignore?>>
+						<?php echo __('RSS', 'decimal_product_quantity_for_woocommerce'); ?>
+					</th>
+					<td>
+						<input type="checkbox" name="wdpq_term_rss_feed_enable" id="wdpq_term_rss_feed_enable" <?php if($WooDecimalProduct_RSS_Feed_Enable) {echo 'checked';} ?> <?php if(!$WooDecimalProduct_RSS_Feed_Enable) {echo 'disabled="true"';} ?>>
+						<span class="wdpq_term_options_field_description">
+							<?php echo __('WooCommerce RSS Feed', 'decimal_product_quantity_for_woocommerce'); ?>
+						</span>
+						<br>
+						<span class="wdpq_options_field_vpro_about"><?php echo __('* PRO Version only!', 'decimal_product_quantity_for_woocommerce'); ?><span>
+					</td>
+				</tr>
+				
+				<tr class='form-field wdpq-term-footer'>
+					<td colspan="2">
+
 					</td>
 				</tr>				
 				
@@ -198,7 +264,7 @@
 			$contents = ob_get_contents();
 			ob_end_clean();
 			
-			echo $contents;	
+			echo $contents; // phpcs:ignore 	
 		}
 	}
 	

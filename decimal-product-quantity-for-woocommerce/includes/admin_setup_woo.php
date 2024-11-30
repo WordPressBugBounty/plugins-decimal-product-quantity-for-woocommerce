@@ -1,9 +1,9 @@
 <?php
 /*
-* Decimal Product Quantity for WooCommerce
-* Admin WooCommerce Setup Page.
-* admin_setup_woo.php
-*/
+ * Decimal Product Quantity for WooCommerce
+ * Admin WooCommerce Setup Page.
+ * admin_setup_woo.php
+ */
 
 	/* Инициализация.
      * Запускаем самым последним, чтобы быть уверенным, что WooCommerce уже инициализировался.
@@ -26,7 +26,7 @@
 			'Decimal Product Quantity for WooCommerce',
 			__('Decimal Quantity', 'decimal_product_quantity_for_woocommerce'),
 			'manage_woocommerce',
-			plugin_dir_path(__FILE__) .'options.php',
+			'decimal-product-quantity-for-woocommerce/includes/options.php',
 			''
 		);		
 	}

@@ -1,8 +1,8 @@
 <?php
 /*
-* Decimal Product Quantity for WooCommerce
-* functions.php
-*/
+ * Decimal Product Quantity for WooCommerce
+ * functions.php
+ */
 
 	/* Check PRO Plugin Installed
 	----------------------------------------------------------------- */		
@@ -41,7 +41,7 @@
 			$PostMeta_Table = $wpdb->prefix .'postmeta';
 			
 			$Query = "SELECT * FROM $PostMeta_Table WHERE meta_key LIKE 'woodecimalproduct_%'";			
-			$Result = $wpdb->get_results ($wpdb->prepare($Query, true));
+			$Result = $wpdb -> get_results ($wpdb->prepare($Query, true)); // phpcs:ignore 
 			
 			if ($Result) {
 				foreach ($Result as $Meta) {
@@ -166,14 +166,6 @@
 		
 		return $Number;
 	}	
-	
-	/* Добавляем новое описание Ошибки.
-	----------------------------------------------------------------- */	
-	function WooDecimalProduct_Add_Errors_Msg ($Error_Msg, $Errors_Msg) {
-		$Errors_Msg .= "<li>$Error_Msg</li>";
-		
-		return $Errors_Msg;
-	}
 	
 	/* Получаем Pice_Unit_Label Товара.
 	----------------------------------------------------------------- */

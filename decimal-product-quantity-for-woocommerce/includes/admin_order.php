@@ -1,9 +1,9 @@
 <?php
 /*
-* Decimal Product Quantity for WooCommerce
-* Admin WooCommerce Order Page.
-* admin_order.php
-*/
+ * Decimal Product Quantity for WooCommerce
+ * Admin WooCommerce Order Page.
+ * admin_order.php
+ */
 
     /* WooCommerce Order Page.
 	 * Шаг изменения кол-ва Товара на странице Администрирования Заказа.
@@ -48,8 +48,6 @@
     ----------------------------------------------------------------- */ 
 	add_filter ('woocommerce_quantity_input_min_admin', 'WooDecimalProduct_quantity_Input_Min', 10, 3);
 	function WooDecimalProduct_quantity_Input_Min($Min_Qnt, $product, $mode) {
-		// $mode = 'edit' or 'refund'
-		
 		if (is_admin()) {
 			if ($product) {
 				$Parent_ID = 0;
@@ -92,7 +90,7 @@
 				if ($id) {		
 					$product_object = wc_get_product ($id);
 
-					if ( ! wc_products_array_filter_readable ($product_object)) {
+					if (! wc_products_array_filter_readable ($product_object)) {
 						continue;
 					}
 

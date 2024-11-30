@@ -1,8 +1,8 @@
 <?php
 /*
-	Decimal Product Quantity for WooCommerce
-	uninstall.php
-*/
+ * Decimal Product Quantity for WooCommerce
+ *uninstall.php
+ */
 
 	// if uninstall.php is not called by WordPress, die
 	if (!defined('WP_UNINSTALL_PLUGIN')) {
@@ -34,9 +34,9 @@
 			
 			// Remove post meta
 			global $wpdb;
-			$PostMeta_Table = $wpdb->prefix .'postmeta';
+			$PostMeta_Table = $wpdb -> prefix .'postmeta';
 			
 			$Query = "DELETE FROM $PostMeta_Table WHERE meta_key LIKE 'woodecimalproduct_%'";			
-			$wpdb->query($Query);	
+			$wpdb -> query($Query); // phpcs:ignore 
 		}		
 	}

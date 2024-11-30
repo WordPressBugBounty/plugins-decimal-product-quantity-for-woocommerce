@@ -1,12 +1,12 @@
 <?php
 /*
-* Decimal Product Quantity for WooCommerce
-* JS Product Object.
-* ajax_quantity.php
-*/ 
+ * Decimal Product Quantity for WooCommerce
+ * JS Product Object.
+ * ajax_quantity.php
+ */ 
 	
-	$Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field($_REQUEST['mode']) : null;
-	$Object_ID	= isset($_REQUEST['id']) ? sanitize_text_field($_REQUEST['id']) : 0;		
+	$Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field(wp_unslash($_REQUEST['mode'])) : null;
+	$Object_ID	= isset($_REQUEST['id']) ? sanitize_text_field(wp_unslash($_REQUEST['id'])) : 0;		
 
 	$Product_QNT_Options = array();
 	

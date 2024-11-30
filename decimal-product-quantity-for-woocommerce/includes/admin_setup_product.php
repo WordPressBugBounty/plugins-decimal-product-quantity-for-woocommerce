@@ -1,9 +1,9 @@
 <?php
 /*
-* Decimal Product Quantity for WooCommerce
-* Admin Product Setup Page.
-* admin_setup_product.php
-*/
+ * Decimal Product Quantity for WooCommerce
+ * Admin Product Setup Page.
+ * admin_setup_product.php
+ */
 
 	/* DashBoard. WooCommerce. List Products. 
 	 * Добавляем новые Колонки в Списке Товаров.
@@ -17,7 +17,6 @@
 			
 			if ($column_name == 'price' ) {
 				$New_Columns['quantity'] = __('Quantity', 'decimal_product_quantity_for_woocommerce');
-				
 			}			
 		}		
 		
@@ -39,10 +38,10 @@
 			$Stp_Qnt 		= $WooDecimalProduct_QuantityData['stp_qnt'];				
 			$QNT_Precision 	= $WooDecimalProduct_QuantityData['precision'];		
 				
-			echo __('Min:', 'decimal_product_quantity_for_woocommerce') .' ' .$Min_Qnt ."<br>";
-			echo __('Max:', 'decimal_product_quantity_for_woocommerce') .' ' .$Max_Qnt ."<br>";
-			echo __('Step:', 'decimal_product_quantity_for_woocommerce') .' ' .$Stp_Qnt ."<br>";
-			echo __('Set:', 'decimal_product_quantity_for_woocommerce') .' ' .$Def_Qnt ."<br>";			
+			echo __('Min:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html($Min_Qnt) ."<br>";
+			echo __('Max:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html($Max_Qnt) ."<br>";
+			echo __('Step:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html($Stp_Qnt) ."<br>";
+			echo __('Set:', 'decimal_product_quantity_for_woocommerce') .' ' .esc_html($Def_Qnt) ."<br>";			
 		}
 	}
 	
@@ -77,11 +76,7 @@
 	 * Если не указано, то будет как в Глобальных Настройках.
 	----------------------------------------------------------------- */		
 	add_action ('woocommerce_product_options_general_product_data', 'WooDecimalProduct_Tab_General_add_Options');
-	function WooDecimalProduct_Tab_General_add_Options() {	
-		$WooDecimalProduct_Min_Quantity_Default    	= get_option ('woodecimalproduct_min_qnt_default', 1);  
-		$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');  
-		$WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
-		$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);		
+	function WooDecimalProduct_Tab_General_add_Options() {			
 		$WooDecimalProduct_Price_Unit_Label			= get_option ('woodecimalproduct_price_unit_label', 0);		
 
 		$Product_ID = get_the_ID();
@@ -99,7 +94,7 @@
 
 		$Product_Price_Unit_Label = '';
 
-		// Берем первую из Категорий если их несколько.
+		// Берем Значение "Price Unit Label" из первой значимой Категории если их несколько.
 		foreach ($Product_Category_IDs as $Term_ID) {
 			if ($Product_Price_Unit_Label == '') {
 				$Term_Price_Unit = get_term_meta ($Term_ID, 'woodecimalproduct_term_price_unit', $single = true);
@@ -195,21 +190,33 @@
 					'desc_tip'    	=> 'true',
 					'description' => __('Disable Price Unit-Label for this Product.', 'decimal_product_quantity_for_woocommerce')
 				)
-			);		
-				
-		echo '</div>';      	
+			);
+			
+			woocommerce_wp_checkbox( 
+				array( 
+					'id'          	=> 'woodecimalproduct_rss_feed_disable', 
+					'label'       	=> __('Disable RSS Feed', 'decimal_product_quantity_for_woocommerce'), 
+					'desc_tip'    	=> 'true',
+					'description' => __('Disable RSS Feed for this Product.', 'decimal_product_quantity_for_woocommerce')
+				)
+			);
+
+			echo '<div style="clear: both; margin-top: -20px; margin-left: 12px; color: red;">';
+			echo '(' .__('* PRO Version only!', 'decimal_product_quantity_for_woocommerce') .')';
+			echo '</div>';
+		echo '</div>';    	
 	} 
 	
 	/* Сохраняем "Опции кол-ва Товара" для данного Товара.
 	----------------------------------------------------------------- */	
 	add_action ('woocommerce_process_product_meta', 'WooDecimalProduct_save_product_field_step_Qnt');	
 	function WooDecimalProduct_save_product_field_step_Qnt ($post_id) {	
-        $new_min_Qnt    		= isset($_POST['woodecimalproduct_min_qnt']) ? sanitize_text_field ($_POST['woodecimalproduct_min_qnt']): 1;
-        $new_step_Qnt   		= isset($_POST['woodecimalproduct_step_qnt']) ? sanitize_text_field ($_POST['woodecimalproduct_step_qnt']): 1;  
-		$new_dft_Qnt    		= isset($_POST['woodecimalproduct_item_qnt']) ? sanitize_text_field ($_POST['woodecimalproduct_item_qnt']): 1;
-		$new_max_Qnt			= isset($_POST['woodecimalproduct_max_qnt']) ? sanitize_text_field ($_POST['woodecimalproduct_max_qnt']): '';
-		$new_Pice_Unit_Label	= isset($_POST['woodecimalproduct_pice_unit_label']) ? sanitize_text_field ($_POST['woodecimalproduct_pice_unit_label']): '';
-		$new_Pice_Unit_Disable	= isset($_POST['woodecimalproduct_pice_unit_disable']) ? 'yes': '';			
+        $new_min_Qnt    		= isset($_POST['woodecimalproduct_min_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_min_qnt'])): 1;
+        $new_step_Qnt   		= isset($_POST['woodecimalproduct_step_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_step_qnt'])): 1;  
+		$new_dft_Qnt    		= isset($_POST['woodecimalproduct_item_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_item_qnt'])): 1;
+		$new_max_Qnt			= isset($_POST['woodecimalproduct_max_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_max_qnt'])): '';
+		$new_Pice_Unit_Label	= isset($_POST['woodecimalproduct_pice_unit_label']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_pice_unit_label'])): '';
+		$new_Pice_Unit_Disable	= isset($_POST['woodecimalproduct_pice_unit_disable']) ? 'yes': '';	
 		
 		update_post_meta ($post_id, 'woodecimalproduct_min_qnt', $new_min_Qnt);
 		update_post_meta ($post_id, 'woodecimalproduct_step_qnt', $new_step_Qnt);
@@ -219,6 +226,58 @@
 		update_post_meta ($post_id, 'woodecimalproduct_pice_unit_disable', $new_Pice_Unit_Disable);	
 	}
 
+    /* Вариативный Товар. Админка. Шаг и Минимальное кол-во выбора Товара на странице Товара по каждой из Вариаций.
+    ---*PRO-------------------------------------------------------------- */
+	add_action ('woocommerce_product_after_variable_attributes', 'WooDecimalProductPro_quantity_product_after_variable_attributes', 10);
+	function WooDecimalProductPro_quantity_product_after_variable_attributes () {
+        global $WooDecimalProduct_Min_Quantity_Default;
+		global $WooDecimalProduct_Step_Quantity_Default;
+		global $WooDecimalProduct_Item_Quantity_Default;
+		global $WooDecimalProduct_Max_Quantity_Default;
+		
+		ob_start();
+		?>
+
+		<div class="form-row form-row-full" style="background: aliceblue; padding: 10px; border-radius: 9px;">
+			<div style="color: red;">
+				<?php echo __('* PRO Version only!', 'decimal_product_quantity_for_woocommerce'); ?>
+			</div>
+			
+			<p class="form-field">
+				<label for="woodecimalproduct_options_variation_field_min_qnt">
+					<?php echo __('Min cart Quantity (if the variation has a separate value)', 'decimal_product_quantity_for_woocommerce'); ?>
+				</label>
+				<input type="text" class="short" disabled="true" name="woodecimalproduct_options_variation_field_min_qnt" value="" placeholder="<?php echo esc_attr($WooDecimalProduct_Min_Quantity_Default);?>">
+			</p>
+			
+			<p class="form-field">
+				<label for="woodecimalproduct_options_variation_field_step_qnt">
+					<?php echo __('Step change Quantity (if the variation has a separate value)', 'decimal_product_quantity_for_woocommerce'); ?>
+				</label>
+				<input type="text" class="short" disabled="true" name="woodecimalproduct_options_variation_field_step_qnt" value="" placeholder="<?php echo esc_attr($WooDecimalProduct_Step_Quantity_Default);?>">
+			</p>
+
+			<p class="form-field">
+				<label for="woodecimalproduct_options_variation_field_default_qnt">
+					<?php echo __('Default Quantity (if the variation has a separate value)', 'decimal_product_quantity_for_woocommerce'); ?>
+				</label>
+				<input type="text" class="short" disabled="true" name="woodecimalproduct_options_variation_field_default_qnt" value="" placeholder="<?php echo esc_attr($WooDecimalProduct_Item_Quantity_Default);?>">
+			</p>	
+
+			<p class="form-field">
+				<label for="woodecimalproduct_options_variation_field_max_qnt">					
+					<?php echo __('Max cart Quantity (if the variation has a separate value)', 'decimal_product_quantity_for_woocommerce'); ?>
+				</label>
+				<input type="text" class="short" disabled="true" name="woodecimalproduct_options_variation_field_max_qnt" value="" placeholder="<?php echo esc_attr($WooDecimalProduct_Max_Quantity_Default);?>">
+			</p>
+		</div>
+		<?php
+		$Buffer = ob_get_contents();		
+		ob_end_clean();
+		
+		echo $Buffer; // phpcs:ignore 
+	}
+	
 	/* Страница Настроек Товара.
 	 * Stock Threshold. Thanks to: sammyblueeyes & kylie
 	----------------------------------------------------------------- */	

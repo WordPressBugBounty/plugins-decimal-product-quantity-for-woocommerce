@@ -7,7 +7,7 @@ Tested up to: 6.6.2
 Requires PHP: 5.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 12.40
+Stable tag: 13.41
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc..
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Products Supported.
@@ -37,6 +37,7 @@ For example:
 
 	<a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> Features:
 * You can set separate Minimum Product Quantity, Step of Changing the Quantity & Default preset Quantity - for each Variable Product Variation.
+* You can create RSS Feed for WooCommerce. Support: "Google Merchant Center" -> "Price_Unit_Label", separate hierarchy Categories -> Products.
 
 == Installation ==
 
@@ -63,6 +64,12 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 13.41 =
+	2024.11.30
+	* Add about XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label", separate hierarchy Categories -> Products.
+	* Tested to WP: 6.7.1
+	* Tested to WooCommerce: 9.4.2
+	
 = 12.40 =
 	2024.10.23
 	* Fix Auto correction (on Disable)
