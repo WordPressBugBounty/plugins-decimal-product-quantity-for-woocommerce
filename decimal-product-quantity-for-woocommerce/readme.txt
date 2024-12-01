@@ -7,7 +7,7 @@ Tested up to: 6.6.2
 Requires PHP: 5.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 13.41
+Stable tag: 13.41.1
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc..
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Products Supported.
@@ -64,6 +64,10 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 13.41.1 =
+	2024.12.01
+	* Fix Minor PHP Warning.
+	
 = 13.41 =
 	2024.11.30
 	* Add about XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label", separate hierarchy Categories -> Products.

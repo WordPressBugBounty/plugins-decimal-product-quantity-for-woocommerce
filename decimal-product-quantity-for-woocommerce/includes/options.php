@@ -376,7 +376,7 @@
 									</label>
 								</th>
 								<td class="wdpq_options_field_input">
-									<input disabled="true" id="wdpq_rss_feed_enable" name="wdpq_rss_feed_enable" type="checkbox" <?php if($WooDecimalProduct_RSS_Feed_Enable) {echo 'checked';} ?>>
+									<input disabled="true" id="wdpq_rss_feed_enable" name="wdpq_rss_feed_enable" type="checkbox" >
 									<span class="wdpq_options_field_description">
 										<?php echo __('Enable WooCommerce RSS Feed. On/Off', 'decimal_product_quantity_for_woocommerce'); ?>
 									</span>
