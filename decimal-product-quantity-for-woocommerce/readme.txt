@@ -3,11 +3,11 @@ Contributors: WPGear
 Donate link: wpgear.xyz/decimal-product-quantity-woo
 Tags: woocommerce,decimal,quantity,step,min,max,piece,product,minimum,maximum,variation
 Requires at least: 5.0
-Tested up to: 6.6.2
+Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 13.41.1
+Stable tag: 13.41.2
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc..
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Products Supported.
@@ -37,7 +37,7 @@ For example:
 
 	<a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> Features:
 * You can set separate Minimum Product Quantity, Step of Changing the Quantity & Default preset Quantity - for each Variable Product Variation.
-* You can create RSS Feed for WooCommerce. Support: "Google Merchant Center" -> "Price_Unit_Label", separate hierarchy Categories -> Products.
+* You can create RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) for "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
 
 == Installation ==
 
@@ -64,6 +64,10 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 13.41.2 =
+	2024.12.02
+	* Update Translates.
+	
 = 13.41.1 =
 	2024.12.01
 	* Fix Minor PHP Warning.

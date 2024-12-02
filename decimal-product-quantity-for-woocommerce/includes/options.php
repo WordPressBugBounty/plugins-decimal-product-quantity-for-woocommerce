@@ -31,7 +31,8 @@
 	$Action 	= isset($_REQUEST['action']) ? sanitize_text_field (wp_unslash($_REQUEST['action'])) : null;
 	$WP_Nonce 	= isset($_REQUEST['_wpnonce']) ? sanitize_text_field (wp_unslash($_REQUEST['_wpnonce'])) : 'none';
 	
-	$Errors_Msg = array();	
+	$Errors_Msg = array();
+	$WooDecimalProduct_RSS_Feed_Slug = 'products';
 	
 	if ($Action == 'Update') {
 		if (!wp_verify_nonce($WP_Nonce, $WooDecimalProduct_Nonce)) {
@@ -382,13 +383,29 @@
 									</span>
 									<p class="wdpq_options_field_helptip">
 										<?php echo __('Support: "Google Merchant Center" -> "Price_Unit_Label as [unit_pricing_measure]', 'decimal_product_quantity_for_woocommerce'); ?>
-									</p>
-									<p class="wdpq_options_field_helptip">
-										<?php echo __('Link for RSS Feed:', 'decimal_product_quantity_for_woocommerce'); ?>
-										<?php echo '<a href="' .esc_url ($WooDecimalProduct_RSS_Feed_Link) .'" target="blank">' .esc_url ($WooDecimalProduct_RSS_Feed_Link) .'</a>'; ?>
 									</p>									
 								</td>
-							</tr>						
+							</tr>
+
+							<tr class="wdpq_options_field_vpro">
+								<th scope="row" class="wdpq_options_field_label">
+									<label for="wdpq_rss_feed_slug">
+										<?php echo __('Slug for WooCommerce RSS Feed', 'decimal_product_quantity_for_woocommerce'); ?>
+										<br>
+										<span class="wdpq_options_field_vpro_about"><?php echo __('* PRO Version only!', 'decimal_product_quantity_for_woocommerce'); ?><span>
+									</label>
+								</th>
+								<td class="wdpq_options_field_input">
+									<input disabled="true" id="wdpq_rss_feed_slug" name="wdpq_rss_feed_slug" type="text" style="width: 100px;" value="<?php echo esc_attr($WooDecimalProduct_RSS_Feed_Slug); ?>">
+									<span class="wdpq_options_field_description">
+										<?php echo __('Link for RSS Feed. (Default: products)', 'decimal_product_quantity_for_woocommerce'); ?>
+									</span>
+									<p class="wdpq_options_field_helptip">
+										<?php echo __('RSS Feed:', 'decimal_product_quantity_for_woocommerce'); ?>
+										<?php echo '<a href="' .esc_url ($WooDecimalProduct_RSS_Feed_Link) .'" target="blank">' .esc_url ($WooDecimalProduct_RSS_Feed_Link) .'</a>'; ?>
+									</p>
+								</td>
+							</tr>							
 						</tbody>
 					</table>
 				</div>

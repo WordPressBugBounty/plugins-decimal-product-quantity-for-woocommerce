@@ -2,8 +2,8 @@
 /*
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: wpgear.xyz/decimal-product-quantity-woo
-Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label", separate hierarchy Categories -> Products.
-Version: 13.41.1
+Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
+Version: 13.41.2
 Text Domain: decimal_product_quantity_for_woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -33,7 +33,7 @@ License: GPLv2
 	$WooDecimalProduct_Plugin_URL = plugin_dir_url (__FILE__); // со слэшем на конце
 	
 	$WooDecimalProduct_LocalePath = dirname (plugin_basename (__FILE__)) . '/languages/';
-	__('Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create RSS Feed for WooCommerce. Support: "Google Merchant Center" -> "Price_Unit_Label", separate hierarchy Categories -> Products.', 'decimal_product_quantity_for_woocommerce');	
+	__('Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create RSS Feed for WooCommerce. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.', 'decimal_product_quantity_for_woocommerce');	
 	
 	/* JS Script.
 	----------------------------------------------------------------- */	
