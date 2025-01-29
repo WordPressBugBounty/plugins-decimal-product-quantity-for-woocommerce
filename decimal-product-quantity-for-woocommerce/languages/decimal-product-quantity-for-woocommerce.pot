@@ -1,0 +1,438 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Decimal Product Quantity for WooCommerce\n"
+"POT-Creation-Date: 2025-01-29 12:31+0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: WPGear <wpgear.xyz@gmail.com>\n"
+"Language-Team: WPGear Team <wpgear.xyz@gmail.com>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;"
+"_nx_noop:1,2,3c;esc_attr__;esc_attr_e;esc_html__;esc_html_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Generator: Poedit 1.8.12\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: decimal-product-quantity-for-woocommerce.php:36
+msgid ""
+"Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step "
+"& Default preset. Variable Products Supported. Auto correction \"No valid "
+"value\". Update Cart Automatically on Quantity Change (AJAX Cart Update). "
+"Read about <a href=\"http://wpgear.xyz/decimal-product-quantity-woo-pro/"
+"\">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default "
+"preset Quantity - for each Product Variation. Create RSS Feed for "
+"WooCommerce. Create XML/RSS Feed for WooCommerce. Support: \"Google Merchant "
+"Center\" (Product data specification) whith \"Price_Unit_Label\" -> "
+"[unit_pricing_measure], separate hierarchy Categories -> Products."
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:203
+msgid ""
+"You have exceeded the allowed Maximum Quantity for this product. Check Cart."
+msgstr ""
+
+# WooCommerce. No need Translate.
+#: decimal-product-quantity-for-woocommerce.php:279
+#, php-format
+msgctxt "Item name in quotes"
+msgid "&ldquo;%s&rdquo;"
+msgstr ""
+
+# WooCommerce. No need Translate.
+#: decimal-product-quantity-for-woocommerce.php:289
+#, php-format
+msgid "%s has been added to your cart."
+msgid_plural "%s have been added to your cart."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+# WooCommerce. No need Translate.
+#: decimal-product-quantity-for-woocommerce.php:294
+msgid "Continue shopping"
+msgstr ""
+
+# WooCommerce. No need Translate.
+#: decimal-product-quantity-for-woocommerce.php:296
+msgid "View cart"
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:409
+msgid "- No valid value. Auto correction nearest valid value:"
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:419
+#: decimal-product-quantity-for-woocommerce.php:582
+msgid ""
+"- More than the maximum allowed for this Product. Auto correction to Max:"
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:1004
+#: decimal-product-quantity-for-woocommerce.php:1005
+msgid "Will be available after creating the Cart"
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:1014
+msgid "Create Cart"
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:1027
+msgid "These Products were in your previous Cart. You can \"Create Cart\" based on them."
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:1120
+msgid "Correct processing of coupons is possible only in the Pro version \"Decimal Product Quantity for WooCommerce\". Sorry."
+msgstr ""
+
+#: decimal-product-quantity-for-woocommerce.php:1140
+msgid "Coupons Disabled, sorry."
+msgstr ""
+
+#: includes/admin/admin_order.php:118
+msgid "In stock"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:19
+#: includes/admin/admin_setup_product.php:19
+msgid "Quantity"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:39
+#: includes/admin/admin_setup_product.php:41
+msgid "Min:"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:40
+#: includes/admin/admin_setup_product.php:42
+msgid "Max:"
+msgstr "Макс:"
+
+#: includes/admin/admin_setup_category.php:41
+#: includes/admin/admin_setup_product.php:43
+msgid "Step:"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:42
+#: includes/admin/admin_setup_product.php:44
+msgid "Set:"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:64
+#: includes/admin/admin_setup_category.php:69
+#: includes/admin/admin_setup_product.php:113
+msgid "Disabled in Global Option."
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:81
+#: includes/admin/admin_setup_category.php:160
+#: includes/admin/admin_setup_woo.php:27
+msgid "Decimal Quantity"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:82
+#: includes/admin/admin_setup_category.php:163
+msgid "This Options will be shown for all Products in this Category."
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:83
+#: includes/admin/admin_setup_category.php:164
+msgid "But each Product can have its own Options."
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:89
+#: includes/admin/admin_setup_category.php:176
+#: includes/admin/admin_setup_product.php:108 includes/admin/options.php:320
+msgid "Price Unit-Label"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:91
+#: includes/admin/admin_setup_category.php:180
+msgid "Sample: \"Price per Kg.\" / \"Price per Meter\". Or leave blank."
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:96
+#: includes/admin/admin_setup_category.php:192 includes/admin/options.php:71
+#: includes/admin/options.php:125 includes/admin/options.php:246
+msgid "Min Quantity"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:101
+#: includes/admin/admin_setup_category.php:201 includes/admin/options.php:84
+#: includes/admin/options.php:138 includes/admin/options.php:151
+#: includes/admin/options.php:263
+msgid "Max Quantity"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:106
+#: includes/admin/admin_setup_category.php:210 includes/admin/options.php:97
+msgid "Step Quantity"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:111
+#: includes/admin/admin_setup_category.php:219 includes/admin/options.php:109
+#: includes/admin/options.php:123 includes/admin/options.php:136
+#: includes/admin/options.php:297
+msgid "Default set Quantity"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:119
+#: includes/admin/admin_setup_category.php:231
+msgid "Sample (Min,Max,Step,Set): 1 or 0.1 or 0.25 or 1.5 etc."
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:120
+#: includes/admin/admin_setup_category.php:232
+msgid "or leave blank for "
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:120
+#: includes/admin/admin_setup_category.php:232
+msgid "General Settings"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:127
+#: includes/admin/admin_setup_category.php:244
+msgid "RSS"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:131
+#: includes/admin/admin_setup_category.php:249 includes/admin/options.php:374
+msgid "WooCommerce RSS Feed"
+msgstr ""
+
+#: includes/admin/admin_setup_category.php:134
+#: includes/admin/admin_setup_category.php:252
+#: includes/admin/admin_setup_product.php:203
+#: includes/admin/admin_setup_product.php:241 includes/admin/options.php:376
+#: includes/admin/options.php:395
+msgid "* PRO Version only!"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:122
+msgid "Quantity Options"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:128
+msgid "* If not specified, it will be as in"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:137
+msgid "Minimum"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:140
+msgid "Set the Min of changing the quantity: 0.1 0.5 100 e.t.c (Default = "
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:147
+msgid "Default Set"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:150
+msgid "Set the Default quantity: 0.1 0.5 100 e.t.c (Default = "
+msgstr ""
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:157
+msgid "Step change +/-"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:160
+msgid "Set the Step of changing the quantity: 0.1 0.5 100 e.t.c (Default = "
+msgstr ""
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:167
+msgid "Maximum"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:170
+msgid ""
+"Set the Max of changing the quantity: 0.1 0.5 100 e.t.c (or leave blank)"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:180
+msgid ""
+"View Price Unit-Label. Sample: \"Price per Kg.\" / \"Price per Meter\". Or "
+"leave blank to use Category value."
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:187
+msgid "Disable Price Unit-Label"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:189
+msgid "Disable Price Unit-Label for this Product."
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:196
+msgid "Disable RSS Feed"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:198
+msgid "Disable RSS Feed for this Product."
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:246
+msgid "Min cart Quantity (if the variation has a separate value)"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:253
+msgid "Step change Quantity (if the variation has a separate value)"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:260
+msgid "Default Quantity (if the variation has a separate value)"
+msgstr ""
+
+#: includes/admin/admin_setup_product.php:267
+msgid "Max cart Quantity (if the variation has a separate value)"
+msgstr ""
+
+#: includes/admin/options.php:44
+msgid "Warning! Data Incorrect. Update Disable."
+msgstr ""
+
+#: includes/admin/options.php:77 includes/admin/options.php:103
+#: includes/admin/options.php:115
+msgid "Not a Valid Number. Set = 1"
+msgstr ""
+
+#: includes/admin/options.php:90
+msgid "Not a Valid Number. Set = empty"
+msgstr ""
+
+#: includes/admin/options.php:129
+msgid "Set = Min"
+msgstr ""
+
+#: includes/admin/options.php:142
+msgid "Set = Max"
+msgstr ""
+
+#: includes/admin/options.php:149 includes/admin/options.php:280
+msgid "Step change Quantity"
+msgstr ""
+
+#: includes/admin/options.php:155
+msgid "Set = Default"
+msgstr ""
+
+#: includes/admin/options.php:215
+msgid "Warning!"
+msgstr ""
+
+#: includes/admin/options.php:223
+msgid "Check this Settings."
+msgstr ""
+
+#: includes/admin/options.php:230
+msgid "* Each Product and each Category can set a custom value."
+msgstr ""
+msgstr ""
+
+#: includes/admin/options.php:238
+msgid "General:"
+msgstr ""
+
+#: includes/admin/options.php:252
+msgid "How min-much quantity of product to cart"
+msgstr ""
+
+#: includes/admin/options.php:255 includes/admin/options.php:289
+#: includes/admin/options.php:306
+msgid "1 or 0.1 or 0.25 or 1.5 etc."
+msgstr ""
+
+#: includes/admin/options.php:269
+msgid "How max-much quantity of product to cart"
+msgstr ""
+
+#: includes/admin/options.php:272
+msgid "1 or 0.1 or 0.25 or 1.5 etc. Or leave blank"
+msgstr ""
+
+#: includes/admin/options.php:286
+msgid "How much to increase or decrease the quantity of product to cart"
+msgstr ""
+
+#: includes/admin/options.php:303
+msgid "How much default quantity of product to cart"
+msgstr ""
+
+#: includes/admin/options.php:326
+msgid "Enable \"Price Unit-Label\" (Kg, Liter, Meter, Piece, etc.) On/Off"
+msgstr ""
+
+#: includes/admin/options.php:334
+msgid "Auto correction"
+msgstr ""
+
+#: includes/admin/options.php:340
+msgid ""
+"Correction \"No valid Value\" customer enters to nearest valid value "
+"Quantity. On/Off"
+msgstr ""
+
+#: includes/admin/options.php:348
+msgid "Auto update Cart"
+msgstr ""
+
+#: includes/admin/options.php:354
+msgid "Auto update Cart if change Quantity (AJAX Cart Update) On/Off"
+msgstr ""
+
+#: includes/admin/options.php:366
+msgid "RSS:"
+msgstr ""
+
+#: includes/admin/options.php:382
+msgid "Enable WooCommerce RSS Feed. On/Off"
+msgstr ""
+
+#: includes/admin/options.php:385
+msgid ""
+"Support: \"Google Merchant Center\" -> \"Price_Unit_Label as "
+"[unit_pricing_measure]"
+msgstr ""
+
+#: includes/admin/options.php:393
+msgid "Slug for WooCommerce RSS Feed"
+msgstr ""
+
+#: includes/admin/options.php:401
+msgid "Link for RSS Feed. (Default: products)"
+msgstr ""
+
+#: includes/admin/options.php:404
+msgid "RSS Feed:"
+msgstr ""
+
+#: includes/admin/options.php:417
+msgid "Ext:"
+msgstr ""
+
+#: includes/admin/options.php:425
+msgid "Debug info"
+msgstr ""
+
+#: includes/admin/options.php:431
+msgid "View Debug info in Browser Console. On/Off"
+msgstr ""
+
+#: includes/admin/options.php:439
+msgid "Clearing"
+msgstr ""
+
+#: includes/admin/options.php:445
+msgid "Delete Quantity-MetaData with Uninstall Plugin. On/Off"
+msgstr ""
+
+#: includes/admin/options.php:460
+msgid "Save"
+msgstr ""

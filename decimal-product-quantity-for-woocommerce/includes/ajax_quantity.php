@@ -5,8 +5,8 @@
  * ajax_quantity.php
  */ 
 	
-	$Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field(wp_unslash($_REQUEST['mode'])) : null;
-	$Object_ID	= isset($_REQUEST['id']) ? sanitize_text_field(wp_unslash($_REQUEST['id'])) : 0;		
+	$Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : null; // phpcs:ignore	
+	$Object_ID	= isset($_REQUEST['id']) ? sanitize_text_field( wp_unslash( $_REQUEST['id'] ) ) : 0; // phpcs:ignore			
 
 	$Product_QNT_Options = array();
 	
@@ -22,10 +22,10 @@
 	}
 	
 	$Obj_Request = new stdClass();
-	$Obj_Request->status 	= 'OK';
-	$Obj_Request->answer 	= $Result;
-	$Obj_Request->qnt_data 	= $WooDecimalProduct_QuantityData;
+	$Obj_Request -> status 	= 'OK';
+	$Obj_Request -> answer 	= $Result;
+	$Obj_Request -> qnt_data = $WooDecimalProduct_QuantityData;
 
-	wp_send_json($Obj_Request);    
+	wp_send_json( $Obj_Request );    
 
 	die; // Complete.

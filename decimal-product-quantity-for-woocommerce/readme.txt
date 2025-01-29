@@ -1,16 +1,16 @@
 === Decimal Product Quantity for WooCommerce ===
 Contributors: WPGear
-Donate link: wpgear.xyz/decimal-product-quantity-woo
-Tags: woocommerce,decimal,quantity,step,min,max,piece,product,minimum,maximum,variation
+Donate link: https://wpgear.xyz/decimal-product-quantity-woo
+Tags: woocommerce,decimal,quantity,piece,variation
 Requires at least: 5.0
 Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 13.41.2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Stable tag: 14.42
 
-Products like: Pizza, Liquid on the filling, Custom weight, etc..
-(Piece of Product). Min, Max, Step & Default preset Quantity. Variable Products Supported.
+Products like: Pizza, Liquid on the filling, Custom weight, etc.
+(Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
 
 == Description ==
 The plugin makes it possible to sell Products as whole or in parts: 0.5 1.5 etc.
@@ -64,6 +64,13 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 14.42 =
+	2025.01.29
+	* Global Update. Now work on WooCommerce 9.5.2
+	* Now work on Modern Themes like: Astra & e.t.c.
+	* Correct processing of Сoupons is possible only in the Pro version.
+	* Cart Repeat-Again (after complete order) is possible only in the Pro version.
+	
 = 13.41.2 =
 	2024.12.02
 	* Update Translates.
