@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 14.42
+Version: 14.42.1
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -49,7 +49,7 @@ License: GPLv2
 	----------------------------------------------------------------- */
     add_action ('wp_ajax_WooDecimalProductQNT', 'WooDecimalProduct_Ajax');
     function WooDecimalProduct_Ajax() {
-		include_once ('includes/ajax_quantity.php');
+		include_once ('includes/ajax_processing.php');
     }		
 
 	/* Translate.
@@ -91,7 +91,7 @@ License: GPLv2
 					// Простой Товар.
 					$item_product_id = $Product_ID;
 				}
-
+				
 				$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($item_product_id);
 				WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, __FUNCTION__ .' $WooDecimalProduct_QuantityData ' .__LINE__, 'test', true);
 				
@@ -141,6 +141,7 @@ License: GPLv2
 			}				
 		}
 			
+		WooDecimalProduct_Debugger ($args, __FUNCTION__ .' $args ' .__LINE__, 'test', true);
         return $args;
     }     
 
@@ -148,7 +149,7 @@ License: GPLv2
     ----------------------------------------------------------------- */ 
     add_filter ('woocommerce_available_variation', 'WooDecimalProduct_Filter_quantity_available_variation', 10, 3);
 	function WooDecimalProduct_Filter_quantity_available_variation ($args, $product, $variation) {	
-        $Product_ID = $product->get_id();
+        $Product_ID = $product -> get_id();
 		WooDecimalProduct_Debugger ($Product_ID, __FUNCTION__ .' $Product_ID ' .__LINE__, 'test', true);
 
 		$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
@@ -494,6 +495,8 @@ License: GPLv2
 					console.log('WooDecimalProduct JS Check Cart Quantity - loaded');
 					
 					var WooDecimalProduct_ConsoleLog_Debuging = <?php echo esc_html( $WooDecimalProduct_ConsoleLog_Debuging ); ?>;
+					
+					WooDecimalProductQNT_ConsoleLog_Debuging ('Auto_Correction: On');
 					
 					var WooDecimalProduct_AJAX_Cart_Update = <?php echo esc_html( $WooDecimalProduct_AJAX_Cart_Update ); ?>;
 					WooDecimalProductQNT_ConsoleLog_Debuging ('AJAX_Cart_Update: ' + WooDecimalProduct_AJAX_Cart_Update);
@@ -860,6 +863,8 @@ License: GPLv2
 		WooDecimalProduct_Debugger ($Quantity, __FUNCTION__ .' $Quantity ' .__LINE__, 'test', true);
 		// WooDecimalProduct_Debugger ($Cart_Items, __FUNCTION__ .' $Cart_Items ' .__LINE__, 'test', true);
 
+		$Product_Subtotal = 0;
+		
 		$Product_ID = $Product -> get_id();
 		WooDecimalProduct_Debugger ($Product_ID, __FUNCTION__ .' $Product_ID ' .__LINE__, 'test', true);
 		
@@ -873,23 +878,21 @@ License: GPLv2
 		} else {
 			//Простой Товар.
 			$isVariation = false;
-		}	
+		}
 		
-		$Item_Product_ID = $Product_ID;
-
-		WooDecimalProduct_Debugger ($Item_Product_ID, __FUNCTION__ .' $Item_Product_ID ' .__LINE__, 'test', true);	
-
-		$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_CartItem_by_ProductID ($Item_Product_ID, $isVariation);
+		$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_CartItem_by_ProductID ($Product_ID, $isVariation);
 		WooDecimalProduct_Debugger ($WDPQ_Cart_Item, __FUNCTION__ .' $WDPQ_Cart_Item ' .__LINE__, 'test', true);
 
 		if ($WDPQ_Cart_Item) {
 			$Cart_Item_Quantity = $WDPQ_Cart_Item['quantity'];
 			$Cart_Item_Price 	= $WDPQ_Cart_Item['price'];
-			
+
 			$Product_Subtotal = $Cart_Item_Price * $Cart_Item_Quantity;
+			$Product_Subtotal = WooDecimalProduct_Totals_Round ($Product_Subtotal);
 
 			WooDecimalProduct_Debugger ($Product_Subtotal, __FUNCTION__ .' $Product_Subtotal ' .__LINE__, 'test', true);
 			return $Product_Subtotal;
+			
 		} else {
 			// Ситуация, Корзина была сформирована, но Браузер закрыли и открыли снова. 
 			// Обрабатывается тут: WooDecimalProduct_Action_after_cart ().
@@ -901,8 +904,9 @@ License: GPLv2
 			
 			$Product_Price = $Product -> get_price();
 			$Quantity = 1;
-			
+
 			$Product_Subtotal = $Product_Price * $Quantity;
+			$Product_Subtotal = WooDecimalProduct_Totals_Round ($Product_Subtotal);
 		}
 
 		WooDecimalProduct_Debugger ($Product_Subtotal, __FUNCTION__ .' $Product_Subtotal ' .__LINE__, 'test', true);

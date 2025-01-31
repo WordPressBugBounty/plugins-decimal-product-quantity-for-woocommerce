@@ -7,7 +7,7 @@ Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 14.42
+Stable tag: 14.42.1
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -64,6 +64,13 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 14.42.1 =
+	2025.01.31
+	* Fix Minor Stupids.
+	* Fix Product Setup -> General: PlaceHolders for Min, Max, Default Set, Step.
+	* Fix get Min, Max, Default Set, Step from Categories, if is not settings on the Product.
+	* Fix Cart Item Subtotal Round with Item Precision.
+	
 = 14.42 =
 	2025.01.29
 	* Global Update. Now work on WooCommerce 9.5.2

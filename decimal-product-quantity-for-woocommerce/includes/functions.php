@@ -137,24 +137,30 @@
 			$Max_Qnt = get_post_meta ($Product_ID, 'woodecimalproduct_max_qnt', true);  // Максимальное Количество для данного Товара	
 			$Def_Qnt = get_post_meta ($Product_ID, 'woodecimalproduct_item_qnt', true);	// Default_Qnt для данного Товара
 			$Stp_Qnt = get_post_meta ($Product_ID, 'woodecimalproduct_step_qnt', true);	// Шаг изменения для данного Товара		
+			
+			// PlaceHolders
+			$PlaceHolder_Min_Qnt = isset($Term_QuantityData['min_qnt']) ? $Term_QuantityData['min_qnt'] : $WooDecimalProduct_Min_Quantity_Default;
+			$PlaceHolder_Max_Qnt = isset($Term_QuantityData['max_qnt']) ? $Term_QuantityData['max_qnt'] : $WooDecimalProduct_Max_Quantity_Default;	
+			$PlaceHolder_Def_Qnt = isset($Term_QuantityData['def_qnt']) ? $Term_QuantityData['def_qnt'] : $WooDecimalProduct_Item_Quantity_Default;	
+			$PlaceHolder_Stp_Qnt = isset($Term_QuantityData['stp_qnt']) ? $Term_QuantityData['stp_qnt'] : $WooDecimalProduct_Step_Quantity_Default;
 
 			if (!$Min_Qnt) {
-				$Min_Qnt = isset($Term_QuantityData['min_qnt']) ? $Term_QuantityData['min_qnt'] : $WooDecimalProduct_Min_Quantity_Default;			
+				$Min_Qnt = $PlaceHolder_Min_Qnt;
 			}
 			
 			if (!$Max_Qnt) {
-				$Max_Qnt = isset($Term_QuantityData['max_qnt']) ? $Term_QuantityData['max_qnt'] : $WooDecimalProduct_Max_Quantity_Default;							
+				$Max_Qnt = $PlaceHolder_Max_Qnt;
 			}
 			if ($Max_Qnt == '') {
 				$Max_Qnt = $No_MaxEmpty; // '-1' for Unlimited
 			}			
 
 			if (!$Def_Qnt) {
-				$Def_Qnt = isset($Term_QuantityData['def_qnt']) ? $Term_QuantityData['def_qnt'] : $WooDecimalProduct_Item_Quantity_Default;							
+				$Def_Qnt = $PlaceHolder_Def_Qnt;
 			}
 			
 			if (!$Stp_Qnt) {
-				$Stp_Qnt = isset($Term_QuantityData['stp_qnt']) ? $Term_QuantityData['stp_qnt'] : $WooDecimalProduct_Step_Quantity_Default;							
+				$Stp_Qnt = $PlaceHolder_Stp_Qnt;
 			}		
 			
 			if ($Min_Qnt && $Def_Qnt) {
@@ -167,15 +173,17 @@
 			$WooDecimalProduct_QuantityData['max_qnt'] = $Max_Qnt;
 			$WooDecimalProduct_QuantityData['def_qnt'] = $Def_Qnt;
 			$WooDecimalProduct_QuantityData['stp_qnt'] = $Stp_Qnt;
+			$WooDecimalProduct_QuantityData['placeholder_min_qnt'] = $PlaceHolder_Min_Qnt;
+			$WooDecimalProduct_QuantityData['placeholder_max_qnt'] = $PlaceHolder_Max_Qnt;
+			$WooDecimalProduct_QuantityData['placeholder_def_qnt'] = $PlaceHolder_Def_Qnt;
+			$WooDecimalProduct_QuantityData['placeholder_stp_qnt'] = $PlaceHolder_Stp_Qnt;
 			
-			// Precision
-			$Locale_Info = localeconv();
-			$Locale_Delimiter = $Locale_Info['decimal_point'];
-			
-			$Min_QNT_Precision = strlen (substr (strrchr ($Min_Qnt, $Locale_Delimiter), 1));
+			$Locale_Delimiter = WooDecimalProduct_Get_Locale_Delimiter ();
+
+			$Min_QNT_Precision = strlen (substr (strrchr ($Min_Qnt, $Locale_Delimiter), 1));	
 			$Def_QNT_Precision = strlen (substr (strrchr ($Def_Qnt, $Locale_Delimiter), 1));
 			$Stp_QNT_Precision = strlen (substr (strrchr ($Stp_Qnt, $Locale_Delimiter), 1));
-			
+					
 			$QNT_Precision = max (array ($Min_QNT_Precision, $Def_QNT_Precision, $Stp_QNT_Precision));
 
 			$WooDecimalProduct_QuantityData['precision'] = $QNT_Precision;				
@@ -281,7 +289,12 @@
 		$Product_Category_IDs = wc_get_product_term_ids ($Product_ID, 'product_cat');
 		
 		// Берем первую из Категорий если их несколько - в которой имеется Pice_Unit_Label.
+		// Если Pice_Unit_Label отсутствует, то берем Первую из Категорий.
 		foreach ($Product_Category_IDs as $Term_ID) {
+			if ( empty( $Term_QuantityData ) ) {
+				$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
+			}				
+			
 			if ($Pice_Unit_Label == '') {
 				$Term_Price_Unit = get_term_meta ($Term_ID, 'woodecimalproduct_term_price_unit', $single = true);
 
@@ -732,18 +745,54 @@
 
 		return $CartItem;		
 	}
-
+	
+	/* Get Woo Price Decimals Settings.
+	----------------------------------------------------------------- */
+	function WooDecimalProduct_Get_Woo_PriceDecimals_Settings () {		
+		$PriceDecimals = 2;
+		
+		if (function_exists( 'wc_get_price_decimals' )) {
+			$PriceDecimals = wc_get_price_decimals();
+		}
+		
+		WooDecimalProduct_Debugger ($PriceDecimals, __FUNCTION__ .' $PriceDecimals ' .__LINE__, 'test', true);
+		return $PriceDecimals;
+	}	
+	
+	/* Get Locale_Delimiter.
+	----------------------------------------------------------------- */
+	function WooDecimalProduct_Get_Locale_Delimiter () {
+		
+		$Locale_Info = localeconv();
+		$Locale_Delimiter = $Locale_Info['decimal_point'];
+		
+		WooDecimalProduct_Debugger ($Locale_Delimiter, __FUNCTION__ .' $Locale_Delimiter ' .__LINE__, 'test', true);
+		return $Locale_Delimiter;
+	}	
+	
+	/* Totals-Round.
+	----------------------------------------------------------------- */
+	function WooDecimalProduct_Totals_Round ($Total) {
+		$PriceDecimals = WooDecimalProduct_Get_Woo_PriceDecimals_Settings ();
+		
+		$Totals_Round = round( $Total, $PriceDecimals );
+		
+		WooDecimalProduct_Debugger ($Totals_Round, __FUNCTION__ .' $Totals_Round ' .__LINE__, 'test', true);
+		return $Totals_Round;
+	}
+	
 	/* Get Quantity-Precision for Product.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_Product_QNT_Precision ($Product_ID) {
 		$No_MaxEmpty = '-1';	// Unlimited
+		
 		$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
 					
 		$QNT_Precision = $WooDecimalProduct_QuantityData['precision'];
 		
 		return $QNT_Precision;
 	}
-
+	
 	/* Round Product Quantity with Precision.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Round_ProductQuantity ($Product_ID, $Quantity) {

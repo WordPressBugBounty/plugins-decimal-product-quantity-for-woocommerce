@@ -83,12 +83,19 @@
 			
 		$No_MaxEmpty = '---';
 		$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, __FUNCTION__ .' $WooDecimalProduct_QuantityData ' .__LINE__, 'test', true);	
 
 		$Min_Qnt 		= $WooDecimalProduct_QuantityData['min_qnt'];
 		$Max_Qnt 		= $WooDecimalProduct_QuantityData['max_qnt'];
 		$Def_Qnt 		= $WooDecimalProduct_QuantityData['def_qnt'];
-		$Stp_Qnt 		= $WooDecimalProduct_QuantityData['stp_qnt'];				
+		$Stp_Qnt 		= $WooDecimalProduct_QuantityData['stp_qnt'];
 		$QNT_Precision 	= $WooDecimalProduct_QuantityData['precision'];	
+		
+		// PlaceHolders
+		$PlaceHolder_Min_Qnt = $WooDecimalProduct_QuantityData['placeholder_min_qnt'];
+		$PlaceHolder_Max_Qnt = $WooDecimalProduct_QuantityData['placeholder_max_qnt'];
+		$PlaceHolder_Def_Qnt = $WooDecimalProduct_QuantityData['placeholder_def_qnt'];
+		$PlaceHolder_Stp_Qnt = $WooDecimalProduct_QuantityData['placeholder_stp_qnt'];		
 
 		$Product_Category_IDs = wc_get_product_term_ids ($Product_ID, 'product_cat');
 
@@ -131,46 +138,51 @@
 				echo '</div>';
 			echo '</div>';
 		
+			// Minimum
 			woocommerce_wp_text_input( 
 				array( 
 					'id'          => 'woodecimalproduct_min_qnt', 
 					'label'       => __('Minimum', 'decimal-product-quantity-for-woocommerce'), 
-					'placeholder' => $Min_Qnt,
+					'placeholder' => $PlaceHolder_Min_Qnt,
 					'desc_tip'    => 'true',
 					'description' => sprintf ( esc_html( __('Set the Min of changing the quantity: 0.1 0.5 100 e.t.c (Default = ', 'decimal-product-quantity-for-woocommerce') ) .'%s' .')', $Min_Qnt)
 				)
 			);
 			
+			// Default Set
 			woocommerce_wp_text_input( 
 				array( 
 					'id'          => 'woodecimalproduct_item_qnt', 
 					'label'       => __('Default Set', 'decimal-product-quantity-for-woocommerce'), 
-					'placeholder' => $Def_Qnt,
+					'placeholder' => $PlaceHolder_Def_Qnt,
 					'desc_tip'    => 'true',
 					'description' => sprintf ( esc_html( __('Set the Default quantity: 0.1 0.5 100 e.t.c (Default = ', 'decimal-product-quantity-for-woocommerce') ) .'%s' .')', $Def_Qnt)
 				)
 			);		
 
+			// Step change +/-
 			woocommerce_wp_text_input( 
 				array( 
 					'id'          => 'woodecimalproduct_step_qnt', 
 					'label'       => __('Step change +/-', 'decimal-product-quantity-for-woocommerce'), 
-					'placeholder' => $Stp_Qnt,
+					'placeholder' => $PlaceHolder_Stp_Qnt,
 					'desc_tip'    => 'true',
 					'description' => sprintf ( esc_html( __('Set the Step of changing the quantity: 0.1 0.5 100 e.t.c (Default = ', 'decimal-product-quantity-for-woocommerce') ) .'%s' .')', $Stp_Qnt)
 				)
 			);
 
+			// Maximum
 			woocommerce_wp_text_input( 
 				array( 
 					'id'          => 'woodecimalproduct_max_qnt', 
 					'label'       => __('Maximum', 'decimal-product-quantity-for-woocommerce'), 
-					'placeholder' => $Max_Qnt,
+					'placeholder' => $PlaceHolder_Max_Qnt,
 					'desc_tip'    => 'true',
 					'description' => __('Set the Max of changing the quantity: 0.1 0.5 100 e.t.c (or leave blank)', 'decimal-product-quantity-for-woocommerce')
 				)
 			);
 			
+			// Price Unit Label
 			woocommerce_wp_text_input( 
 				array( 
 					'id'          	=> 'woodecimalproduct_pice_unit_label', 
@@ -181,6 +193,7 @@
 				)
 			);	
 
+			// Disable: Price Unit Label
 			woocommerce_wp_checkbox( 
 				array( 
 					'id'          	=> 'woodecimalproduct_pice_unit_disable', 
@@ -190,6 +203,7 @@
 				)
 			);
 			
+			// Disable: RSS Feed
 			woocommerce_wp_checkbox( 
 				array( 
 					'id'          	=> 'woodecimalproduct_rss_feed_disable', 
