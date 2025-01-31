@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 14.42.1
+Version: 14.42.2
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -30,9 +30,9 @@ License: GPLv2
 	$WooDecimalProduct_ConsoleLog_Debuging		= get_option ('woodecimalproduct_debug_log', 0);
 	$WooDecimalProduct_Uninstall_Del_MetaData 	= get_option ('woodecimalproduct_uninstall_del_metadata', 0);
 	
-	$WooDecimalProduct_Plugin_URL = plugin_dir_url (__FILE__); // со слэшем на конце
+	$WooDecimalProduct_Plugin_URL = plugin_dir_url ( __FILE__ ); // со слэшем на конце
 	
-	$WooDecimalProduct_LocalePath = dirname (plugin_basename (__FILE__)) . '/languages/';
+	$WooDecimalProduct_LocalePath = dirname (plugin_basename ( __FILE__ )) . '/languages/';
 	__('Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create RSS Feed for WooCommerce. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.', 'decimal-product-quantity-for-woocommerce');	
 	
 	/* JS Script.
@@ -61,7 +61,7 @@ License: GPLv2
 		load_plugin_textdomain ('decimal-product-quantity-for-woocommerce', false, $WooDecimalProduct_LocalePath);		
 	}
 	
-	/* Инициализация.
+	/* Init. Инициализация.
      * Запускаем самым последним, чтобы быть уверенным, что WooCommerce уже инициализировался.
 	----------------------------------------------------------------- */ 
 	add_action ('init', 'WooDecimalProduct_Init', 999999);
@@ -69,7 +69,8 @@ License: GPLv2
 		WooDecimalProduct_Woo_remove_filters();		
 	}
 	
-    /* Минимальное / Максимально кол-во выбора Товара, Шаг, Значение по-Умолчанию на странице Товара и Корзины.
+	/* Страница Товара и Корзина
+     * Минимальное / Максимально кол-во выбора Товара, Шаг, Значение по-Умолчанию на странице Товара и Корзины.
 	 * woocommerce\includes\wc-template-functions.php
 	 * Woo version > 9.4.3
     ----------------------------------------------------------------- */   

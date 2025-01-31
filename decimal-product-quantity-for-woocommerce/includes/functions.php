@@ -785,13 +785,12 @@
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_Product_QNT_Precision ($Product_ID) {
 		$No_MaxEmpty = '-1';	// Unlimited
-		
 		$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
 					
 		$QNT_Precision = $WooDecimalProduct_QuantityData['precision'];
 		
 		return $QNT_Precision;
-	}
+	}	
 	
 	/* Round Product Quantity with Precision.
 	----------------------------------------------------------------- */
