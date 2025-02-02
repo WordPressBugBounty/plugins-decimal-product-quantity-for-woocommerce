@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 14.42.2
+Version: 14.42.3
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -1229,23 +1229,25 @@ License: GPLv2
 									$WDPQ_CartItem = WooDecimalProduct_Get_WDPQ_CartItem_by_ProductID ($Product_ID, $isVariation);
 									WooDecimalProduct_Debugger ($WDPQ_CartItem, __FUNCTION__ .' $WDPQ_CartItem ' .__LINE__, 'test', true);
 									
-									$WDPQ_CartItem_Quantity = $WDPQ_CartItem['quantity'];
-									$WDPQ_CartItem_Price 	= $WDPQ_CartItem['price'];
-									
-									$WDPQ_CartItem_Total = $WDPQ_CartItem_Price * $WDPQ_CartItem_Quantity;
-									
-									if ($WDPQ_CartItem_Total == 0) {
-										$WDPQ_CartItem_Total = 1;
+									if ($WDPQ_CartItem) {
+										$WDPQ_CartItem_Quantity = isset( $WDPQ_CartItem['quantity'] ) ? $WDPQ_CartItem['quantity'] : 1;
+										$WDPQ_CartItem_Price 	= isset( $WDPQ_CartItem['price'] ) ? $WDPQ_CartItem['price'] : 0;
+										
+										$WDPQ_CartItem_Total = $WDPQ_CartItem_Price * $WDPQ_CartItem_Quantity;
+										
+										if ($WDPQ_CartItem_Total == 0) {
+											$WDPQ_CartItem_Total = 1;
+										}
+										
+										// OrderMeta. Update Quantity	
+										WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_qty', $WDPQ_CartItem_Quantity);					
+
+										// OrderMeta. Update SubTotal
+										WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_subtotal', $WDPQ_CartItem_Total);	
+
+										// OrderMeta. Update Total
+										WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_total', $WDPQ_CartItem_Total);
 									}
-									
-									// OrderMeta. Update Quantity	
-									WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_qty', $WDPQ_CartItem_Quantity);					
-
-									// OrderMeta. Update SubTotal
-									WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_subtotal', $WDPQ_CartItem_Total);	
-
-									// OrderMeta. Update Total
-									WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_total', $WDPQ_CartItem_Total);
 								}
 							}
 							
