@@ -7,7 +7,7 @@ Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 14.42.3
+Stable tag: 14.43
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -64,6 +64,17 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 14.43 =
+	2025.02.05
+	* Tested to WooCommerce: 9.6.1
+	* Fix AJAX Update Cart. Hide Button.
+	* Fix Order Page. Coupons Item Total. (Disable on Free version. Sorry.)
+	* Fix Translate.
+	
+= 14.42.4 =
+	2025.02.04
+	* Fix Restored Cart Session.
+	
 = 14.42.3 =
 	2025.02.02
 	* Fix Empty CartItem. @sebkam request. Very Strange.

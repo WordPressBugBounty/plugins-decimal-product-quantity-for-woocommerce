@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 14.42.3
+Version: 14.43
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -33,7 +33,7 @@ License: GPLv2
 	$WooDecimalProduct_Plugin_URL = plugin_dir_url ( __FILE__ ); // со слэшем на конце
 	
 	$WooDecimalProduct_LocalePath = dirname (plugin_basename ( __FILE__ )) . '/languages/';
-	__('Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create RSS Feed for WooCommerce. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.', 'decimal-product-quantity-for-woocommerce');	
+	__('Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.', 'decimal-product-quantity-for-woocommerce');	
 	
 	/* JS Script.
 	----------------------------------------------------------------- */	
@@ -508,6 +508,9 @@ License: GPLv2
 					var WooDecimalProduct_QuantityData = <?php echo wp_json_encode( $WooDecimalProduct_QuantityData ); ?> // phpcs:ignore ;
 					WooDecimalProductQNT_ConsoleLog_Debuging (WooDecimalProduct_QuantityData);
 
+					// Купоны доступны только в Pro Версии. Потому, что с ними все стало совсем не просто.
+					WooDecimalProductQNT_Hide_CouponBox ();
+					
 					// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину"
 					WooDecimalProductQNT_Hide_CartButton ();					
 		
@@ -611,6 +614,7 @@ License: GPLv2
 					jQuery(document.body).on('updated_cart_totals', function(){
 						WooDecimalProductQNT_ConsoleLog_Debuging ('updated_cart_totals');
 						
+						WooDecimalProductQNT_Hide_CouponBox ();
 						WooDecimalProductQNT_Hide_CartButton ();	
 					});						
 
@@ -621,18 +625,24 @@ License: GPLv2
 						}
 					}
 
-					// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину" и строку Таблицы, если Купоны не используются.
+					// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину"
 					function WooDecimalProductQNT_Hide_CartButton () {
 						if (WooDecimalProduct_AJAX_Cart_Update) {							
-							var WooDecimalProduct_Element_Coupon = jQuery("input[name='coupon_code']");
+							var WooDecimalProduct_Element_CouponBox = jQuery("input[name='coupon_code']");
 							
-							if (WooDecimalProduct_Element_Coupon.length != 0) {
+							if (WooDecimalProduct_Element_CouponBox.length != 0) {
 								var WooDecimalProduct_AJAX_Cart_CSS = "<style type='text/css'> .woocommerce button[name='update_cart'] {display: none;} </style>";						 
 								jQuery(WooDecimalProduct_AJAX_Cart_CSS).appendTo("body");								
 							} else {
 								jQuery("button[name='update_cart']").parent().css('display', 'none');
-							}
-						}						
+							}						
+						}
+					}
+					
+					// Скрываем Блок Купонов.
+					function WooDecimalProductQNT_Hide_CouponBox () {
+						var WooDecimalProduct_Element_CouponBox = jQuery("div[class='coupon']");
+						WooDecimalProduct_Element_CouponBox.remove();
 					}
 				});
 			</script>
@@ -1123,6 +1133,20 @@ License: GPLv2
 	
 			echo '<div id="wdpq_warning" class="notice notice-warning"><p>' .esc_html( $Notice ) .'</p></div>';
 		}	
+	}
+	
+	/* Coupons. Disable.
+	 * Переопределяем разрешение Использования Купонов. (Доступно только в Pro версии)
+	 * woocommerce\includes\wc-coupon-functions.php
+	 * wc_coupons_enabled()
+	----------------------------------------------------------------- */	
+	add_filter ('woocommerce_coupons_enabled', 'WooDecimalProduct_Filter_coupons_enabled', 9999, 1);
+	function WooDecimalProduct_Filter_coupons_enabled ($Coupon_Enable) {
+		WooDecimalProduct_Debugger ($Coupon_Enable, __FUNCTION__ .' $Coupon_Enable ' .__LINE__, 'test', true);
+		
+		$Coupon_Enable = false;
+		
+		return $Coupon_Enable;
 	}
 
 	/* Coupons. Cart. PRO

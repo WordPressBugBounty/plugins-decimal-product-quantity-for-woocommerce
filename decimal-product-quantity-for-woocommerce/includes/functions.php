@@ -673,7 +673,7 @@
 		
 		if ($User_ID > 0) {
 			// Залогиненый Пользователь. Session User-Meta
-			update_user_meta ($User_ID, 'wdpq_cart', '');
+			update_user_meta ($User_ID, $Cart_Name, '');
 			
 		} else {
 			// Анонимный Пользователь. 
