@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 14.43.1
+Version: 14.43.2
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -457,7 +457,8 @@ License: GPLv2
 		}
 	}
 	
-	/* Корзина. Авто-Коррекция неправильно введенного Значения Количества.
+	/* Корзина. 
+	 * Авто-Коррекция неправильно введенного Значения Количества.
 	 * AJAX Обновление Корзины при изменении Количества Товара.
 	----------------------------------------------------------------- */	
 	add_action ('woocommerce_before_cart', 'WooDecimalProduct_Action_before_cart', 1);
@@ -466,7 +467,10 @@ License: GPLv2
 		global $WooDecimalProduct_Auto_Correction_Quantity;
 		global $WooDecimalProduct_AJAX_Cart_Update;
 		
-		if ($WooDecimalProduct_Auto_Correction_Quantity) {	
+		WooDecimalProduct_Debugger ($WooDecimalProduct_Auto_Correction_Quantity, __FUNCTION__ .' $WooDecimalProduct_Auto_Correction_Quantity ' .__LINE__, 'test', true);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_AJAX_Cart_Update, __FUNCTION__ .' $WooDecimalProduct_AJAX_Cart_Update ' .__LINE__, 'test', true);
+		
+		if ($WooDecimalProduct_Auto_Correction_Quantity || $WooDecimalProduct_AJAX_Cart_Update) {	
 			$WooDecimalProduct_Cart = array();
 			
 			$No_MaxEmpty = '-1';	// Unlimited
@@ -505,6 +509,9 @@ License: GPLv2
 					
 					WooDecimalProductQNT_ConsoleLog_Debuging ('Auto_Correction: On');
 					
+					var WooDecimalProduct_Auto_Correction_Quantity = <?php echo esc_html( $WooDecimalProduct_Auto_Correction_Quantity ); ?>;
+					WooDecimalProductQNT_ConsoleLog_Debuging ('Auto_Correction_Quantity: ' + WooDecimalProduct_Auto_Correction_Quantity);					
+					
 					var WooDecimalProduct_AJAX_Cart_Update = <?php echo esc_html( $WooDecimalProduct_AJAX_Cart_Update ); ?>;
 					WooDecimalProductQNT_ConsoleLog_Debuging ('AJAX_Cart_Update: ' + WooDecimalProduct_AJAX_Cart_Update);
 					
@@ -524,92 +531,95 @@ License: GPLv2
 						$('.woocommerce').on('change', 'input.qty', function(e){
 							WooDecimalProductQNT_ConsoleLog_Debuging (e);
 							
-							var WooDecimalProduct_ItemProduct_QNT_Msg = '';
-							
-							var WooDecimalProduct_ItemInputID = e.currentTarget.attributes.id.value;
-							WooDecimalProductQNT_ConsoleLog_Debuging ('input_id: ' + WooDecimalProduct_ItemInputID);
-												
-							var WooDecimalProduct_Item_Attr_ProductID = e.currentTarget.attributes.product_id;						
+							// Авто-Коррекция.
+							if (WooDecimalProduct_Auto_Correction_Quantity) {
+								var WooDecimalProduct_ItemProduct_QNT_Msg = '';
+								
+								var WooDecimalProduct_ItemInputID = e.currentTarget.attributes.id.value;
+								WooDecimalProductQNT_ConsoleLog_Debuging ('input_id: ' + WooDecimalProduct_ItemInputID);
 													
-							// Добавляем Аттрибуты. (Простой и Вариативный Товары)
-							if (typeof WooDecimalProduct_Item_Attr_ProductID == 'undefined' || WooDecimalProduct_Item_Attr_ProductID == false) {
-								WooDecimalProductQNT_ConsoleLog_Debuging ('item_product_id: N/A. Init.');
-								
-								Object.keys(WooDecimalProduct_Cart).forEach(function(key) {
-									WooDecimalProductQNT_ConsoleLog_Debuging (key, WooDecimalProduct_Cart[key]);
+								var WooDecimalProduct_Item_Attr_ProductID = e.currentTarget.attributes.product_id;						
+														
+								// Добавляем Аттрибуты. (Простой и Вариативный Товары)
+								if (typeof WooDecimalProduct_Item_Attr_ProductID == 'undefined' || WooDecimalProduct_Item_Attr_ProductID == false) {
+									WooDecimalProductQNT_ConsoleLog_Debuging ('item_product_id: N/A. Init.');
 									
-									jQuery("input[name='cart[" + WooDecimalProduct_Cart[key] + "][qty]']").attr('product_id', key);
-								});								
-							} 
+									Object.keys(WooDecimalProduct_Cart).forEach(function(key) {
+										WooDecimalProductQNT_ConsoleLog_Debuging (key, WooDecimalProduct_Cart[key]);
+										
+										jQuery("input[name='cart[" + WooDecimalProduct_Cart[key] + "][qty]']").attr('product_id', key);
+									});								
+								} 
 
-							var WooDecimalProduct_ItemProductID = e.currentTarget.attributes.product_id.value;
-							WooDecimalProductQNT_ConsoleLog_Debuging ('item_product_id: ' + WooDecimalProduct_ItemProductID);
-							
-							var WooDecimalProduct_ItemProduct_QuantityData = WooDecimalProduct_QuantityData[WooDecimalProduct_ItemProductID];
-							WooDecimalProductQNT_ConsoleLog_Debuging (WooDecimalProduct_ItemProduct_QuantityData);
-							
-							var WooDecimalProduct_ItemProduct_Min_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['min_qnt']);
-							var WooDecimalProduct_ItemProduct_Max_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['max_qnt']);
-							var WooDecimalProduct_ItemProduct_Def_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['def_qnt']);
-							var WooDecimalProduct_ItemProduct_Stp_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['stp_qnt']);
-							var WooDecimalProduct_ItemProduct_Precision = Number(WooDecimalProduct_ItemProduct_QuantityData['precision']);
-							
-							var WooDecimalProduct_ItemProduct_Input = e.currentTarget.value;
-							WooDecimalProduct_ItemProduct_Input = Number(WooDecimalProduct_ItemProduct_Input);
-							WooDecimalProductQNT_ConsoleLog_Debuging ('Input: ' + WooDecimalProduct_ItemProduct_Input);
-				
-							var WooDecimalProduct_ItemProduct_Input_Normal = Number(WooDecimalProduct_ItemProduct_Input.toFixed(WooDecimalProduct_ItemProduct_Precision));
-							WooDecimalProductQNT_ConsoleLog_Debuging ('*Input: ' + WooDecimalProduct_ItemProduct_Input_Normal);
-
-							var WooDecimalProduct_ItemProduct_DivStep = Number((WooDecimalProduct_ItemProduct_Input_Normal / WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
-							WooDecimalProductQNT_ConsoleLog_Debuging ('Input_DivStep: ' + WooDecimalProduct_ItemProduct_DivStep);
-				
-							var WooDecimalProduct_ItemProduct_DivStep_PartInt = WooDecimalProduct_ItemProduct_DivStep.toString();
-							WooDecimalProduct_ItemProduct_DivStep_PartInt = WooDecimalProduct_ItemProduct_DivStep_PartInt.split('.');
-							WooDecimalProduct_ItemProduct_DivStep_PartInt = WooDecimalProduct_ItemProduct_DivStep_PartInt[0];
-							WooDecimalProduct_ItemProduct_DivStep_PartInt = Number(WooDecimalProduct_ItemProduct_DivStep_PartInt);
-							WooDecimalProductQNT_ConsoleLog_Debuging ('Input_DivStep_PartInt: ' + WooDecimalProduct_ItemProduct_DivStep_PartInt);				
-							
-							var WooDecimalProduct_ItemProduct_QNT_Input_Check = Number((WooDecimalProduct_ItemProduct_DivStep_PartInt * WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
-							WooDecimalProductQNT_ConsoleLog_Debuging ('Check: ' + WooDecimalProduct_ItemProduct_QNT_Input_Check);
-							
-							var WooDecimalProduct_ItemProduct_QNT_Valid = WooDecimalProduct_ItemProduct_Input_Normal;
-							
-							// Check Validation
-							if (WooDecimalProduct_ItemProduct_Input_Normal != WooDecimalProduct_ItemProduct_QNT_Input_Check) {																
-								WooDecimalProduct_ItemProduct_QNT_Valid = Number((WooDecimalProduct_ItemProduct_QNT_Input_Check + WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
-								WooDecimalProductQNT_ConsoleLog_Debuging ('Valid: ' + WooDecimalProduct_ItemProduct_QNT_Valid);
+								var WooDecimalProduct_ItemProductID = e.currentTarget.attributes.product_id.value;
+								WooDecimalProductQNT_ConsoleLog_Debuging ('item_product_id: ' + WooDecimalProduct_ItemProductID);
 								
-								WooDecimalProduct_ItemProduct_QNT_Msg = WooDecimalProduct_ItemProduct_Input_Normal + ' - No valid value. Auto correction nearest valid value: ' + WooDecimalProduct_ItemProduct_QNT_Valid;
-															
-								jQuery ("#" + WooDecimalProduct_ItemInputID).val(WooDecimalProduct_ItemProduct_QNT_Valid);
-							} 
-							
-							// Check Max.
-							if (WooDecimalProduct_ItemProduct_Max_Qnt != '-1') {
-								if (WooDecimalProduct_ItemProduct_QNT_Valid > WooDecimalProduct_ItemProduct_Max_Qnt) {
-									var WooDecimalProduct_ItemProduct_QNT_Input_PartInt = Math.trunc (WooDecimalProduct_ItemProduct_Max_Qnt / WooDecimalProduct_ItemProduct_Stp_Qnt);
+								var WooDecimalProduct_ItemProduct_QuantityData = WooDecimalProduct_QuantityData[WooDecimalProduct_ItemProductID];
+								WooDecimalProductQNT_ConsoleLog_Debuging (WooDecimalProduct_ItemProduct_QuantityData);
+								
+								var WooDecimalProduct_ItemProduct_Min_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['min_qnt']);
+								var WooDecimalProduct_ItemProduct_Max_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['max_qnt']);
+								var WooDecimalProduct_ItemProduct_Def_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['def_qnt']);
+								var WooDecimalProduct_ItemProduct_Stp_Qnt 	= Number(WooDecimalProduct_ItemProduct_QuantityData['stp_qnt']);
+								var WooDecimalProduct_ItemProduct_Precision = Number(WooDecimalProduct_ItemProduct_QuantityData['precision']);
+								
+								var WooDecimalProduct_ItemProduct_Input = e.currentTarget.value;
+								WooDecimalProduct_ItemProduct_Input = Number(WooDecimalProduct_ItemProduct_Input);
+								WooDecimalProductQNT_ConsoleLog_Debuging ('Input: ' + WooDecimalProduct_ItemProduct_Input);
+					
+								var WooDecimalProduct_ItemProduct_Input_Normal = Number(WooDecimalProduct_ItemProduct_Input.toFixed(WooDecimalProduct_ItemProduct_Precision));
+								WooDecimalProductQNT_ConsoleLog_Debuging ('*Input: ' + WooDecimalProduct_ItemProduct_Input_Normal);
+
+								var WooDecimalProduct_ItemProduct_DivStep = Number((WooDecimalProduct_ItemProduct_Input_Normal / WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
+								WooDecimalProductQNT_ConsoleLog_Debuging ('Input_DivStep: ' + WooDecimalProduct_ItemProduct_DivStep);
+					
+								var WooDecimalProduct_ItemProduct_DivStep_PartInt = WooDecimalProduct_ItemProduct_DivStep.toString();
+								WooDecimalProduct_ItemProduct_DivStep_PartInt = WooDecimalProduct_ItemProduct_DivStep_PartInt.split('.');
+								WooDecimalProduct_ItemProduct_DivStep_PartInt = WooDecimalProduct_ItemProduct_DivStep_PartInt[0];
+								WooDecimalProduct_ItemProduct_DivStep_PartInt = Number(WooDecimalProduct_ItemProduct_DivStep_PartInt);
+								WooDecimalProductQNT_ConsoleLog_Debuging ('Input_DivStep_PartInt: ' + WooDecimalProduct_ItemProduct_DivStep_PartInt);				
+								
+								var WooDecimalProduct_ItemProduct_QNT_Input_Check = Number((WooDecimalProduct_ItemProduct_DivStep_PartInt * WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
+								WooDecimalProductQNT_ConsoleLog_Debuging ('Check: ' + WooDecimalProduct_ItemProduct_QNT_Input_Check);
+								
+								var WooDecimalProduct_ItemProduct_QNT_Valid = WooDecimalProduct_ItemProduct_Input_Normal;
+								
+								// Check Validation
+								if (WooDecimalProduct_ItemProduct_Input_Normal != WooDecimalProduct_ItemProduct_QNT_Input_Check) {																
+									WooDecimalProduct_ItemProduct_QNT_Valid = Number((WooDecimalProduct_ItemProduct_QNT_Input_Check + WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
+									WooDecimalProductQNT_ConsoleLog_Debuging ('Valid: ' + WooDecimalProduct_ItemProduct_QNT_Valid);
 									
-									WooDecimalProduct_ItemProduct_QNT_Valid = Number((WooDecimalProduct_ItemProduct_QNT_Input_PartInt * WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
-
-									WooDecimalProduct_ItemProduct_QNT_Msg = WooDecimalProduct_ItemProduct_Input_Normal + ' ' + "<?php echo esc_html( __('- More than the maximum allowed for this Product. Auto correction to Max:', 'decimal-product-quantity-for-woocommerce') ); ?>" + ' ' + WooDecimalProduct_ItemProduct_QNT_Valid;
-								}									
-							}
-
-							if (WooDecimalProduct_ItemProduct_QNT_Msg != '') {
-								jQuery ("#" + WooDecimalProduct_ItemInputID).val(WooDecimalProduct_ItemProduct_QNT_Valid);
+									WooDecimalProduct_ItemProduct_QNT_Msg = WooDecimalProduct_ItemProduct_Input_Normal + ' - No valid value. Auto correction nearest valid value: ' + WooDecimalProduct_ItemProduct_QNT_Valid;
+																
+									jQuery ("#" + WooDecimalProduct_ItemInputID).val(WooDecimalProduct_ItemProduct_QNT_Valid);
+								} 
 								
-								alert (WooDecimalProduct_ItemProduct_QNT_Msg);
-							} else {
-								if (WooDecimalProduct_ItemProduct_Input_Normal != WooDecimalProduct_ItemProduct_Input) {
-									WooDecimalProductQNT_ConsoleLog_Debuging ('Floating Number - Detected.');
-									jQuery ("#" + WooDecimalProduct_ItemInputID).val(WooDecimalProduct_ItemProduct_QNT_Input_Check);
+								// Check Max.
+								if (WooDecimalProduct_ItemProduct_Max_Qnt != '-1') {
+									if (WooDecimalProduct_ItemProduct_QNT_Valid > WooDecimalProduct_ItemProduct_Max_Qnt) {
+										var WooDecimalProduct_ItemProduct_QNT_Input_PartInt = Math.trunc (WooDecimalProduct_ItemProduct_Max_Qnt / WooDecimalProduct_ItemProduct_Stp_Qnt);
+										
+										WooDecimalProduct_ItemProduct_QNT_Valid = Number((WooDecimalProduct_ItemProduct_QNT_Input_PartInt * WooDecimalProduct_ItemProduct_Stp_Qnt).toFixed(WooDecimalProduct_ItemProduct_Precision));
+
+										WooDecimalProduct_ItemProduct_QNT_Msg = WooDecimalProduct_ItemProduct_Input_Normal + ' ' + "<?php echo esc_html( __('- More than the maximum allowed for this Product. Auto correction to Max:', 'decimal-product-quantity-for-woocommerce') ); ?>" + ' ' + WooDecimalProduct_ItemProduct_QNT_Valid;
+									}									
 								}
+
+								if (WooDecimalProduct_ItemProduct_QNT_Msg != '') {
+									jQuery ("#" + WooDecimalProduct_ItemInputID).val(WooDecimalProduct_ItemProduct_QNT_Valid);
+									
+									alert (WooDecimalProduct_ItemProduct_QNT_Msg);
+								} else {
+									if (WooDecimalProduct_ItemProduct_Input_Normal != WooDecimalProduct_ItemProduct_Input) {
+										WooDecimalProductQNT_ConsoleLog_Debuging ('Floating Number - Detected.');
+										jQuery ("#" + WooDecimalProduct_ItemInputID).val(WooDecimalProduct_ItemProduct_QNT_Input_Check);
+									}
+								}
+								WooDecimalProductQNT_ConsoleLog_Debuging ('-------------');	
 							}
-							WooDecimalProductQNT_ConsoleLog_Debuging ('-------------');	
 												
-							if (WooDecimalProduct_AJAX_Cart_Update) {
-								// AJAX Cart Update. Обновляем Корзину	
+							// AJAX Cart Update. Обновляем Корзину	
+							if (WooDecimalProduct_AJAX_Cart_Update) {								
 								jQuery("[name='update_cart']").trigger("click");
 								WooDecimalProductQNT_ConsoleLog_Debuging ('Cart Updating');	
 							}	
