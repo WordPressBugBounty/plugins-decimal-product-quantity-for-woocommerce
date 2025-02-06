@@ -1,0 +1,10 @@
+/*
+ * WPGear. Decimal Product Quantity for WooCommerce
+ * style.css
+ */
+.wdpq_tax_about, .wdpq_total_about {
+	font-size: small;
+	cursor: help;
+	color: darkgrey;
+	padding-left: 5px;
+}

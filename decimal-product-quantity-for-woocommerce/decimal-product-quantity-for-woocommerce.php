@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 14.43
+Version: 14.43.1
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -43,6 +43,8 @@ License: GPLv2
 		global $WooDecimalProduct_Plugin_URL;
 		
 		wp_enqueue_script ('woodecimalproduct', $WooDecimalProduct_Plugin_URL .'includes/woodecimalproduct.js'); // phpcs:ignore 
+		
+		wp_enqueue_style ('wdpq_style', $WooDecimalProduct_Plugin_URL .'style.css'); // phpcs:ignore
 	}
 
 	/* AJAX Processing
@@ -66,7 +68,11 @@ License: GPLv2
 	----------------------------------------------------------------- */ 
 	add_action ('init', 'WooDecimalProduct_Init', 999999);
 	function WooDecimalProduct_Init () {		
-		WooDecimalProduct_Woo_remove_filters();		
+		WooDecimalProduct_Woo_remove_filters();	
+
+		// "WooCommerce High-Performance Order Storage" Mode
+		$WooDecimalProduct_is_HPOS_Mode_Enable = filter_var( get_option( 'woocommerce_custom_orders_table_enabled', false ), FILTER_VALIDATE_BOOLEAN );
+		WooDecimalProduct_Debugger ($WooDecimalProduct_is_HPOS_Mode_Enable, __FUNCTION__ .' $WooDecimalProduct_is_HPOS_Mode_Enable ' .__LINE__, 'test', true);
 	}
 	
 	/* Страница Товара и Корзина
@@ -832,11 +838,17 @@ License: GPLv2
 		}
 		
 		$WDPQ_Cart_Total = WooDecimalProduct_Get_WDPQ_Cart_Total ($Cart_Total);
-		WooDecimalProduct_Debugger ($WDPQ_Cart_Total, __FUNCTION__ .' $WDPQ_Cart_Total ' .__LINE__, 'test', true);
+		// WooDecimalProduct_Debugger ($WDPQ_Cart_Total, __FUNCTION__ .' $WDPQ_Cart_Total ' .__LINE__, 'test', true);
 		
+		$Woo_Session = WC() -> session;
+		// WooDecimalProduct_Debugger ($Woo_Session, __FUNCTION__ .' $Woo_Session ' .__LINE__, 'test', true);
+		
+		// Shipping
 		$current_shipping_method = null;
 		
-		$shipping_methods = WC() -> session -> get( 'chosen_shipping_methods' );
+		$shipping_methods = $Woo_Session -> get( 'chosen_shipping_methods' );
+		// WooDecimalProduct_Debugger ($shipping_methods, __FUNCTION__ .' $shipping_methods ' .__LINE__, 'test', true);
+		
 		$packages = WC() -> shipping() -> get_packages();
 		// WooDecimalProduct_Debugger ($packages, __FUNCTION__ .' $packages ' .__LINE__, 'test', true);
 		
@@ -858,9 +870,54 @@ License: GPLv2
 			
 			$Cart_Total = $WDPQ_Cart_Total + $shipping_method_cost;
 		}
+		WooDecimalProduct_Debugger ($Cart_Total, __FUNCTION__ .' $Cart_Total ' .__LINE__, 'test', true);
+		
+		// Tax
+		$Woo_Totals = $Woo_Session -> get( 'cart_totals' );
+		// WooDecimalProduct_Debugger ($Woo_Totals, __FUNCTION__ .' $Woo_Totals ' .__LINE__, 'test', true);
+		
+		$Subtotal_Tax = isset( $Woo_Totals['subtotal_tax'] ) ? $Woo_Totals['subtotal_tax'] : 0; // phpcs:ignore
+		WooDecimalProduct_Debugger ($Subtotal_Tax, __FUNCTION__ .' $Subtotal_Tax ' .__LINE__, 'test', true);
+	
+		$Cart_Total = $Cart_Total + $Subtotal_Tax;
 	
 		WooDecimalProduct_Debugger ($Cart_Total, __FUNCTION__ .' $Cart_Total ' .__LINE__, 'test', true);
 		return $Cart_Total;
+	}
+
+	/* Cart. Tax. Amount.
+	 * woocommerce\templates\cart\cart-totals.php
+	 * woocommerce\includes\wc-cart-functions.php
+	 * wc_cart_totals_taxes_total_html( $tax )
+	----------------------------------------------------------------- */
+	// Не отображаем. Потому, что тогда нужно делать так же и для Subtotal. А в нем нет Фильтра.
+	// add_filter ('woocommerce_cart_totals_taxes_total_html', 'WooDecimalProduct_Filter_cart_totals_taxes_total_html', 9999, 1);
+	// function WooDecimalProduct_Filter_cart_totals_taxes_total_html ($Tax_html) {	
+		// WooDecimalProduct_Debugger ($Tax_html, __FUNCTION__ .' $Tax_html ' .__LINE__, 'test', true);		
+		
+		// $Tax_About_Title = __('Real value may be Rounded', 'decimal-product-quantity-for-woocommerce');
+		// $Tax_About_Text  = __('(may be Rounded)', 'decimal-product-quantity-for-woocommerce');
+		
+		// $Tax_html .= '<span class="wdpq_tax_about" title="' .$Tax_About_Title .'">' .$Tax_About_Text .'</span>';
+		
+		// return $Tax_html;
+	// }	
+	
+	/* Cart. Total. Amount.
+	 * woocommerce\templates\cart\cart-totals.php
+	 * woocommerce\includes\wc-cart-functions.php
+	 * wc_cart_totals_order_total_html( $tax )
+	----------------------------------------------------------------- */		
+	add_filter ('woocommerce_cart_totals_order_total_html', 'WooDecimalProduct_Filter_cart_totals_order_total_html', 9999, 1);
+	function WooDecimalProduct_Filter_cart_totals_order_total_html ($Total_html) {	
+		WooDecimalProduct_Debugger ($Total_html, __FUNCTION__ .' $Total_html ' .__LINE__, 'test', true);		
+		
+		$Total_About_Title = __('Real value may be Rounded', 'decimal-product-quantity-for-woocommerce');
+		$Total_About_Text  = __('(may be Rounded)', 'decimal-product-quantity-for-woocommerce');
+		
+		$Total_html .= '<span class="wdpq_total_about" title="' .$Total_About_Title .'">' .$Total_About_Text .'</span>';
+		
+		return $Total_html;
 	}	
 
 	/* Cart. Item Subtotal.
