@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 15.44.1
+Version: 15.44.2
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -844,6 +844,10 @@ License: GPLv2
 	----------------------------------------------------------------- */
 	add_filter ('woocommerce_cart_get_total', 'WooDecimalProduct_Filter_cart_get_total', 9999);
 	function WooDecimalProduct_Filter_cart_get_total ($Cart_Total) {
+		return $Cart_Total;		
+		
+		// Видимо, были некоторые заморогчки в предыдущих версиях. С Купонами - Определенно.
+		
 		WooDecimalProduct_Debugger ($Cart_Total, __FUNCTION__ .' $Cart_Total ' .__LINE__, 'cart_get_total', true);
 		// WooDecimalProduct_Debugger ($_REQUEST, __FUNCTION__ .' $_REQUEST ' .__LINE__, 'cart_get_total', true);
 		// WooDecimalProduct_Debugger ($_SERVER, __FUNCTION__ .' $_SERVER ' .__LINE__, 'cart_get_total', true);
@@ -875,29 +879,40 @@ License: GPLv2
 			$available_methods = $package['rates'];
 			
 			foreach ($available_methods as $key => $method) {
-				if($shipping_methods[0] == $method->id){
-					$current_shipping_method = $method;
+				if($shipping_methods[0] == $method -> id){
+					$current_shipping_method = $method;					
 				}
 			}
 			
 			$shipping_method_cost = 0;
 			if ($current_shipping_method) {
+				WooDecimalProduct_Debugger ($current_shipping_method, __FUNCTION__ .' $current_shipping_method ' .__LINE__, 'cart_get_total', true);
+				
 				$shipping_method_cost = $current_shipping_method -> cost;
 				// WooDecimalProduct_Debugger ($shipping_method_cost, __FUNCTION__ .' $shipping_method_cost ' .__LINE__, 'cart_get_total', true);
+				
+				$shipping_tax_status = $current_shipping_method -> tax_status;
+				WooDecimalProduct_Debugger ($shipping_tax_status, __FUNCTION__ .' $shipping_tax_status ' .__LINE__, 'cart_get_total', true);
 			}
-			
-			$Cart_Total = $WDPQ_Cart_Total + $shipping_method_cost;
 		}
 		WooDecimalProduct_Debugger ($Cart_Total, __FUNCTION__ .' $Cart_Total ' .__LINE__, 'cart_get_total', true);
 		
 		// Tax
 		$Woo_Totals = $Woo_Session -> get( 'cart_totals' );
-		// WooDecimalProduct_Debugger ($Woo_Totals, __FUNCTION__ .' $Woo_Totals ' .__LINE__, 'cart_get_total', true);
+		WooDecimalProduct_Debugger ($Woo_Totals, __FUNCTION__ .' $Woo_Totals ' .__LINE__, 'cart_get_total', true);
 		
 		$Subtotal_Tax = isset( $Woo_Totals['subtotal_tax'] ) ? $Woo_Totals['subtotal_tax'] : 0; // phpcs:ignore
 		WooDecimalProduct_Debugger ($Subtotal_Tax, __FUNCTION__ .' $Subtotal_Tax ' .__LINE__, 'cart_get_total', true);
-	
-		$Cart_Total = $Cart_Total + $Subtotal_Tax;
+		
+		if ($shipping_tax_status == 'taxable') {
+			// Доставка включена в рассчет Налога.			
+
+		} else {
+			// Доставка не включена в рассчет Налога.
+			
+		}
+		
+		$Cart_Total = $WDPQ_Cart_Total + $shipping_method_cost + $Subtotal_Tax;
 	
 		WooDecimalProduct_Debugger ($Cart_Total, __FUNCTION__ .' $Cart_Total ' .__LINE__, 'cart_get_total', true);
 		return $Cart_Total;
