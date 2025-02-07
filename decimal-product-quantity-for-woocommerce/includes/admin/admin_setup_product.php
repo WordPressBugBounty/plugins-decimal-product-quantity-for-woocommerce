@@ -83,7 +83,7 @@
 			
 		$No_MaxEmpty = '---';
 		$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
-		WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, __FUNCTION__ .' $WooDecimalProduct_QuantityData ' .__LINE__, 'test', true);	
+		WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, __FUNCTION__ .' $WooDecimalProduct_QuantityData ' .__LINE__, 'product_options_general', true);	
 
 		$Min_Qnt 		= $WooDecimalProduct_QuantityData['min_qnt'];
 		$Max_Qnt 		= $WooDecimalProduct_QuantityData['max_qnt'];
