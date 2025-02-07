@@ -833,6 +833,24 @@
 		}
 	}
 	
+	/* Clear Woo Cart if WDPQ-Cart Emty. 
+	----------------------------------------------------------------- */
+	function WooDecimalProduct_Clear_WooCart_if_WDPQCart_Emty () {
+		// Возможна ситуация, когда Корзина была сформирована, но Браузер закрыли и открыли снова. 
+		// Но открыли не на странице Корзина (там нормально это отрабатывается, а на странице Товара)
+		// при этом, WDPQ-Cart пустая, но Woo-Cart автоматически создана из прошлой Сессии.
+		// Поэтому, в такой ситуации, необходимо Удалить Woo-Cart.
+		
+		$isWDPQ_Cart_Empty = WooDecimalProduct_is_WDPQCart_Empty ();
+		WooDecimalProduct_Debugger ($isWDPQ_Cart_Empty, __FUNCTION__ .' $isWDPQ_Cart_Empty ' .__LINE__, 'clear_cart', true);
+		
+		if ($isWDPQ_Cart_Empty) {
+			wc_empty_cart();
+		}
+		
+		return true;
+	}
+	
 	/* Debugger. 
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Debugger ($Result, $Title = null, $Process = null, $TimeStamp = '') {
