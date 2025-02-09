@@ -71,7 +71,7 @@
 		}	
 
 		global $WooDecimalProduct_Plugin_URL;
-		wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css'); // phpcs:ignore		
+		wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'includes/admin/admin-style.css'); // phpcs:ignore		
 		
 		if ($term == 'product_cat') {
 			// Mode: "Add new category"

@@ -7,7 +7,7 @@ Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 15.44.2
+Stable tag: 16
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -34,6 +34,7 @@ For example:
 * You can set a "Value Label" for each individual Item. Individually or as a whole for the Category. For example: "Price per Meter", "Price per Liter".
 * It is possible to use Product - JS Object for Ext.Integration: QNT_Data. Function: DPQW_Get_QuantityData (Product_ID).
 * Works with WooCommerce specifics from v3.4.8 & more
+* Buttons: [+ / -] for Rpoduct & Cart
 
 	<a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> Features:
 * You can set separate Minimum Product Quantity, Step of Changing the Quantity & Default preset Quantity - for each Variable Product Variation.
@@ -64,6 +65,10 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 16 =
+	2025.02.09
+	* Add Buttons: [+] / [-] for Quantity on Product Page & Cart.
+	
 = 15.44.2 =
 	2025.02.07
 	* Fix Cart Tax & Totals. 

@@ -1,0 +1,70 @@
+/*
+ * WPGear. Decimal Product Quantity for WooCommerce
+ * admin-style.css
+ */
+.wdpq_options_box {
+	border-left: 4px solid #ffba00;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    background: aliceblue;
+	padding-top: 10px;
+	padding-left: 20px;
+	margin-bottom: 20px;	
+}
+.wdpq_options_field_label {
+	font-weight: normal !important;
+}
+.wdpq_options td {
+	color: red;
+}
+
+.wdpq_options_field_vpro label {
+	color: darkgray;
+}
+.wdpq_options_field_vpro td {
+	color: darkgray;
+}
+.wdpq_options_field_vpro a {
+	color: darkgray !important;
+}
+.wdpq_options_field_vpro_about {
+	color: brown;
+	font-weight: normal;
+}
+.wdpq_options_field_vpro .wdpq_term_options_field_description {
+	color: darkgray;
+}
+.wdpq_options_field_vpro .wdpq_term_options_field_helptip {
+	color: darkgray;
+}
+
+.wdpq-term-header {
+	border-style: solid; 
+	border-width: thin;
+	background: aliceblue;
+}
+.wdpq-term-item {
+	border-style: solid; 
+	border-width: thin; 
+	border-top: none; 
+	border-bottom: none;
+}
+.wdpq-term-item th {
+	text-align: right; 
+	padding-top: 5px; 
+	padding-bottom: 2px;
+}
+.wdpq-term-item td {
+	padding-top: 2px; 
+	padding-bottom: 2px;
+}
+.wdpq-term-item-hr td {
+	padding-top: 2px;
+}
+.wdpq-term-footer {
+	border-style: solid; 
+	border-width: thin; 
+	border-top: none;
+}
+.wdpq-term-footer td {
+	padding-bottom: 0px;
+}

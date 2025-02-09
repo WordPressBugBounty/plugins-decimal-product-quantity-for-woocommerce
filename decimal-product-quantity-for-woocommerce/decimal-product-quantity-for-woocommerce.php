@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 15.44.2
+Version: 16
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -23,6 +23,9 @@ License: GPLv2
     $WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
 	$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);
 	$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');  
+	
+	$WooDecimalProduct_ButtonsPM_Product_Enable	= get_option ('woodecimalproduct_buttonspm_product_enable', 0);
+	$WooDecimalProduct_ButtonsPM_Cart_Enable	= get_option ('woodecimalproduct_buttonspm_cart_enable', 0);	
 	
 	$WooDecimalProduct_Auto_Correction_Quantity	= get_option ('woodecimalproduct_auto_correction_qnt', 1);
 	$WooDecimalProduct_AJAX_Cart_Update			= get_option ('woodecimalproduct_ajax_cart_update', 0);	
@@ -351,6 +354,7 @@ License: GPLv2
 		
 		global $WooDecimalProduct_ConsoleLog_Debuging;
 		global $WooDecimalProduct_Auto_Correction_Quantity;	
+		global $WooDecimalProduct_ButtonsPM_Product_Enable;
 		
 		if ($WooDecimalProduct_Auto_Correction_Quantity) {
 			global $product;
@@ -384,7 +388,60 @@ License: GPLv2
 						var WooDecimalProduct_Step_Qnt 		= <?php echo esc_html( $Stp_Qnt ); ?>;
 						var WooDecimalProduct_QNT_Precision	= <?php echo esc_html( $QNT_Precision ); ?>;
 						
+						var WooDecimalProduct_ButtonsPM_Enable = <?php echo esc_html( $WooDecimalProduct_ButtonsPM_Product_Enable ); ?>;
+						
 						var Element_Input_Quantity = jQuery("input[name=quantity]");
+						
+						// Buttons [+ / -]
+						if (WooDecimalProduct_ButtonsPM_Enable) {
+							var WDPQ_Button_Minus 	= document.createElement("button");
+							var WDPQ_Button_Plus 	= document.createElement("button");
+							
+							WDPQ_Button_Minus.id = 'wdpq_minus';
+							WDPQ_Button_Minus.name = 'wdpq_minus';
+							WDPQ_Button_Minus.value = 'minus';
+							WDPQ_Button_Minus.type = 'button';	
+							WDPQ_Button_Minus.innerHTML = '-';	
+							
+							WDPQ_Button_Plus.id = 'wdpq_plus';
+							WDPQ_Button_Plus.name = 'wdpq_plus';
+							WDPQ_Button_Plus.value = 'plus';
+							WDPQ_Button_Plus.type = 'button';	
+							WDPQ_Button_Plus.innerHTML = '+';
+							
+							Element_Input_Quantity.before(WDPQ_Button_Minus);
+							Element_Input_Quantity.after(WDPQ_Button_Plus);
+							
+							jQuery("#wdpq_minus").addClass('wpdq_buttons_step single_add_to_cart_button button');
+							jQuery("#wdpq_plus").addClass('wpdq_buttons_step single_add_to_cart_button button');
+							
+							Element_Input_Quantity.addClass('wpdq_input_step_mode');
+							
+							jQuery(document).on("click", "#wdpq_minus", WDPQ_Quantity_Minus);
+							jQuery(document).on("click", "#wdpq_plus", WDPQ_Quantity_Plus);
+							
+							function WDPQ_Quantity_Minus () {
+								var WooDecimalProduct_QNT_Input = Element_Input_Quantity.val();
+								WooDecimalProduct_QNT_Input = Number(WooDecimalProduct_QNT_Input);
+										
+								WooDecimalProduct_QNT_Input = WooDecimalProduct_QNT_Input - WooDecimalProduct_Step_Qnt;
+								
+								if (WooDecimalProduct_QNT_Input >= WooDecimalProduct_Min_Qnt) {
+									Element_Input_Quantity.val(WooDecimalProduct_QNT_Input);
+								}
+							}
+							
+							function WDPQ_Quantity_Plus () {
+								var WooDecimalProduct_QNT_Input = Element_Input_Quantity.val();
+								WooDecimalProduct_QNT_Input = Number(WooDecimalProduct_QNT_Input);
+										
+								WooDecimalProduct_QNT_Input = WooDecimalProduct_QNT_Input + WooDecimalProduct_Step_Qnt;
+								
+								if (WooDecimalProduct_QNT_Input <= WooDecimalProduct_Max_Qnt) {
+									Element_Input_Quantity.val(WooDecimalProduct_QNT_Input);
+								}		
+							}	
+						}
 
 						jQuery (document).on('change','[name=quantity]',function() {
 							var WooDecimalProduct_QNT_Msg = '';
@@ -468,6 +525,7 @@ License: GPLv2
 		global $WooDecimalProduct_ConsoleLog_Debuging;
 		global $WooDecimalProduct_Auto_Correction_Quantity;
 		global $WooDecimalProduct_AJAX_Cart_Update;
+		global $WooDecimalProduct_ButtonsPM_Cart_Enable;
 		
 		WooDecimalProduct_Debugger ($WooDecimalProduct_Auto_Correction_Quantity, __FUNCTION__ .' $WooDecimalProduct_Auto_Correction_Quantity ' .__LINE__, 'cart', true);
 		WooDecimalProduct_Debugger ($WooDecimalProduct_AJAX_Cart_Update, __FUNCTION__ .' $WooDecimalProduct_AJAX_Cart_Update ' .__LINE__, 'cart', true);
@@ -528,7 +586,11 @@ License: GPLv2
 					
 					// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину"
 					WooDecimalProductQNT_Hide_CartButton ();					
-		
+
+					var WooDecimalProduct_ButtonsPM_Enable = <?php echo esc_html( $WooDecimalProduct_ButtonsPM_Cart_Enable ); ?>;
+
+					WDPQ_ButtonsPM ();
+
 					jQuery (function ($) {
 						$('.woocommerce').on('change', 'input.qty', function(e){
 							WooDecimalProductQNT_ConsoleLog_Debuging (e);
@@ -621,10 +683,7 @@ License: GPLv2
 							}
 												
 							// AJAX Cart Update. Обновляем Корзину	
-							if (WooDecimalProduct_AJAX_Cart_Update) {								
-								jQuery("[name='update_cart']").trigger("click");
-								WooDecimalProductQNT_ConsoleLog_Debuging ('Cart Updating');	
-							}	
+							WDPQ_AJAX_Cart_Update ();	
 						});
 					});
 
@@ -633,9 +692,21 @@ License: GPLv2
 						WooDecimalProductQNT_ConsoleLog_Debuging ('updated_cart_totals');
 						
 						WooDecimalProductQNT_Hide_CouponBox ();
-						WooDecimalProductQNT_Hide_CartButton ();	
+						WooDecimalProductQNT_Hide_CartButton ();
+
+						WDPQ_ButtonsPM ();						
 					});						
 
+					// AJAX Cart Update. Обновляем Корзину
+					function WDPQ_AJAX_Cart_Update () {
+						if (WooDecimalProduct_AJAX_Cart_Update) {
+							jQuery("[name='update_cart']").trigger("click");
+							WooDecimalProductQNT_ConsoleLog_Debuging ('Cart Updating');
+						} else {
+							jQuery("button[name=update_cart]").removeAttr('disabled');
+						}
+					}					
+					
 					// Debug in Browser Console
 					function WooDecimalProductQNT_ConsoleLog_Debuging (ConsoleLog) {
 						if (WooDecimalProduct_ConsoleLog_Debuging) {
@@ -645,16 +716,16 @@ License: GPLv2
 
 					// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину"
 					function WooDecimalProductQNT_Hide_CartButton () {
-						if (WooDecimalProduct_AJAX_Cart_Update) {							
-							var WooDecimalProduct_Element_CouponBox = jQuery("input[name='coupon_code']");
+						// if (WooDecimalProduct_AJAX_Cart_Update) {							
+							// var WooDecimalProduct_Element_CouponBox = jQuery("input[name='coupon_code']");
 							
-							if (WooDecimalProduct_Element_CouponBox.length != 0) {
-								var WooDecimalProduct_AJAX_Cart_CSS = "<style type='text/css'> .woocommerce button[name='update_cart'] {display: none;} </style>";						 
-								jQuery(WooDecimalProduct_AJAX_Cart_CSS).appendTo("body");								
-							} else {
-								jQuery("button[name='update_cart']").parent().css('display', 'none');
-							}						
-						}
+							// if (WooDecimalProduct_Element_CouponBox.length != 0) {
+								// var WooDecimalProduct_AJAX_Cart_CSS = "<style type='text/css'> .woocommerce button[name='update_cart'] {display: none;} </style>";						 
+								// jQuery(WooDecimalProduct_AJAX_Cart_CSS).appendTo("body");								
+							// } else {
+								// jQuery("button[name='update_cart']").parent().css('display', 'none');
+							// }						
+						// }
 					}
 					
 					// Скрываем Блок Купонов.
@@ -662,6 +733,93 @@ License: GPLv2
 						var WooDecimalProduct_Element_CouponBox = jQuery("div[class='coupon']");
 						WooDecimalProduct_Element_CouponBox.remove();
 					}
+					
+					// Кнопки: +/-
+					function WDPQ_ButtonsPM () {
+						// Buttons [+ / -]
+						if (WooDecimalProduct_ButtonsPM_Enable) {
+							var Elements_Input_Quantity = jQuery('input.qty');
+							
+							for (i = 0; i < Elements_Input_Quantity.length; i++) {
+								console.log(Elements_Input_Quantity[i]);
+								
+								var Item_Index = Elements_Input_Quantity[i].id;
+								
+								var WDPQ_Button_Minus 	= document.createElement("button");
+								var WDPQ_Button_Plus 	= document.createElement("button");
+								
+								WDPQ_Button_Minus.id = 'wdpq_minus_' + Item_Index;
+								WDPQ_Button_Minus.name = 'wdpq_minus_' + Item_Index;
+								WDPQ_Button_Minus.value = 'minus';
+								WDPQ_Button_Minus.type = 'button';	
+								WDPQ_Button_Minus.innerHTML = '-';	
+								
+								WDPQ_Button_Plus.id = 'wdpq_plus_' + Item_Index;
+								WDPQ_Button_Plus.name = 'wdpq_plus_' + Item_Index;
+								WDPQ_Button_Plus.value = 'plus';
+								WDPQ_Button_Plus.type = 'button';	
+								WDPQ_Button_Plus.innerHTML = '+';
+								
+								Elements_Input_Quantity[i].before(WDPQ_Button_Minus);
+								Elements_Input_Quantity[i].after(WDPQ_Button_Plus);
+								
+								jQuery("#wdpq_minus_" + Item_Index).addClass('wpdq_cart_buttons_step single_add_to_cart_button button');
+								jQuery("#wdpq_plus_" + Item_Index).addClass('wpdq_cart_buttons_step single_add_to_cart_button button');
+								
+								jQuery("#wdpq_plus_" + Item_Index).attr('item_index', Item_Index);
+								jQuery("#wdpq_minus_" + Item_Index).attr('item_index', Item_Index);
+								
+								var Element_Input_Quantity = jQuery("#" + Item_Index);
+								
+								Element_Input_Quantity.addClass('wpdq_cart_input_step_mode');
+								
+								jQuery(document).on("click", "#wdpq_minus_" + Item_Index, WDPQ_Quantity_Minus);
+								jQuery(document).on("click", "#wdpq_plus_" + Item_Index, WDPQ_Quantity_Plus);
+
+								// Plus
+								function WDPQ_Quantity_Minus (e) {
+									var WooDecimalProduct_Item_Attr_Index = e.currentTarget.attributes.item_index;		
+									
+									var Element_ID = "#" + WooDecimalProduct_Item_Attr_Index.value;
+									
+									var WDPQ_QNT_Input = jQuery(Element_ID);			
+									var WDPQ_QNT_Input_Value = Number( WDPQ_QNT_Input[0].value );
+									
+									var WDPQ_QNT_Input_Step = Number( WDPQ_QNT_Input.attr('step') );			
+									var WDPQ_QNT_Input_Min = Number( WDPQ_QNT_Input.attr('min') );
+										
+									WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value - WDPQ_QNT_Input_Step;
+									
+									if (WDPQ_QNT_Input_Value >= WDPQ_QNT_Input_Min) {
+										WDPQ_QNT_Input.val(WDPQ_QNT_Input_Value);
+															
+										jQuery('input.qty').trigger("change");
+									}
+								}	
+								
+								// Minus
+								function WDPQ_Quantity_Plus (e) {
+									var WooDecimalProduct_Item_Attr_Index = e.currentTarget.attributes.item_index;		
+									
+									var Element_ID = "#" + WooDecimalProduct_Item_Attr_Index.value;
+									
+									var WDPQ_QNT_Input = jQuery(Element_ID);			
+									var WDPQ_QNT_Input_Value = Number( WDPQ_QNT_Input[0].value );
+									
+									var WDPQ_QNT_Input_Step = Number( WDPQ_QNT_Input.attr('step') );			
+									var WDPQ_QNT_Input_Max = Number( WDPQ_QNT_Input.attr('max') );
+										
+									WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value + WDPQ_QNT_Input_Step;
+									
+									if (WDPQ_QNT_Input_Value <= WDPQ_QNT_Input_Max) {
+										WDPQ_QNT_Input.val(WDPQ_QNT_Input_Value);
+										
+										jQuery('input.qty').trigger("change");
+									}		
+								}		
+							}
+						}	
+					}					
 				});
 			</script>
 			<?php

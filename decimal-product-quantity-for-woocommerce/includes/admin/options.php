@@ -9,7 +9,7 @@
     }	
 	
 	global $WooDecimalProduct_Plugin_URL;
-	wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css'); // phpcs:ignore	
+	wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'includes/admin/admin-style.css'); // phpcs:ignore	
 	
 	$WooDecimalProduct_Nonce = 'Update_Options_DecimalProductQuantityForWooCommerce';
 	$nonce = wp_create_nonce ($WooDecimalProduct_Nonce);	
@@ -18,6 +18,9 @@
 	$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');  
     $WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
 	$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);
+	
+	$WooDecimalProduct_ButtonsPM_Product_Enable	= get_option ('woodecimalproduct_buttonspm_product_enable', 0);
+	$WooDecimalProduct_ButtonsPM_Cart_Enable	= get_option ('woodecimalproduct_buttonspm_cart_enable', 0);
 	
 	$WooDecimalProduct_Auto_Correction_Quantity	= get_option ('woodecimalproduct_auto_correction_qnt', 1);
 	$WooDecimalProduct_AJAX_Cart_Update			= get_option ('woodecimalproduct_ajax_cart_update', 0);	
@@ -57,6 +60,8 @@
 		$New_WDPQ_Auto_Correction 			= isset($_REQUEST['wdpq_auto_correction']) ? 1 : 0;
 		$New_WDPQ_AJAX_Cart_Update 			= isset($_REQUEST['wdpq_ajax_cart_update']) ? 1 : 0;
 		$New_WDPQ_Price_Unit_Label 			= isset($_REQUEST['wdpq_pice_unit_label']) ? 1 : 0;
+		$New_WDPQ_ButtonsPM_Product_Enable 	= isset($_REQUEST['wdpq_buttons_pm_product_enable']) ? 1 : 0;
+		$New_WDPQ_ButtonsPM_Cart_Enable 	= isset($_REQUEST['wdpq_buttons_pm_cart_enable']) ? 1 : 0;
 		
 		$New_WDPQ_ConsoleLog_Debuging 		= isset($_REQUEST['wdpq_debug_log']) ? 1 : 0;
 		$New_WDPQ_Uninstall_Del_MetaData	= isset($_REQUEST['wdpq_uninstall_del']) ? 1 : 0;
@@ -178,6 +183,16 @@
 			$WooDecimalProduct_Item_Quantity_Default = $New_WDPQ_Set;
 			update_option('woodecimalproduct_item_qnt_default', $WooDecimalProduct_Item_Quantity_Default);
 		}		
+		
+		if ($New_WDPQ_ButtonsPM_Product_Enable != $WooDecimalProduct_ButtonsPM_Product_Enable) {
+			$WooDecimalProduct_ButtonsPM_Product_Enable = $New_WDPQ_ButtonsPM_Product_Enable;
+			update_option('woodecimalproduct_buttonspm_product_enable', $WooDecimalProduct_ButtonsPM_Product_Enable);
+		}
+		
+		if ($New_WDPQ_ButtonsPM_Cart_Enable != $WooDecimalProduct_ButtonsPM_Cart_Enable) {
+			$WooDecimalProduct_ButtonsPM_Cart_Enable = $New_WDPQ_ButtonsPM_Cart_Enable;
+			update_option('woodecimalproduct_buttonspm_cart_enable', $WooDecimalProduct_ButtonsPM_Cart_Enable);
+		}		
 
 		if ($New_WDPQ_Auto_Correction != $WooDecimalProduct_Auto_Correction_Quantity) {
 			$WooDecimalProduct_Auto_Correction_Quantity = $New_WDPQ_Auto_Correction;
@@ -192,7 +207,7 @@
 		if ($New_WDPQ_Price_Unit_Label != $WooDecimalProduct_Price_Unit_Label) {
 			$WooDecimalProduct_Price_Unit_Label = $New_WDPQ_Price_Unit_Label;
 			update_option('woodecimalproduct_price_unit_label', $WooDecimalProduct_Price_Unit_Label);
-		}		
+		}
 
 		if ($New_WDPQ_ConsoleLog_Debuging != $WooDecimalProduct_ConsoleLog_Debuging) {
 			$WooDecimalProduct_ConsoleLog_Debuging = $New_WDPQ_ConsoleLog_Debuging;
@@ -230,15 +245,13 @@
 				<?php echo esc_html( __('* Each Product and each Category can set a custom value.', 'decimal-product-quantity-for-woocommerce') ); ?>
 			</div>	
 			
-			<form name="form_wdpq_Options" method="post" style="margin-top: 20px;">
-				<div style="margin-top: 10px; margin-bottom: 20px;">
-				
+			<form name="form_wdpq_Options" method="post" style="margin-top: 20px;">			
+				<div style="margin-left: 20px; margin-bottom: 10px;">					
 					<div style="margin-top: 10px;">
-						<hr>
 						<h3><?php echo esc_html( __('General:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
-					</div>	
+					</div>					
 					
-					<table class="form-table">
+					<table class="form-table" style="margin-left: 20px;">
 						<tbody>
 							<tr>
 								<th scope="row" class="wdpq_options_field_label">
@@ -309,10 +322,56 @@
 							</tr>
 						</tbody>
 					</table>
+				</div>	
 					
+				<div style="margin-top: 10px; margin-bottom: 20px;">	
 					<hr>
+					<div style="margin-top: 10px;">
+						<h3><?php echo esc_html( __('Buttons [Plus / Minus]:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
+					</div>
+					
+					<table class="form-table" style="margin-left: 20px;">
+						<tbody>	
+							<tr>
+								<th scope="row" class="wdpq_options_field_label">
+									<label for="wdpq_buttons_pm_product_enable">
+										<?php echo esc_html( __('Product', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</label>
+								</th>
+								<td class="wdpq_options_field_input">
+									<input id="wdpq_buttons_pm_product_enable" name="wdpq_buttons_pm_product_enable" type="checkbox" <?php if($WooDecimalProduct_ButtonsPM_Product_Enable) {echo 'checked';} ?>>
+									<span class="wdpq_options_field_description">
+										<?php echo esc_html( __('Enable Buttons [ + / - ] for Product', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</span>
+								</td>									
+								</th>
+							</tr>
 
-					<table class="form-table">
+							<tr>
+								<th scope="row" class="wdpq_options_field_label">
+									<label for="wdpq_buttons_pm_cart_enable">
+										<?php echo esc_html( __('Cart', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</label>
+								</th>
+								<td class="wdpq_options_field_input">
+									<input id="wdpq_buttons_pm_cart_enable" name="wdpq_buttons_pm_cart_enable" type="checkbox" <?php if($WooDecimalProduct_ButtonsPM_Cart_Enable) {echo 'checked';} ?>>
+									<span class="wdpq_options_field_description">
+										<?php echo esc_html( __('Enable Buttons [ + / - ] for Cart', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</span>
+								</td>									
+								</th>
+							</tr>							
+						</tbody>
+					</table>
+				</div>						
+				
+				<div style="margin-top: 10px; margin-bottom: 20px;">				
+					<div style="margin-top: 10px;">
+						<hr>
+						<h3><?php echo esc_html( __('Advanced:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
+					</div>					
+
+					<table class="form-table" style="margin-left: 20px;">
 						<tbody>	
 							<tr>
 								<th scope="row" class="wdpq_options_field_label">
@@ -359,14 +418,13 @@
 					</table>
 				</div>
 
-				<div style="margin-top: 10px; margin-bottom: 20px;">
-				
+				<div style="margin-top: 10px; margin-bottom: 20px;">				
 					<div style="margin-top: 10px;">
 						<hr>
 						<h3><?php echo esc_html( __('RSS:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
 					</div>
 					
-					<table class="form-table">
+					<table class="form-table" style="margin-left: 20px;">
 						<tbody>	
 							<tr class="wdpq_options_field_vpro">
 								<th scope="row" class="wdpq_options_field_label">
@@ -409,15 +467,14 @@
 						</tbody>
 					</table>
 				</div>
-					
+				
 				<div style="margin-top: 10px; margin-bottom: 20px;">
-
 					<div style="margin-top: 10px;">
 						<hr>
-						<h3><?php echo esc_html( __('Ext:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
+						<h3><?php echo esc_html( __('Debugging:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
 					</div>	
 					
-					<table class="form-table">
+					<table class="form-table" style="margin-left: 20px;">
 						<tbody>								
 							<tr>
 								<th scope="row" class="wdpq_options_field_label">
@@ -431,8 +488,20 @@
 										<?php echo esc_html( __('View Debug info in Browser Console. On/Off', 'decimal-product-quantity-for-woocommerce') ); ?>
 									</span>
 								</td>
-							</tr>
-							
+							</tr>							
+						</tbody>
+					</table>
+				</div>
+				
+				<div style="margin-top: 10px; margin-bottom: 20px;">
+					<div style="margin-top: 10px;">
+						<hr>
+						<h3><?php echo esc_html( __('Clearing:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
+					</div>	
+					
+					<table class="form-table" style="margin-left: 20px;">
+						<tbody>								
+							<tr>
 							<tr>
 								<th scope="row" class="wdpq_options_field_label">
 									<label for="wdpq_uninstall_del">
@@ -446,21 +515,19 @@
 									</span>
 								</td>
 							</tr>							
-							
+							</tr>
 						</tbody>
 					</table>
+					
 				</div>
 
 				<hr>				
 
-				<div style="margin-top: 10px; margin-bottom: 5px; text-align: right;">
-					<span id="save_options_processing" style="display: none; margin-right: 5px;">
-						<i class="fa fa-refresh fa-spin fa-fw fa-2x" aria-hidden="true" style="vertical-align: baseline;"></i>
-					</span>
-					<input id="btn_options_save" type="submit" class="button button-primary" style="margin-right: 5px;" value="<?php echo esc_html( __('Save', 'decimal-product-quantity-for-woocommerce') ); ?>">
+				<div style="margin-top: 10px; margin-right: 10px; padding-bottom: 10px; text-align: right;">
+					<input id="btn_options_save" type="submit" class="button button-primary" value="<?php echo esc_html( __('Save', 'decimal-product-quantity-for-woocommerce') ); ?>">
 				</div>
 				<input id="action" name="action" type="hidden" value="Update">
 				<input id="_wpnonce" name="_wpnonce" type="hidden" value="<?php echo esc_attr($nonce); ?>">
 			</form>
 		</div>		
-	</DIV>
+	</div>

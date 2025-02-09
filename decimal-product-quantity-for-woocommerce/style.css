@@ -8,3 +8,34 @@
 	color: darkgrey;
 	padding-left: 5px;
 }
+
+.wpdq_buttons_step {
+	width: 40px !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+.wpdq_input_step_mode {
+	float: left;
+	height: auto !important;
+	
+	-webkit-appearance: none;
+	
+	appearance: none;
+	-moz-appearance: textfield;	
+}
+
+.wpdq_cart_buttons_step {
+	width: 40px !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	line-height: 0.4em !important;
+	vertical-align: top;	
+}
+.wpdq_cart_input_step_mode {
+	height: auto !important;
+	
+	-webkit-appearance: none;
+	
+	appearance: none;
+	-moz-appearance: textfield;	
+}
