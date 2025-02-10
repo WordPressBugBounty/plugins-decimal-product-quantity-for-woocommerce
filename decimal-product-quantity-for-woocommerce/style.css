@@ -13,10 +13,12 @@
 	width: 40px !important;
 	padding-left: 0 !important;
 	padding-right: 0 !important;
+	margin-bottom: 0 !important;
 }
 .wpdq_input_step_mode {
 	float: left;
 	height: auto !important;
+	text-align: center;
 	
 	-webkit-appearance: none;
 	
@@ -33,6 +35,7 @@
 }
 .wpdq_cart_input_step_mode {
 	height: auto !important;
+	text-align: center;
 	
 	-webkit-appearance: none;
 	
