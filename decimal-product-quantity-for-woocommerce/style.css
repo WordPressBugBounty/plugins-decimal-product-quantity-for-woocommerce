@@ -9,16 +9,21 @@
 	padding-left: 5px;
 }
 
+.cart .quantity {
+	float: left;
+}
 .wpdq_buttons_step {
 	width: 40px !important;
 	padding-left: 0 !important;
 	padding-right: 0 !important;
 	margin-bottom: 0 !important;
+	float: left !important;
 }
 .wpdq_input_step_mode {
 	float: left;
 	height: auto !important;
 	text-align: center;
+	margin: 0 !important;
 	
 	-webkit-appearance: none;
 	
@@ -30,11 +35,9 @@
 	width: 40px !important;
 	padding-left: 0 !important;
 	padding-right: 0 !important;
-	line-height: 0.4em !important;
 	vertical-align: top;	
 }
 .wpdq_cart_input_step_mode {
-	height: auto !important;
 	text-align: center;
 	
 	-webkit-appearance: none;

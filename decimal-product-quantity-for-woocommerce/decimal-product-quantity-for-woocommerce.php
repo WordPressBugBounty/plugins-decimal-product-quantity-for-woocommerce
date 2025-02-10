@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 16.46
+Version: 16.46.1
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -11,11 +11,11 @@ Author URI: https://wpgear.xyz
 License: GPLv2
 */
 
-	include_once(__DIR__ .'/includes/functions.php');
-	include_once(__DIR__ .'/includes/admin/admin_setup_woo.php');
-	include_once(__DIR__ .'/includes/admin/admin_setup_product.php');
-	include_once(__DIR__ .'/includes/admin/admin_setup_category.php');
-	include_once(__DIR__ .'/includes/admin/admin_order.php');
+	include_once( __DIR__ .'/includes/functions.php' );
+	include_once( __DIR__ .'/includes/admin/admin_setup_woo.php' );
+	include_once( __DIR__ .'/includes/admin/admin_setup_product.php' );
+	include_once( __DIR__ .'/includes/admin/admin_setup_category.php' );
+	include_once( __DIR__ .'/includes/admin/admin_order.php' );
 
 	WooDecimalProduct_Check_Updated ();
 	
@@ -248,8 +248,6 @@ License: GPLv2
 				WooDecimalProduct_Debugger ($Cart_Item_Key, __FUNCTION__ .' $Cart_Item_Key ' .__LINE__, 'add_to_cart_message', true);
 				
 				$Item_Price = 0;
-				
-
 									
 				if ($Variation_ID) {
 					//Вариативный Товар.
