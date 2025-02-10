@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 16.45.2
+Version: 16.46
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -242,57 +242,67 @@ License: GPLv2
 	
 		$count = 0;	
 		
-		foreach ($products as $product_id => $qty) {
+		foreach ($products as $Product_ID => $qty) {
 			if ($qty > 0) {				
-				$Cart_Item_Key = WooDecimalProduct_Get_CartItem_Key_by_ProductID ($product_id);
+				$Cart_Item_Key = WooDecimalProduct_Get_CartItem_Key_by_ProductID ($Product_ID);
 				WooDecimalProduct_Debugger ($Cart_Item_Key, __FUNCTION__ .' $Cart_Item_Key ' .__LINE__, 'add_to_cart_message', true);
 				
 				$Item_Price = 0;
 				
-				$Product = wc_get_product( $product_id );
+
+									
+				if ($Variation_ID) {
+					//Вариативный Товар.
+					
+					// $Product_Variation_Prices = $Product -> get_variation_prices();
+					// WooDecimalProduct_Debugger ($Product_Variation_Prices, __FUNCTION__ .' $Product_Variation_Prices ' .__LINE__, 'add_to_cart_message', true);
+											
+					// $Item_Price = $Product_Variation_Prices['price'][$Variation_ID]; // price						
+					// $Item_RegularPrice = $Product_Variation_Prices['regular_price'][$Variation_ID]; // regular_price
+					// $Item_SalePrice = $Product_Variation_Prices['sale_price'][$Variation_ID]; // sale_price
+					
+					$Product = wc_get_product( $Variation_ID );
+					
+				} else {
+					//Простой Товар.
+					
+					$Product = wc_get_product( $Product_ID );
+				}	
+				
 				// WooDecimalProduct_Debugger ($Product, __FUNCTION__ .' $Product ' .__LINE__, 'add_to_cart_message', true);
+				if ($Product) {	
+					$Item_Price 		= $Product -> get_price();
+					$Item_RegularPrice 	= $Product -> get_regular_price();
+					$Item_SalePrice 	= $Product -> get_sale_price();
+					
+					WooDecimalProduct_Debugger ($Item_Price, __FUNCTION__ .' $Item_Price ' .__LINE__, 'add_to_cart_message', true);
+					WooDecimalProduct_Debugger ($Item_RegularPrice, __FUNCTION__ .' $Item_RegularPrice ' .__LINE__, 'add_to_cart_message', true);
+					WooDecimalProduct_Debugger ($Item_SalePrice, __FUNCTION__ .' $Item_SalePrice ' .__LINE__, 'add_to_cart_message', true);
+					
+					// $tax_display_mode = get_option( 'woocommerce_tax_display_shop' ); // Woo version > 9.4.3 не работает
+									
+					$Price_Excl_Tax = wc_get_price_excluding_tax( $Product ); 	// price without VAT
+					$Price_Incl_Tax = wc_get_price_including_tax( $Product );  	// price with VAT
+					$Tax_Amount     = $Price_Incl_Tax - $Price_Excl_Tax; 		// VAT amount
 
-				if ($Product) {						
-					if ($Variation_ID) {
-						//Вариативный Товар.
-						
-						$Product_Variation_Prices = $Product -> get_variation_prices();
-						WooDecimalProduct_Debugger ($Product_Variation_Prices, __FUNCTION__ .' $Product_Variation_Prices ' .__LINE__, 'add_to_cart_message', true);
-						
-						// price
-						$Item_Price = $Product_Variation_Prices['price'][$Variation_ID];
-						
-						// regular_price
-						$Item_RegularPrice = $Product_Variation_Prices['regular_price'][$Variation_ID];
+					WooDecimalProduct_Debugger ($Price_Excl_Tax, __FUNCTION__ .' $Price_Excl_Tax ' .__LINE__, 'add_to_cart_message', true);
+					WooDecimalProduct_Debugger ($Price_Incl_Tax, __FUNCTION__ .' $Price_Incl_Tax ' .__LINE__, 'add_to_cart_message', true);
+					WooDecimalProduct_Debugger ($Tax_Amount, __FUNCTION__ .' $Tax_Amount ' .__LINE__, 'add_to_cart_message', true);
 
-						// sale_price
-						$Item_SalePrice = $Product_Variation_Prices['sale_price'][$Variation_ID];		
-						
-					} else {
-						//Простой Товар.
-						
-						$Item_Price 		= $Product -> get_price();
-						$Item_RegularPrice 	= $Product -> get_regular_price();
-						$Item_SalePrice 	= $Product -> get_sale_price();
-					}	
-				}
-				WooDecimalProduct_Debugger ($Item_Price, __FUNCTION__ .' $Item_Price ' .__LINE__, 'add_to_cart_message', true);
-				WooDecimalProduct_Debugger ($Item_RegularPrice, __FUNCTION__ .' $Item_RegularPrice ' .__LINE__, 'add_to_cart_message', true);
-				WooDecimalProduct_Debugger ($Item_SalePrice, __FUNCTION__ .' $Item_SalePrice ' .__LINE__, 'add_to_cart_message', true);
-								
-				$Item = array(
-					'key' => $Cart_Item_Key,
-					'product_id' => $product_id,
-					'variation_id' => $Variation_ID,
-					'quantity' => $qty,
-					'price' => $Item_Price,
-				);
-				WooDecimalProduct_Debugger ($Item, __FUNCTION__ .' $Item ' .__LINE__, 'add_to_cart_message', true);
+					$Item = array(
+						'key' => $Cart_Item_Key,
+						'product_id' => $Product_ID,
+						'variation_id' => $Variation_ID,
+						'quantity' => $qty,
+						'price' => $Price_Excl_Tax,
+					);				
+					WooDecimalProduct_Debugger ($Item, __FUNCTION__ .' $Item ' .__LINE__, 'add_to_cart_message', true);
 
-				$Add_to_Cart[] = $Item;
+					$Add_to_Cart[] = $Item;
+				}					
 			}
 			
-			$titles[] = ($qty > 0 ? $qty . ' &times; ' : '') . sprintf (_x('&ldquo;%s&rdquo;', 'Item name in quotes', 'woocommerce'), wp_strip_all_tags( (get_the_title ($product_id)) )); // phpcs:ignore	
+			$titles[] = ($qty > 0 ? $qty . ' &times; ' : '') . sprintf (_x('&ldquo;%s&rdquo;', 'Item name in quotes', 'woocommerce'), wp_strip_all_tags( (get_the_title ($Product_ID)) )); // phpcs:ignore	
 			$count   += $qty;
 		}
 
@@ -314,7 +324,7 @@ License: GPLv2
 
 		if (has_filter( 'wc_add_to_cart_message')) {
 			wc_deprecated_function ('The wc_add_to_cart_message filter', '3.0', 'wc_add_to_cart_message_html');
-			$message = apply_filters ('wc_add_to_cart_message', $message, $product_id);
+			$message = apply_filters ('wc_add_to_cart_message', $message, $Product_ID);
 		}	
 		
 		WooDecimalProduct_Debugger ($message, __FUNCTION__ .' $message ' .__LINE__, 'add_to_cart_message', true);
