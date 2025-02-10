@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 16.45.1
+Version: 16.45.2
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -250,8 +250,9 @@ License: GPLv2
 				$Item_Price = 0;
 				
 				$Product = wc_get_product( $product_id );
+				// WooDecimalProduct_Debugger ($Product, __FUNCTION__ .' $Product ' .__LINE__, 'add_to_cart_message', true);
 
-				if ($Product) {
+				if ($Product) {						
 					if ($Variation_ID) {
 						//Вариативный Товар.
 						
@@ -262,18 +263,22 @@ License: GPLv2
 						$Item_Price = $Product_Variation_Prices['price'][$Variation_ID];
 						
 						// regular_price
-						$Item_Regular_Price = $Product_Variation_Prices['regular_price'][$Variation_ID];
+						$Item_RegularPrice = $Product_Variation_Prices['regular_price'][$Variation_ID];
 
 						// sale_price
-						$Item_Sale_Price = $Product_Variation_Prices['sale_price'][$Variation_ID];		
+						$Item_SalePrice = $Product_Variation_Prices['sale_price'][$Variation_ID];		
 						
 					} else {
 						//Простой Товар.
 						
-						$Item_Price = $Product -> get_price();
+						$Item_Price 		= $Product -> get_price();
+						$Item_RegularPrice 	= $Product -> get_regular_price();
+						$Item_SalePrice 	= $Product -> get_sale_price();
 					}	
 				}
 				WooDecimalProduct_Debugger ($Item_Price, __FUNCTION__ .' $Item_Price ' .__LINE__, 'add_to_cart_message', true);
+				WooDecimalProduct_Debugger ($Item_RegularPrice, __FUNCTION__ .' $Item_RegularPrice ' .__LINE__, 'add_to_cart_message', true);
+				WooDecimalProduct_Debugger ($Item_SalePrice, __FUNCTION__ .' $Item_SalePrice ' .__LINE__, 'add_to_cart_message', true);
 								
 				$Item = array(
 					'key' => $Cart_Item_Key,
@@ -426,8 +431,10 @@ License: GPLv2
 										
 								WooDecimalProduct_QNT_Input = WooDecimalProduct_QNT_Input - WooDecimalProduct_Step_Qnt;
 								
-								if (WooDecimalProduct_QNT_Input >= WooDecimalProduct_Min_Qnt) {
-									Element_Input_Quantity.val(WooDecimalProduct_QNT_Input);
+								var WooDecimalProduct_QNT_Input_Normal = Number(WooDecimalProduct_QNT_Input.toFixed(WooDecimalProduct_QNT_Precision));
+								
+								if (WooDecimalProduct_QNT_Input_Normal >= WooDecimalProduct_Min_Qnt) {
+									Element_Input_Quantity.val(WooDecimalProduct_QNT_Input_Normal);
 								}
 							}
 							
@@ -436,9 +443,10 @@ License: GPLv2
 								WooDecimalProduct_QNT_Input = Number(WooDecimalProduct_QNT_Input);
 										
 								WooDecimalProduct_QNT_Input = WooDecimalProduct_QNT_Input + WooDecimalProduct_Step_Qnt;
+								var WooDecimalProduct_QNT_Input_Normal = Number(WooDecimalProduct_QNT_Input.toFixed(WooDecimalProduct_QNT_Precision));
 								
-								if (WooDecimalProduct_QNT_Input <= WooDecimalProduct_Max_Qnt) {
-									Element_Input_Quantity.val(WooDecimalProduct_QNT_Input);
+								if (WooDecimalProduct_QNT_Input_Normal <= WooDecimalProduct_Max_Qnt) {
+									Element_Input_Quantity.val(WooDecimalProduct_QNT_Input_Normal);
 								}		
 							}	
 						}
@@ -557,6 +565,9 @@ License: GPLv2
 				$WooDecimalProduct_Cart[$item_product_id] = $cart_item_key;
 				
 				$WooDecimalProduct_QuantityData[$item_product_id] = WooDecimalProduct_Get_QuantityData_by_ProductID ($product_id, $No_MaxEmpty);
+				WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, __FUNCTION__ .' $WooDecimalProduct_QuantityData ' .__LINE__, 'cart', true);
+				
+				$QNT_Precision = $WooDecimalProduct_QuantityData[$item_product_id]['precision'];
 			}
 			
 			ob_start();
@@ -580,6 +591,9 @@ License: GPLv2
 					
 					var WooDecimalProduct_QuantityData = <?php echo wp_json_encode( $WooDecimalProduct_QuantityData ); ?> // phpcs:ignore ;
 					WooDecimalProductQNT_ConsoleLog_Debuging (WooDecimalProduct_QuantityData);
+					
+					var WooDecimalProduct_QNT_Precision	= <?php echo esc_html( $QNT_Precision ); ?>;// phpcs:ignore ;
+
 
 					// Купоны доступны только в Pro Версии. Потому, что с ними все стало совсем не просто.
 					WooDecimalProductQNT_Hide_CouponBox ();
@@ -794,9 +808,10 @@ License: GPLv2
 										var WDPQ_QNT_Input_Min = Number( WDPQ_QNT_Input.attr('min') );
 											
 										WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value - WDPQ_QNT_Input_Step;
-										
-										if (WDPQ_QNT_Input_Value >= WDPQ_QNT_Input_Min) {
-											WDPQ_QNT_Input.val(WDPQ_QNT_Input_Value);
+										var WooDecimalProduct_QNT_Input_Normal = Number(WDPQ_QNT_Input_Value.toFixed(WooDecimalProduct_QNT_Precision));
+
+										if (WooDecimalProduct_QNT_Input_Normal >= WDPQ_QNT_Input_Min) {
+											WDPQ_QNT_Input.val(WooDecimalProduct_QNT_Input_Normal);
 																
 											jQuery('input.qty').trigger("change");
 										}
@@ -815,9 +830,10 @@ License: GPLv2
 										var WDPQ_QNT_Input_Max = Number( WDPQ_QNT_Input.attr('max') );
 											
 										WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value + WDPQ_QNT_Input_Step;
+										var WooDecimalProduct_QNT_Input_Normal = Number(WDPQ_QNT_Input_Value.toFixed(WooDecimalProduct_QNT_Precision));
 										
-										if (WDPQ_QNT_Input_Value <= WDPQ_QNT_Input_Max) {
-											WDPQ_QNT_Input.val(WDPQ_QNT_Input_Value);
+										if (WooDecimalProduct_QNT_Input_Normal <= WDPQ_QNT_Input_Max) {
+											WDPQ_QNT_Input.val(WooDecimalProduct_QNT_Input_Normal);
 											
 											jQuery('input.qty').trigger("change");
 										}		
