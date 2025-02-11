@@ -46,7 +46,7 @@
 	}
 	
 	/* DashBoard. WooCommerce. List Products.
-	 * Добавляем в Колонку "Price" -> "Pice_Unit_Label" в Списке Товаров.
+	 * Добавляем в Колонку "Price" -> "Price_Unit_Label" в Списке Товаров.
 	----------------------------------------------------------------- */	
 	add_filter ('woocommerce_get_price_html', 'WooDecimalProduct_filter_get_price_html', 10, 2);	
 	function WooDecimalProduct_filter_get_price_html ($price, $product) {		
@@ -58,10 +58,10 @@
 			if ($pagenow == 'edit.php') {
 				$Product_ID = $product -> get_id();
 				
-				$Pice_Unit_Label = WooDecimalProduct_Get_PiceUnitLabel_by_ProductID ($Product_ID);
+				$Price_Unit_Label = WooDecimalProduct_Get_PriceUnitLabel_by_ProductID ($Product_ID);
 				
-				if ($Pice_Unit_Label) {
-					$price .= "<br>$Pice_Unit_Label";
+				if ($Price_Unit_Label) {
+					$price .= "<br>$Price_Unit_Label";
 					
 					return $price;			
 				}				
@@ -185,7 +185,7 @@
 			// Price Unit Label
 			woocommerce_wp_text_input( 
 				array( 
-					'id'          	=> 'woodecimalproduct_pice_unit_label', 
+					'id'          	=> 'woodecimalproduct_price_unit_label', 
 					'label'       	=> $Label_Price_Unit_Label, 
 					'placeholder' 	=> $Product_Price_Unit_Label,
 					'desc_tip'    	=> 'true',
@@ -196,7 +196,7 @@
 			// Disable: Price Unit Label
 			woocommerce_wp_checkbox( 
 				array( 
-					'id'          	=> 'woodecimalproduct_pice_unit_disable', 
+					'id'          	=> 'woodecimalproduct_price_unit_disable', 
 					'label'       	=> __('Disable Price Unit-Label', 'decimal-product-quantity-for-woocommerce'), 
 					'desc_tip'    	=> 'true',
 					'description' => __('Disable Price Unit-Label for this Product.', 'decimal-product-quantity-for-woocommerce')
@@ -227,15 +227,15 @@
         $new_step_Qnt   		= isset($_POST['woodecimalproduct_step_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_step_qnt'])): 1; // phpcs:ignore	  
 		$new_dft_Qnt    		= isset($_POST['woodecimalproduct_item_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_item_qnt'])): 1; // phpcs:ignore	
 		$new_max_Qnt			= isset($_POST['woodecimalproduct_max_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_max_qnt'])): ''; // phpcs:ignore	
-		$new_Pice_Unit_Label	= isset($_POST['woodecimalproduct_pice_unit_label']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_pice_unit_label'])): ''; // phpcs:ignore	
-		$new_Pice_Unit_Disable	= isset($_POST['woodecimalproduct_pice_unit_disable']) ? 'yes': '';	 // phpcs:ignore	
+		$new_Price_Unit_Label	= isset($_POST['woodecimalproduct_price_unit_label']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_price_unit_label'])): ''; // phpcs:ignore	
+		$new_Price_Unit_Disable	= isset($_POST['woodecimalproduct_price_unit_disable']) ? 'yes': '';	 // phpcs:ignore	
 		
 		update_post_meta ($post_id, 'woodecimalproduct_min_qnt', $new_min_Qnt); // phpcs:ignore	
 		update_post_meta ($post_id, 'woodecimalproduct_step_qnt', $new_step_Qnt); // phpcs:ignore	
 		update_post_meta ($post_id, 'woodecimalproduct_item_qnt', $new_dft_Qnt); // phpcs:ignore		
 		update_post_meta ($post_id, 'woodecimalproduct_max_qnt', $new_max_Qnt);	// phpcs:ignore		
-		update_post_meta ($post_id, 'woodecimalproduct_pice_unit_label', $new_Pice_Unit_Label);	// phpcs:ignore	
-		update_post_meta ($post_id, 'woodecimalproduct_pice_unit_disable', $new_Pice_Unit_Disable); // phpcs:ignore		
+		update_post_meta ($post_id, 'woodecimalproduct_price_unit_label', $new_Price_Unit_Label);	// phpcs:ignore	
+		update_post_meta ($post_id, 'woodecimalproduct_price_unit_disable', $new_Price_Unit_Disable); // phpcs:ignore		
 	}
 
     /* Вариативный Товар. Админка. Шаг и Минимальное кол-во выбора Товара на странице Товара по каждой из Вариаций.

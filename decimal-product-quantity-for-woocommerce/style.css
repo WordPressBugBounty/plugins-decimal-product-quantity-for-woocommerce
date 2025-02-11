@@ -11,6 +11,7 @@
 
 .cart .quantity {
 	float: left;
+	display: flex;
 }
 .wpdq_buttons_step {
 	width: 40px !important;

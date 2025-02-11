@@ -206,34 +206,34 @@
 		return $Number;
 	}	
 	
-	/* Получаем Pice_Unit_Label Товара.
+	/* Получаем Price_Unit_Label Товара.
 	----------------------------------------------------------------- */
-	function WooDecimalProduct_Get_PiceUnitLabel_by_ProductID ($Product_ID) {
-		$Pice_Unit_Label = '<div class="woodecimalproduct_pice_unit_label" style="min-height: 12px;"></div>';
+	function WooDecimalProduct_Get_PriceUnitLabel_by_ProductID ($Product_ID) {
+		$Price_Unit_Label = '<div class="woodecimalproduct_price_unit_label" style="min-height: 12px;"></div>';
 		
-		$Product_Pice_Unit_Disable = get_post_meta ($Product_ID, 'woodecimalproduct_pice_unit_disable', true);
+		$Product_Price_Unit_Disable = get_post_meta ($Product_ID, 'woodecimalproduct_price_unit_disable', true);
 		
-		if (! $Product_Pice_Unit_Disable) {					
+		if (! $Product_Price_Unit_Disable) {					
 			// Берем Значение из Товара
-			$Product_Pice_Unit_Label = get_post_meta ($Product_ID, 'woodecimalproduct_pice_unit_label', true);				
+			$Product_Price_Unit_Label = get_post_meta ($Product_ID, 'woodecimalproduct_price_unit_label', true);				
 			
-			if ($Product_Pice_Unit_Label) {
-				$Pice_Unit_Label = '<div class="woodecimalproduct_pice_unit_label" style="min-height: 12px;">' .$Product_Pice_Unit_Label .'</div>';
+			if ($Product_Price_Unit_Label) {
+				$Price_Unit_Label = '<div class="woodecimalproduct_price_unit_label" style="min-height: 12px;">' .$Product_Price_Unit_Label .'</div>';
 			} else {
 				// Берем Значение из Категории Товара				
 				$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_ProductID ($Product_ID);
 
 				if ($Term_QuantityData) {
-					$Pice_Unit_Label = $Term_QuantityData['price_unit'];
+					$Price_Unit_Label = $Term_QuantityData['price_unit'];
 					
-					if ($Pice_Unit_Label) {
-						$Pice_Unit_Label = '<div class="woodecimalproduct_pice_unit_label" style="min-height: 12px;">' .$Pice_Unit_Label .'</div>';
+					if ($Price_Unit_Label) {
+						$Price_Unit_Label = '<div class="woodecimalproduct_price_unit_label" style="min-height: 12px;">' .$Price_Unit_Label .'</div>';
 					}	
 				}		
 			}			
 		}
 		
-		return $Pice_Unit_Label;
+		return $Price_Unit_Label;
 	}
 
 	/* Получаем QuantityData Категории Товаров по Term_ID.
@@ -279,27 +279,27 @@
 	}
 	
 	/* Получаем QuantityData Категории Товаров по Product_ID.
-	 * Категорий может быть несколько. Выбираем ту, в которой имеется Pice_Unit_Label
+	 * Категорий может быть несколько. Выбираем ту, в которой имеется Price_Unit_Label
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_Term_QuantityData_by_ProductID ($Product_ID) {
 		$Term_QuantityData = array();
 		
-		$Pice_Unit_Label = '';
+		$Price_Unit_Label = '';
 		
 		$Product_Category_IDs = wc_get_product_term_ids ($Product_ID, 'product_cat');
 		
-		// Берем первую из Категорий если их несколько - в которой имеется Pice_Unit_Label.
-		// Если Pice_Unit_Label отсутствует, то берем Первую из Категорий.
+		// Берем первую из Категорий если их несколько - в которой имеется Price_Unit_Label.
+		// Если Price_Unit_Label отсутствует, то берем Первую из Категорий.
 		foreach ($Product_Category_IDs as $Term_ID) {
 			if ( empty( $Term_QuantityData ) ) {
 				$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
 			}				
 			
-			if ($Pice_Unit_Label == '') {
+			if ($Price_Unit_Label == '') {
 				$Term_Price_Unit = get_term_meta ($Term_ID, 'woodecimalproduct_term_price_unit', $single = true);
 
 				if ($Term_Price_Unit) {
-					$Pice_Unit_Label = $Term_Price_Unit;
+					$Price_Unit_Label = $Term_Price_Unit;
 					
 					$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
 				}		
@@ -491,12 +491,23 @@
 				$Cart_Item_Quantity 	= $Cart_Product_Item['quantity'];
 				$Cart_Item_Price 		= $Cart_Product_Item['price'];
 				
+				$Item_RegularPrice 		= isset( $Cart_Product_Item['regular_price'] ) ? $Cart_Product_Item['regular_price']: 0;
+				$Item_SalePrice 		= isset( $Cart_Product_Item['sale_price'] ) ? $Cart_Product_Item['sale_price']: 0;
+				$Price_Excl_Tax 		= isset( $Cart_Product_Item['price_tax_excl'] ) ? $Cart_Product_Item['price_tax_excl']: 0;
+				$Price_Incl_Tax 		= isset( $Cart_Product_Item['price_tax_incl'] ) ? $Cart_Product_Item['price_tax_incl']: 0;
+				$Tax_Amount 			= isset( $Cart_Product_Item['tax_amount'] ) ? $Cart_Product_Item['tax_amount']: 0;
+				
 				$Item = array(
 					'key' => $Cart_Item_Key,
 					'product_id' => $Cart_Item_ProductID,
 					'variation_id' => $Cart_Item_Variation_ID,
 					'quantity' => $Cart_Item_Quantity,
 					'price' => $Cart_Item_Price,
+					'regular_price' => $Item_RegularPrice,
+					'sale_price' => $Item_SalePrice,
+					'price_tax_excl' => $Price_Excl_Tax,
+					'price_tax_incl' => $Price_Incl_Tax,
+					'tax_amount' => $Tax_Amount,					
 				);		
 				
 				foreach ($Add_to_Cart as $Add_to_Cart_Product_Item) {	
@@ -505,6 +516,12 @@
 					$Add_to_Cart_VariationID 	= $Add_to_Cart_Product_Item['variation_id'];
 					$Add_to_Cart_Quantity 		= $Add_to_Cart_Product_Item['quantity'];
 					$Add_to_Cart_Price 			= $Add_to_Cart_Product_Item['price'];
+					
+					$Add_to_Cart_RegularPrice	= $Add_to_Cart_Product_Item['regular_price'];
+					$Add_to_Cart_SalePrice		= $Add_to_Cart_Product_Item['sale_price'];
+					$Add_to_Cart_Excl_Tax		= $Add_to_Cart_Product_Item['price_tax_excl'];
+					$Add_to_Cart_Incl_Tax		= $Add_to_Cart_Product_Item['price_tax_incl'];
+					$Add_to_Cart_Tax_Amount		= $Add_to_Cart_Product_Item['tax_amount'];
 
 					if ($Add_to_Cart_Key == $Cart_Item_Key) {
 						// Суммируем
@@ -517,6 +534,11 @@
 							'variation_id' => $Cart_Item_Variation_ID,
 							'quantity' => $New_Quantity,
 							'price' => $Add_to_Cart_Price,
+							'regular_price' => $Add_to_Cart_RegularPrice,
+							'sale_price' => $Add_to_Cart_SalePrice,
+							'price_tax_excl' => $Add_to_Cart_Excl_Tax,
+							'price_tax_incl' => $Add_to_Cart_Incl_Tax,
+							'tax_amount' => $Add_to_Cart_Tax_Amount,							
 						);
 					}
 				}
@@ -531,6 +553,12 @@
 				$Add_to_Cart_VariationID 	= $Add_to_Cart_Product_Item['variation_id'];
 				$Add_to_Cart_Quantity 		= $Add_to_Cart_Product_Item['quantity'];
 				$Add_to_Cart_Price 			= $Add_to_Cart_Product_Item['price'];
+				
+				$Add_to_Cart_RegularPrice	= $Add_to_Cart_Product_Item['regular_price'];
+				$Add_to_Cart_SalePrice		= $Add_to_Cart_Product_Item['sale_price'];
+				$Add_to_Cart_Excl_Tax		= $Add_to_Cart_Product_Item['price_tax_excl'];
+				$Add_to_Cart_Incl_Tax		= $Add_to_Cart_Product_Item['price_tax_incl'];
+				$Add_to_Cart_Tax_Amount		= $Add_to_Cart_Product_Item['tax_amount'];				
 				
 				$Item_Exist = false;
 				
@@ -549,6 +577,11 @@
 						'variation_id' => $Add_to_Cart_VariationID,
 						'quantity' => $Add_to_Cart_Quantity,
 						'price' => $Add_to_Cart_Price,
+						'regular_price' => $Add_to_Cart_RegularPrice,
+						'sale_price' => $Add_to_Cart_SalePrice,
+						'price_tax_excl' => $Add_to_Cart_Excl_Tax,
+						'price_tax_incl' => $Add_to_Cart_Incl_Tax,
+						'tax_amount' => $Add_to_Cart_Tax_Amount,						
 					);
 
 					$NewCart_Data[] = $Item;

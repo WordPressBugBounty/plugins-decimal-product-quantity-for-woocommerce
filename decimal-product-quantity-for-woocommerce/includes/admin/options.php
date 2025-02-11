@@ -59,7 +59,7 @@
 		
 		$New_WDPQ_Auto_Correction 			= isset($_REQUEST['wdpq_auto_correction']) ? 1 : 0;
 		$New_WDPQ_AJAX_Cart_Update 			= isset($_REQUEST['wdpq_ajax_cart_update']) ? 1 : 0;
-		$New_WDPQ_Price_Unit_Label 			= isset($_REQUEST['wdpq_pice_unit_label']) ? 1 : 0;
+		$New_WDPQ_Price_Unit_Label 			= isset($_REQUEST['wdpq_price_unit_label']) ? 1 : 0;
 		$New_WDPQ_ButtonsPM_Product_Enable 	= isset($_REQUEST['wdpq_buttons_pm_product_enable']) ? 1 : 0;
 		$New_WDPQ_ButtonsPM_Cart_Enable 	= isset($_REQUEST['wdpq_buttons_pm_cart_enable']) ? 1 : 0;
 		
@@ -375,12 +375,12 @@
 						<tbody>	
 							<tr>
 								<th scope="row" class="wdpq_options_field_label">
-									<label for="wdpq_pice_unit_label">
+									<label for="wdpq_price_unit_label">
 										<?php echo esc_html( __('Price Unit-Label', 'decimal-product-quantity-for-woocommerce') ); ?>
 									</label>
 								</th>
 								<td class="wdpq_options_field_input">
-									<input id="wdpq_pice_unit_label" name="wdpq_pice_unit_label" type="checkbox" <?php if($WooDecimalProduct_Price_Unit_Label) {echo 'checked';} ?>>
+									<input id="wdpq_price_unit_label" name="wdpq_price_unit_label" type="checkbox" <?php if($WooDecimalProduct_Price_Unit_Label) {echo 'checked';} ?>>
 									<span class="wdpq_options_field_description">
 										<?php echo esc_html( __('Enable "Price Unit-Label" (Kg, Liter, Meter, Piece, etc.) On/Off', 'decimal-product-quantity-for-woocommerce') ); ?>
 									</span>
