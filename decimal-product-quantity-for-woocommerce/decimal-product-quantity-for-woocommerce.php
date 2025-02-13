@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 16.48
+Version: 16.48.1
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -640,7 +640,7 @@ License: GPLv2
 						$('.woocommerce').on('change', 'input.qty', function(e){
 							WooDecimalProductQNT_ConsoleLog_Debuging ('OnChange Processing...');
 							WooDecimalProductQNT_ConsoleLog_Debuging (e);	
-							WooDecimalProductQNT_ConsoleLog_Debuging ('ButtonsPM_Processing_Busi: ' + WDPQ_ButtonsPM_Processing_Busy);	
+							WooDecimalProductQNT_ConsoleLog_Debuging ('ButtonsPM_Processing_Busy: ' + WDPQ_ButtonsPM_Processing_Busy);	
 
 							if (WDPQ_ButtonsPM_Processing_Busy) {
 								// Изменение Количества Кнопками. Коррекция не требуется.
@@ -744,11 +744,14 @@ License: GPLv2
 							// jQuery("input[name='cart[" + WooDecimalProduct_Cart[key] + "][qty]']").attr('product_id', key);
 							WDPQ_Element_InputQNT.attr('product_id', key);
 							
-							// Добавляем Кнопки: +/- для текущего Элемента Input Quantity.
-							if (Elements_ButtonsPM.length > 0) {
-								// Кнопки уже сформированы. Проходим мимо.
-							} else {
-								WDPQ_Add_Buttons_QNT (key);
+							// Кнопки: +/- для текущего Элемента Input Quantity.
+							if (WooDecimalProduct_AJAX_Cart_Update) {
+								// Добавляем Кнопки: +/- для текущего Элемента Input Quantity.
+								if (Elements_ButtonsPM.length > 0) {
+									// Кнопки уже сформированы. Проходим мимо.
+								} else {
+									WDPQ_Add_Buttons_QNT (key);
+								}
 							}
 						});	
 					}
@@ -796,7 +799,7 @@ License: GPLv2
 						if (WDPQ_ButtonsPM_Processing_Busy) {
 							// Исключаем повторные процессы.
 						} else {
-							WooDecimalProductQNT_ConsoleLog_Debuging ('ButtonsPM_Processing_Busi: ' + WDPQ_ButtonsPM_Processing_Busy);
+							WooDecimalProductQNT_ConsoleLog_Debuging ('ButtonsPM_Processing_Busy: ' + WDPQ_ButtonsPM_Processing_Busy);
 							
 							var WDPQ_QNT_Input_Normal = '';
 							
@@ -836,7 +839,7 @@ License: GPLv2
 						if (WDPQ_ButtonsPM_Processing_Busy) {
 							// Исключаем повторные процессы.
 						} else {
-							WooDecimalProductQNT_ConsoleLog_Debuging ('ButtonsPM_Processing_Busi: ' + WDPQ_ButtonsPM_Processing_Busy);
+							WooDecimalProductQNT_ConsoleLog_Debuging ('ButtonsPM_Processing_Busy: ' + WDPQ_ButtonsPM_Processing_Busy);
 							
 							var WDPQ_QNT_Input_Normal = '';
 							
