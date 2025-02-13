@@ -7,7 +7,7 @@ Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 16.48.1
+Stable tag: 16.48.2
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -65,6 +65,10 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 16.48.2 =
+	2025.02.13
+	* Fix Disable Cart Buttons [+]/[-] if Options Disabled. )) Sorry.
+	
 = 16.48.1 =
 	2025.02.13
 	* Fix Disable Cart Buttons [+]/[-] if Options Disabled. Thanks: Rémy Pommier.

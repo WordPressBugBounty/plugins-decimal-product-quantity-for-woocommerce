@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 16.48.1
+Version: 16.48.2
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -629,7 +629,7 @@ License: GPLv2
 					// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину"
 					WooDecimalProductQNT_Hide_CartButton ();					
 
-					var WooDecimalProduct_ButtonsPM_Enable = <?php echo esc_html( $WooDecimalProduct_ButtonsPM_Cart_Enable ); ?>;
+					var WDPQ_ButtonsPM_Cart_Enable = <?php echo esc_html( $WooDecimalProduct_ButtonsPM_Cart_Enable ); ?>;
 
 					var WDPQ_ButtonsPM_Processing_Busy = false;
 										
@@ -745,7 +745,7 @@ License: GPLv2
 							WDPQ_Element_InputQNT.attr('product_id', key);
 							
 							// Кнопки: +/- для текущего Элемента Input Quantity.
-							if (WooDecimalProduct_AJAX_Cart_Update) {
+							if (WDPQ_ButtonsPM_Cart_Enable) {
 								// Добавляем Кнопки: +/- для текущего Элемента Input Quantity.
 								if (Elements_ButtonsPM.length > 0) {
 									// Кнопки уже сформированы. Проходим мимо.
