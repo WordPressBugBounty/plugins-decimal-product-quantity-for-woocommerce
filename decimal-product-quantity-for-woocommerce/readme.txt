@@ -7,7 +7,7 @@ Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 16.48.3
+Stable tag: 16.49
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -32,7 +32,7 @@ For example:
 * Column "Quantity" on Products List.
 * Update Cart Automatically on Quantity Change (AJAX Cart Update)
 * You can set a "Value Label" for each individual Item. Individually or as a whole for the Category. For example: "Price per Meter", "Price per Liter".
-* It is possible to use Product - JS Object for Ext.Integration: QNT_Data. Function: DPQW_Get_QuantityData (Product_ID).
+* It is possible to use Product - JS Object for Ext.Integration: QNT_Data. Function: WDPQ_Get_QuantityData (Product_ID).
 * Works with WooCommerce specifics from v3.4.8 & more
 * Buttons: +/- To select the Quantity on the Product page and in the Cart.
 
@@ -65,6 +65,12 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+
+= 16.49 =
+	2025.02.14
+	* Enqueue JS Scripts instead post for Product Page & Cart Page.
+	* Rename Ext. Function for ability to use Product - JS Object for Ext.Integration: DPQW_Get_QuantityData (Product_ID) -> WDPQ_Get_QuantityData (Product_ID)
+
 = 16.48.3 =
 	2025.02.13
 	* Fix Cart Buttons [+]/[-] for Manual Mode.

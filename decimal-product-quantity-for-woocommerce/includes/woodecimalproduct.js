@@ -6,7 +6,7 @@
 		console.log('woodecimalproduct.js Loaded.');
 	});
 	
-	function DPQW_Get_QuantityData (Product_ID) {
+	function WDPQ_Get_QuantityData (Product_ID) {
 		if (Product_ID) {
 			var WooDecimalProductQNT_Ajax_URL = ajaxurl;
 			var WooDecimalProductQNT_Ajax_Data = 'action=WooDecimalProductQNT&mode=get_product_quantity&id=' + Product_ID;
