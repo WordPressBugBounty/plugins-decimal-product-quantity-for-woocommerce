@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 16.49
+Version: 17.50
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -393,22 +393,22 @@ License: GPLv2
 				$Stp_Qnt 		= $WooDecimalProduct_QuantityData['stp_qnt'];				
 				$QNT_Precision 	= $WooDecimalProduct_QuantityData['precision'];
 				
-global $WooDecimalProduct_Plugin_URL;
+				global $WooDecimalProduct_Plugin_URL;
 
-wp_enqueue_script ('wdpq_page_product', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_product.js'); // phpcs:ignore 
+				wp_enqueue_script ('wdpq_page_product', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_product.js'); // phpcs:ignore 
 
-$Params = array (
-	'qnt_min' => $Min_Qnt,
-	'qnt_max' => $Max_Qnt,
-	'qnt_default' => $Def_Qnt,
-	'qnt_step' => $Stp_Qnt,
-	'qnt_precision' => $QNT_Precision,
-	'debug_enable' => $WooDecimalProduct_ConsoleLog_Debuging,
-	'buttons_pm_enable' => $WooDecimalProduct_ButtonsPM_Product_Enable,
-	'msg_no_valid_value' => esc_html( __('- No valid value. Auto correction nearest valid value:', 'decimal-product-quantity-for-woocommerce') ),
-	'msg_more_than_the_max_allowed' => esc_html( __('- More than the maximum allowed for this Product. Auto correction to Max:', 'decimal-product-quantity-for-woocommerce') ),
-);
-wp_localize_script('wdpq_page_product', 'wdpq_script_params', $Params);
+				$Params = array (
+					'qnt_min' => $Min_Qnt,
+					'qnt_max' => $Max_Qnt,
+					'qnt_default' => $Def_Qnt,
+					'qnt_step' => $Stp_Qnt,
+					'qnt_precision' => $QNT_Precision,
+					'debug_enable' => $WooDecimalProduct_ConsoleLog_Debuging,
+					'buttons_pm_enable' => $WooDecimalProduct_ButtonsPM_Product_Enable,
+					'msg_no_valid_value' => esc_html( __('- No valid value. Auto correction nearest valid value:', 'decimal-product-quantity-for-woocommerce') ),
+					'msg_more_than_the_max_allowed' => esc_html( __('- More than the maximum allowed for this Product. Auto correction to Max:', 'decimal-product-quantity-for-woocommerce') ),
+				);
+				wp_localize_script('wdpq_page_product', 'wdpq_script_params', $Params);
 			}			
 		}
 	}
@@ -459,23 +459,22 @@ wp_localize_script('wdpq_page_product', 'wdpq_script_params', $Params);
 				$QNT_Precision = $WooDecimalProduct_QuantityData[$item_product_id]['precision'];
 			}
 			
-global $WooDecimalProduct_Plugin_URL;
+			global $WooDecimalProduct_Plugin_URL;
 
-wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_cart.js'); // phpcs:ignore 
+			wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_cart.js'); // phpcs:ignore 
 
-$Params = array (
-	'qnt_precision' => $QNT_Precision,	
-	'cart_items_keys' => $WooDecimalProduct_Cart,
-	'quantity_data' => $WooDecimalProduct_QuantityData,
-	'debug_enable' => $WooDecimalProduct_ConsoleLog_Debuging,
-	'autocorrection_enable' => $WooDecimalProduct_Auto_Correction_Quantity,
-	'ajax_cart_update_enable' => $WooDecimalProduct_AJAX_Cart_Update,
-	'buttons_pm_enable' => $WooDecimalProduct_ButtonsPM_Cart_Enable,
-	'msg_no_valid_value' => esc_html( __('- No valid value. Auto correction nearest valid value:', 'decimal-product-quantity-for-woocommerce') ),
-	'msg_more_than_the_max_allowed' => esc_html( __('- More than the maximum allowed for this Product. Auto correction to Max:', 'decimal-product-quantity-for-woocommerce') ),
-);
-wp_localize_script('wdpq_page_cart', 'wdpq_script_params', $Params);			
-			
+			$Params = array (
+				'qnt_precision' => $QNT_Precision,	
+				'cart_items_keys' => $WooDecimalProduct_Cart,
+				'quantity_data' => $WooDecimalProduct_QuantityData,
+				'debug_enable' => $WooDecimalProduct_ConsoleLog_Debuging,
+				'autocorrection_enable' => $WooDecimalProduct_Auto_Correction_Quantity,
+				'ajax_cart_update_enable' => $WooDecimalProduct_AJAX_Cart_Update,
+				'buttons_pm_enable' => $WooDecimalProduct_ButtonsPM_Cart_Enable,
+				'msg_no_valid_value' => esc_html( __('- No valid value. Auto correction nearest valid value:', 'decimal-product-quantity-for-woocommerce') ),
+				'msg_more_than_the_max_allowed' => esc_html( __('- More than the maximum allowed for this Product. Auto correction to Max:', 'decimal-product-quantity-for-woocommerce') ),
+			);
+			wp_localize_script('wdpq_page_cart', 'wdpq_script_params', $Params);			
 		}	
 	}
 	
@@ -828,18 +827,18 @@ wp_localize_script('wdpq_page_cart', 'wdpq_script_params', $Params);
 						$WDPQ_Nonce = 'Restore_WDPQ-Cart_DecimalProductQuantityForWooCommerce';
 						$nonce = wp_create_nonce ($WDPQ_Nonce);	
 						
-global $WooDecimalProduct_Plugin_URL;
+						global $WooDecimalProduct_Plugin_URL;
 
-wp_enqueue_script ('wdpq_page_cart_restore', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_cart_restore.js'); // phpcs:ignore 
+						wp_enqueue_script ('wdpq_page_cart_restore', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_cart_restore.js'); // phpcs:ignore 
 
-$Params = array (
-	'nonce' => esc_html( $nonce ),
-	'item_subtotal_title' => esc_html( __('Will be available after creating the Cart', 'decimal-product-quantity-for-woocommerce') ),
-	'button_class' => esc_html( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ),
-	'button_value' => esc_html( 'create_cart', 'decimal-product-quantity-for-woocommerce'),
-	'button_label' => esc_html( __('Create Cart', 'decimal-product-quantity-for-woocommerce') ),
-);
-wp_localize_script('wdpq_page_cart_restore', 'wdpq_script_cart_restore_params', $Params);			
+						$Params = array (
+							'nonce' => esc_html( $nonce ),
+							'item_subtotal_title' => esc_html( __('Will be available after creating the Cart', 'decimal-product-quantity-for-woocommerce') ),
+							'button_class' => esc_html( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ),
+							'button_value' => esc_html( 'create_cart', 'decimal-product-quantity-for-woocommerce'),
+							'button_label' => esc_html( __('Create Cart', 'decimal-product-quantity-for-woocommerce') ),
+						);
+						wp_localize_script('wdpq_page_cart_restore', 'wdpq_script_cart_restore_params', $Params);			
 						
 						echo '<div class="wdpq_about_create_cart">' .esc_html( __('These Products were in your previous Cart. You can "Create Cart" based on them.', 'decimal-product-quantity-for-woocommerce' ) ).'</div>';
 						

@@ -7,7 +7,7 @@ Tested up to: 6.7.1
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 16.49
+Stable tag: 17.50
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -65,6 +65,9 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 17.50 =
+	2025.02.15
+	* Added "WPGear" Info-Block to Woo Page: "Status". Some parameters will be added to it for the search and solution of conflict situations and problems.
 
 = 16.49 =
 	2025.02.14

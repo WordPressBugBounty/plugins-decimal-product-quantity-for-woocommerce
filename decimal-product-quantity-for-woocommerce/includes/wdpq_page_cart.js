@@ -9,7 +9,7 @@
 		var WDPQ_QNT_Precision 				= wdpq_script_params['qnt_precision'];
 		var WDPQ_Cart_Items_Keys 			= wdpq_script_params['cart_items_keys'];
 		var WDPQ_QuantityData 				= wdpq_script_params['quantity_data'];
-		var WDPQ_Auto_Correction_Quantity 	= wdpq_script_params['autocorrection_enable'];
+		var WDPQ_Auto_Correction_Enable 	= wdpq_script_params['autocorrection_enable'];
 		var WDPQ_AJAX_Cart_Update_Enable	= wdpq_script_params['ajax_cart_update_enable'];
 		var WDPQ_ButtonsPM_Cart_Enable 		= wdpq_script_params['buttons_pm_enable'];
 		var WDPQ_Msg_NoValidValue 			= wdpq_script_params['msg_no_valid_value'];
@@ -17,7 +17,7 @@
 
 		WDPQ_ConsoleLog_Debug_Enable 	= Number(WDPQ_ConsoleLog_Debug_Enable);	
 		WDPQ_QNT_Precision 				= Number(WDPQ_QNT_Precision);	
-		WDPQ_Auto_Correction_Quantity	= Number( WDPQ_Auto_Correction_Quantity );
+		WDPQ_Auto_Correction_Enable		= Number( WDPQ_Auto_Correction_Enable );
 		WDPQ_AJAX_Cart_Update_Enable	= Number( WDPQ_AJAX_Cart_Update_Enable );
 		WDPQ_ButtonsPM_Cart_Enable		= Number( WDPQ_ButtonsPM_Cart_Enable );
 		
@@ -129,7 +129,7 @@
 			} else {
 				// Изменение Количества Мышкой или Руками.
 				// Авто-Коррекция.
-				if (WDPQ_Auto_Correction_Quantity) {
+				if (WDPQ_Auto_Correction_Enable) {
 					var WDPQ_ItemProduct_QNT_Msg = '';
 					
 					var WDPQ_ItemInputID = e.currentTarget.attributes.id.value;
