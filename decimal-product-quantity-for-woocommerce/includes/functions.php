@@ -16,8 +16,8 @@
 			
 			$Plugins = get_plugins();
 			
-			foreach ($Plugins as $Plugin) {
-				$Plugin_TextDomain = $Plugin['decimal-product-quantity-for-woocommerce'];
+			foreach ($Plugins as $Plugin) {				
+				$Plugin_TextDomain = $Plugin['TextDomain'];
 				if ($Plugin_TextDomain == $Plugin_Slug) {
 					$Result = true;
 				}

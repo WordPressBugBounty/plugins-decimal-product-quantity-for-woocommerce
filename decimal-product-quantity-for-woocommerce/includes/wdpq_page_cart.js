@@ -6,7 +6,6 @@
 		console.log('wdpq_page_cart.js Loaded.');	
 
 		var WDPQ_ConsoleLog_Debug_Enable 	= wdpq_script_params['debug_enable'];
-		var WDPQ_QNT_Precision 				= wdpq_script_params['qnt_precision'];
 		var WDPQ_Cart_Items_Keys 			= wdpq_script_params['cart_items_keys'];
 		var WDPQ_QuantityData 				= wdpq_script_params['quantity_data'];
 		var WDPQ_Auto_Correction_Enable 	= wdpq_script_params['autocorrection_enable'];
@@ -16,7 +15,6 @@
 		var WDPQ_Msg_MoreThanMaxAllowed 	= wdpq_script_params['msg_more_than_the_max_allowed'];	
 
 		WDPQ_ConsoleLog_Debug_Enable 	= Number(WDPQ_ConsoleLog_Debug_Enable);	
-		WDPQ_QNT_Precision 				= Number(WDPQ_QNT_Precision);	
 		WDPQ_Auto_Correction_Enable		= Number( WDPQ_Auto_Correction_Enable );
 		WDPQ_AJAX_Cart_Update_Enable	= Number( WDPQ_AJAX_Cart_Update_Enable );
 		WDPQ_ButtonsPM_Cart_Enable		= Number( WDPQ_ButtonsPM_Cart_Enable );
@@ -39,48 +37,45 @@
 			var WDPQ_ButtonPM_Value = e.currentTarget.value;
 			WDPQ_ConsoleLog_Debuging ('value: ' + WDPQ_ButtonPM_Value);
 								
-			var WDPQ_ProductID = e.currentTarget.attributes.item_index.value;														
+			var WDPQ_ItemProductID = e.currentTarget.attributes.item_index.value;														
+			WDPQ_ConsoleLog_Debuging ('product_id: ' + WDPQ_ItemProductID);
 
-			WDPQ_ConsoleLog_Debuging ('product_id: ' + WDPQ_ProductID);	
+			var WDPQ_QNT_Input_Normal = '';
+
+			var WDPQ_Item_Element = "input[product_id='" + WDPQ_ItemProductID + "']";	
+
+			var WDPQ_Item_Element_InputQNT = jQuery(WDPQ_Item_Element);
+			WDPQ_ConsoleLog_Debuging (WDPQ_Item_Element_InputQNT);
+
+			var WDPQ_ItemProduct_QuantityData = WDPQ_QuantityData[WDPQ_ItemProductID];
+			WDPQ_ConsoleLog_Debuging (WDPQ_ItemProduct_QuantityData);
+
+			var WDPQ_ItemProduct_Min_Qnt 	= Number(WDPQ_ItemProduct_QuantityData['min_qnt']);
+			var WDPQ_ItemProduct_Max_Qnt 	= Number(WDPQ_ItemProduct_QuantityData['max_qnt']);
+			var WDPQ_ItemProduct_Stp_Qnt 	= Number(WDPQ_ItemProduct_QuantityData['stp_qnt']);
+			var WDPQ_ItemProduct_Precision 	= Number(WDPQ_ItemProduct_QuantityData['precision']);
+						
+			var WDPQ_QNT_Input_Value = Number( WDPQ_Item_Element_InputQNT.val() );
+			WDPQ_ConsoleLog_Debuging ('val: ' + WDPQ_QNT_Input_Value);
 			
 			// Plus
-			if (WDPQ_ButtonPM_Value == 'plus') {
-				var WDPQ_QNT_Input_Normal = '';
-				
-				var Element = "input[product_id='" + WDPQ_ProductID + "']";
-				
-				var Element_InputQNT = jQuery(Element);
-				WDPQ_ConsoleLog_Debuging (Element_InputQNT);
-				
-				WDPQ_ConsoleLog_Debuging ('precision: ' + WDPQ_QNT_Precision);	
-				
-				var WDPQ_QNT_Input_Value = Number( Element_InputQNT.val() );
-				WDPQ_ConsoleLog_Debuging ('val: ' + WDPQ_QNT_Input_Value);	
+			if (WDPQ_ButtonPM_Value == 'plus') {	
+				WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value + WDPQ_ItemProduct_Stp_Qnt;
+				WDPQ_QNT_Input_Normal = Number(WDPQ_QNT_Input_Value.toFixed(WDPQ_ItemProduct_Precision));
 
-				var WDPQ_QNT_Input_Step = Number( Element_InputQNT.attr('step') );	
-				WDPQ_ConsoleLog_Debuging ('step: ' + WDPQ_QNT_Input_Step);	
-
-				WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value + WDPQ_QNT_Input_Step;
-				WDPQ_QNT_Input_Normal = Number(WDPQ_QNT_Input_Value.toFixed(WDPQ_QNT_Precision));
-				
-				var WDPQ_QNT_Input_Max = Element_InputQNT.attr('max');	
-				WDPQ_ConsoleLog_Debuging ('max: ' + WDPQ_QNT_Input_Max);
-				
-				if (WDPQ_QNT_Input_Max != '') {
+				if (WDPQ_ItemProduct_Max_Qnt != -1) {
 					WDPQ_ButtonsPM_Processing_Busy = true;			
-					
-					WDPQ_QNT_Input_Max = Number( WDPQ_QNT_Input_Max );	
-					
-					if (WDPQ_QNT_Input_Normal <= WDPQ_QNT_Input_Max) {
-						Element_InputQNT.val(WDPQ_QNT_Input_Normal).trigger("change");
-						
+
+					if (WDPQ_QNT_Input_Normal <= WDPQ_ItemProduct_Max_Qnt) {
+						WDPQ_Item_Element_InputQNT.val(WDPQ_QNT_Input_Normal).trigger("change");
+
 						WDPQ_ConsoleLog_Debuging ('[Plus] new value: ' + WDPQ_QNT_Input_Normal);
 					}
 					
 				} else {
 					WDPQ_ButtonsPM_Processing_Busy = true;	
 					
-					Element_InputQNT.val(WDPQ_QNT_Input_Normal).trigger("change");
+					WDPQ_Item_Element_InputQNT.val(WDPQ_QNT_Input_Normal).trigger("change");
 					
 					WDPQ_ConsoleLog_Debuging ('[Plus] new value: ' + WDPQ_QNT_Input_Normal);
 				}		
@@ -88,31 +83,13 @@
 			
 			// Minus
 			if (WDPQ_ButtonPM_Value == 'minus') {
-				var WDPQ_QNT_Input_Normal = '';
+				WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value - WDPQ_ItemProduct_Stp_Qnt;
+				WDPQ_QNT_Input_Normal = Number(WDPQ_QNT_Input_Value.toFixed(WDPQ_ItemProduct_Precision));
 
-				var Element = "input[product_id='" + WDPQ_ProductID + "']";
-				
-				var Element_InputQNT = jQuery(Element);
-				WDPQ_ConsoleLog_Debuging (Element_InputQNT);
-				
-				WDPQ_ConsoleLog_Debuging ('precision: ' + WDPQ_QNT_Precision);	
-				
-				var WDPQ_QNT_Input_Value = Number( Element_InputQNT.val() );
-				WDPQ_ConsoleLog_Debuging ('val: ' + WDPQ_QNT_Input_Value);	
-
-				var WDPQ_QNT_Input_Step = Number( Element_InputQNT.attr('step') );	
-				WDPQ_ConsoleLog_Debuging ('step: ' + WDPQ_QNT_Input_Step);	
-
-				WDPQ_QNT_Input_Value = WDPQ_QNT_Input_Value - WDPQ_QNT_Input_Step;
-				WDPQ_QNT_Input_Normal = Number(WDPQ_QNT_Input_Value.toFixed(WDPQ_QNT_Precision));
-
-				var WDPQ_QNT_Input_Min = Number( Element_InputQNT.attr('min') );	
-				WDPQ_ConsoleLog_Debuging ('min: ' + WDPQ_QNT_Input_Min);
-				
-				if (WDPQ_QNT_Input_Normal >= WDPQ_QNT_Input_Min) {
+				if (WDPQ_QNT_Input_Normal >= WDPQ_ItemProduct_Min_Qnt) {
 					WDPQ_ButtonsPM_Processing_Busy = true;
 					
-					Element_InputQNT.val(WDPQ_QNT_Input_Normal).trigger("change");
+					WDPQ_Item_Element_InputQNT.val(WDPQ_QNT_Input_Normal).trigger("change");
 					
 					WDPQ_ConsoleLog_Debuging ('[Minus] new value: ' + WDPQ_QNT_Input_Normal);		
 				}
