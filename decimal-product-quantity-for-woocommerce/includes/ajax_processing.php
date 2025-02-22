@@ -4,11 +4,12 @@
  * JS Product Object.
  * ajax_processing.php
  */ 
+	$debug_process = 'ajax_processing';
 	
 	$Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : null; // phpcs:ignore	
 	$Object_ID	= isset($_REQUEST['id']) ? sanitize_text_field( wp_unslash( $_REQUEST['id'] ) ) : 0; // phpcs:ignore
 
-	WooDecimalProduct_Debugger ($_REQUEST, __FUNCTION__ .' $_REQUEST ' .__LINE__, 'ajax_processing', true); // phpcs:ignore	
+	WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__);
 
 	$Product_QNT_Options = array();
 	
@@ -18,7 +19,7 @@
 	if ($Mode == 'get_product_quantity') {
 		if ($Object_ID) {
 			$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Object_ID);
-			WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, __FUNCTION__ .' $WooDecimalProduct_QuantityData ' .__LINE__, 'ajax_processing', true);
+			WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 		}
 		
 		$Result = true;	

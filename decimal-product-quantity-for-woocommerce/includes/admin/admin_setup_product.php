@@ -77,13 +77,15 @@
 	----------------------------------------------------------------- */		
 	add_action ('woocommerce_product_options_general_product_data', 'WooDecimalProduct_Tab_General_add_Options');
 	function WooDecimalProduct_Tab_General_add_Options() {			
+		$debug_process = 'product_options_general';
+		
 		$WooDecimalProduct_Price_Unit_Label			= get_option ('woodecimalproduct_price_unit_label', 0);		
 
 		$Product_ID = get_the_ID();
 			
 		$No_MaxEmpty = '---';
 		$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
-		WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, __FUNCTION__ .' $WooDecimalProduct_QuantityData ' .__LINE__, 'product_options_general', true);	
+		WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 
 		$Min_Qnt 		= $WooDecimalProduct_QuantityData['min_qnt'];
 		$Max_Qnt 		= $WooDecimalProduct_QuantityData['max_qnt'];
