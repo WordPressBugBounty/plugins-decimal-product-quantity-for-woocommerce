@@ -98,7 +98,8 @@
 			WDPQ_Debugger ($Session_ID, '$Session_ID', $debug_process, __FUNCTION__, __LINE__);
 			
 			if (!session_id()) {
-				session_start();
+				$Result = session_start();
+				WDPQ_Debugger ($Result, '$Result', $debug_process, __FUNCTION__, __LINE__);
 			}
 		}
 		
@@ -108,7 +109,8 @@
 
 			// if ($Session_Status === PHP_SESSION_NONE && $Session_Status !== PHP_SESSION_ACTIVE) {
 			if ($Session_Status !== PHP_SESSION_ACTIVE) {
-				session_start();
+				$Result = session_start();
+				WDPQ_Debugger ($Result, '$Result', $debug_process, __FUNCTION__, __LINE__);
 			}
 		}		
 		
