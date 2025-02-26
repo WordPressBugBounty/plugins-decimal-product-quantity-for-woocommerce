@@ -940,15 +940,18 @@
 				if ($Content) {
 					$Content = wp_json_encode( $Content );
 				} else {
-					$Content = 'Null/Empty';
+					if (is_null( $Content )) {
+						$Content = 'is NULL';
+					} 					
 				}
 				
 				?>
 				<script type='text/javascript'>	
 					var WDPQ_Debug_Subject 	= '<?php echo esc_html( $Subject ); ?>';
+					var WDPQ_Debug_Process 	= '<?php echo esc_html( $Process ); ?>';
 					var WDPQ_Debug_Content 	= <?php var_export( $Content ); // phpcs:ignore?>;
 					
-					console.log( 'WDPQ_Debug: ' + WDPQ_Debug_Subject );
+					console.log( 'WDPQ_Debug: ' + WDPQ_Debug_Subject + ' ' + WDPQ_Debug_Process );
 					console.log( WDPQ_Debug_Content );
 					console.log( '------------------------' );
 				</script>
