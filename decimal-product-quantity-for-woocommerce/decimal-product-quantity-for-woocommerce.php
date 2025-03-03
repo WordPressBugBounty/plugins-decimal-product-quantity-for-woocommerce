@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 17.51.2
+Version: 17.51.3
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -76,7 +76,7 @@ License: GPLv2
 		
 		// Инициализация Сессии, для Незалогиненых Пользователей.
 		if (! is_user_logged_in() ) {			
-			WooDecimalProduct_StartSession();
+			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
 		} 	
 		
 		WooDecimalProduct_Woo_remove_filters();	
@@ -1223,3 +1223,11 @@ License: GPLv2
 		
 		return $completed;
 	}
+	
+// add_filter ('wpdesk_ceneo_product_ceneo_avail', 'WooDecimalProduct_wpdesk_ceneo', 20, 2);
+// function WooDecimalProduct_wpdesk_ceneo ($result, $source) {
+	// $debug_process = 'wpdesk_ceneo';
+	
+	// WDPQ_Debugger ($result, '$result', $debug_process, __FUNCTION__, __LINE__);
+	// WDPQ_Debugger ($source, '$source', $debug_process, __FUNCTION__, __LINE__);
+// }

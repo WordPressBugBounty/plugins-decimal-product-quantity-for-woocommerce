@@ -84,8 +84,10 @@
 
 	/* Инициализация Сессии, если это - Необходимо
 	----------------------------------------------------------------- */
-	function WooDecimalProduct_StartSession () {
+	function WooDecimalProduct_StartSession ($Initiator = '') {
 		$debug_process = 'f_start_session';
+		
+		WDPQ_Debugger ($Initiator, '$Initiator', $debug_process, __FUNCTION__, __LINE__);
 		
 		// PHP_SESSION_NONE = 1
 		// PHP_SESSION_ACTIVE = 2
@@ -93,27 +95,38 @@
 		$PHP_Version = phpversion(); // Alt: $PHP_Version = PHP_VERSION;
 		WDPQ_Debugger ($PHP_Version, '$PHP_Version', $debug_process, __FUNCTION__, __LINE__);
 		
-		if ( version_compare( $PHP_Version, '5.4', '<=' ) ) {
-			$Session_ID = session_id();
-			WDPQ_Debugger ($Session_ID, '$Session_ID', $debug_process, __FUNCTION__, __LINE__);
+		// Проверяем, что Headers еще не были отправлены, иначе, возникает ошибка Инициализации Сессии.
+		if( headers_sent() ) {
+			WDPQ_Debugger ('headers already sent', 'headers_sent()', $debug_process, __FUNCTION__, __LINE__);
 			
-			if (!session_id()) {
-				$Result = session_start();
-				WDPQ_Debugger ($Result, '$Result', $debug_process, __FUNCTION__, __LINE__);
+			$Headers_List = headers_list();
+			WDPQ_Debugger ($Headers_List, '$Headers_List', $debug_process, __FUNCTION__, __LINE__);
+			
+			return false;
+			
+		} else {
+			if ( version_compare( $PHP_Version, '5.4', '<=' ) ) {
+				$Session_ID = session_id();
+				WDPQ_Debugger ($Session_ID, '$Session_ID', $debug_process, __FUNCTION__, __LINE__);
+				
+				if (!session_id()) {
+					$Result = session_start();
+					WDPQ_Debugger ($Result, '$Result', $debug_process, __FUNCTION__, __LINE__);
+				}
+			}
+			
+			if ( version_compare( $PHP_Version, '7', '>=' ) ) {
+				$Session_Status = session_status();
+				WDPQ_Debugger ($Session_Status, '$Session_Status', $debug_process, __FUNCTION__, __LINE__);
+
+				// if ($Session_Status === PHP_SESSION_NONE && $Session_Status !== PHP_SESSION_ACTIVE) {
+				if ($Session_Status !== PHP_SESSION_ACTIVE) {
+					$Result = session_start();
+					WDPQ_Debugger ($Result, '$Result', $debug_process, __FUNCTION__, __LINE__);
+				}
 			}
 		}
-		
-		if ( version_compare( $PHP_Version, '7', '>=' ) ) {
-			$Session_Status = session_status();
-			WDPQ_Debugger ($Session_Status, '$Session_Status', $debug_process, __FUNCTION__, __LINE__);
-
-			// if ($Session_Status === PHP_SESSION_NONE && $Session_Status !== PHP_SESSION_ACTIVE) {
-			if ($Session_Status !== PHP_SESSION_ACTIVE) {
-				$Result = session_start();
-				WDPQ_Debugger ($Result, '$Result', $debug_process, __FUNCTION__, __LINE__);
-			}
-		}		
-		
+				
 		return true;
 	}
 	
@@ -650,9 +663,12 @@
 			// wc_setcookie('wdpq_cart', $WDPQ_Cart, time() + HOUR_IN_SECONDS);
 			
 			// PHP Sesion
-			WooDecimalProduct_StartSession ();
-
-			$_SESSION[$Cart_Name] = $WDPQ_Cart;		
+			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
+			
+			if ($Session_Started) {
+				$_SESSION[$Cart_Name] = $WDPQ_Cart;	
+			}			
 		}	
 	}
 
@@ -687,7 +703,8 @@
 			// $WDPQ_Cart = isset( $_COOKIE[$Cart_Name] ) ? $_COOKIE[$Cart_Name] : null; // phpcs:ignore	
 			
 			// PHP Sesion
-			WooDecimalProduct_StartSession ();
+			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
 
 			$WDPQ_Cart = isset( $_SESSION[$Cart_Name] ) ? $_SESSION[$Cart_Name]: null; // phpcs:ignore
 			WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
@@ -730,9 +747,12 @@
 			// wc_setcookie('wdpq_cart', null, time() - HOUR_IN_SECONDS);
 			
 			// PHP Sesion
-			WooDecimalProduct_StartSession ();
+			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
 			
-			$_SESSION[$Cart_Name] = '';			
+			if ($Session_Started) {
+				$_SESSION[$Cart_Name] = '';
+			}
 		}	
 	}
 
@@ -877,7 +897,8 @@
 		} else {
 			// Анонимный Пользователь. 
 			
-			WooDecimalProduct_StartSession ();
+			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);		
 			
 			$WDPQ_Cart = isset( $_SESSION["wdpq_cart"] ) ? $_SESSION["wdpq_cart"]: null; // phpcs:ignore
 		}
