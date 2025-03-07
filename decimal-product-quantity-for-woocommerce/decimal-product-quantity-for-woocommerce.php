@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 17.51.3
+Version: 17.52
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -11,6 +11,7 @@ Author URI: https://wpgear.xyz
 License: GPLv2
 */
 
+include_once( __DIR__ .'/includes/blocks/blocks.php' );	
 	include_once( __DIR__ .'/includes/functions.php' );
 	include_once( __DIR__ .'/includes/admin/admin_setup_woo.php' );
 	include_once( __DIR__ .'/includes/admin/admin_setup_product.php' );
@@ -41,12 +42,17 @@ License: GPLv2
 	
 	/* JS Script.
 	----------------------------------------------------------------- */	
-	add_action ('wp_enqueue_scripts', 'WooDecimalProduct_Admin_Style', 25);
-	add_action ('admin_enqueue_scripts', 'WooDecimalProduct_Admin_Style', 25);
-	function WooDecimalProduct_Admin_Style ($hook) {		
+	add_action ('wp_enqueue_scripts', 'WooDecimalProduct_Admin_Style');
+	add_action ('admin_enqueue_scripts', 'WooDecimalProduct_Admin_Style');
+	function WooDecimalProduct_Admin_Style ($hook) {
+		$debug_process = 'enqueue_scripts';
+		
+		global $WooDecimalProduct_Plugin_Version;			
+		wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_Version .'includes/wdpq_page_cart.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
+
 		global $WooDecimalProduct_Plugin_URL;
 		
-		wp_enqueue_script ('woodecimalproduct', $WooDecimalProduct_Plugin_URL .'includes/woodecimalproduct.js'); // phpcs:ignore 
+		wp_enqueue_script ('woodecimalproduct', $WooDecimalProduct_Plugin_URL .'includes/woodecimalproduct.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 		
 		wp_enqueue_style ('wdpq_style', $WooDecimalProduct_Plugin_URL .'style.css'); // phpcs:ignore
 	}
@@ -91,7 +97,7 @@ License: GPLv2
 		$WooDecimalProduct_Plugin_Version = $Plugin_Data['Version'];
 	}
 	
-	/* Страница Товара и Корзина
+	/* Страница Товара и Корзина. Классический вариант. Не Блочные.
      * Минимальное / Максимально кол-во выбора Товара, Шаг, Значение по-Умолчанию на странице Товара и Корзины.
 	 * woocommerce\includes\wc-template-functions.php
 	 * Woo version > 9.4.3
@@ -255,7 +261,7 @@ License: GPLv2
 
 		WDPQ_Debugger ($message, '$message', $debug_process, __FUNCTION__, __LINE__);
 		WDPQ_Debugger ($products, '$products', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__);// phpcs:ignore
 		
 		$Variation_ID = isset( $_REQUEST['variation_id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['variation_id'] ) ) : 0; // phpcs:ignore
 		
@@ -577,8 +583,9 @@ License: GPLv2
 		// WDPQ_Debugger ($Cart_Content, '$Cart_Content', $debug_process, __FUNCTION__, __LINE__);
 		
 		$Cart_Items = isset( $_REQUEST['cart'] ) ? $_REQUEST['cart'] : null; // phpcs:ignore	
-		WDPQ_Debugger ($Cart_Items, '$Cart_Items', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
 		
+		// Это - Корзина.
 		if ($Cart_Items) {
 			$WDPQ_Cart = array ();
 			
@@ -712,7 +719,7 @@ License: GPLv2
 		
 		return $Cart_Total;		
 		
-		// Видимо, были некоторые заморогчки в предыдущих версиях. С Купонами - Определенно.
+		// Видимо, были некоторые заморочки в предыдущих версиях. С Купонами - Определенно.
 	}
 
 	/* Cart. Tax. Amount.
@@ -915,7 +922,7 @@ License: GPLv2
 	function WooDecimalProduct_Action_cart_is_empty () {
 		$debug_process = 'cart-empty';
 
-		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
 
 		$Action = isset($_REQUEST['wdpq_create_cart']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_create_cart'])) : null; // phpcs:ignore
 		$Nonce 	= isset($_REQUEST['wdpq_wpnonce']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_wpnonce'])) : 'none'; // phpcs:ignore	
@@ -993,15 +1000,20 @@ License: GPLv2
 		}		
 	}
 	
-	/* Coupons. Woo Settings.
+	/* DashBoard. Уведомления.
+	 *
+	 * Coupons. Woo Settings.
 	 * woocommerce\templates\cart\cart-totals.php
 	 * woocommerce\includes\wc-cart-functions.php
 	 * wc_cart_totals_coupon_html( $coupon )
+	 *
+	 * Block Layouts. All Pages.
 	----------------------------------------------------------------- */	
 	add_action ('admin_notices', 'WooDecimalProduct_Action_admin_notices');
 	function WooDecimalProduct_Action_admin_notices () {
 		$debug_process = 'admin_notices';
 		
+		// Coupons
 		$screen = get_current_screen();
 		$screen_id = $screen -> id;
 		// WDPQ_Debugger ($screen_id, '$screen_id', $debug_process, __FUNCTION__, __LINE__);
@@ -1009,8 +1021,28 @@ License: GPLv2
 		if ($screen_id == 'edit-shop_coupon') {
 			$Notice = __( 'Correct processing of coupons is possible only in the Pro version "Decimal Product Quantity for WooCommerce". Sorry.', 'decimal-product-quantity-for-woocommerce' );
 	
-			echo '<div id="wdpq_warning" class="notice notice-warning"><p>' .esc_html( $Notice ) .'</p></div>';
+			echo '<div id="wdpq_warning_coupons" class="notice notice-warning notice-wdpq"><p>' .esc_html( $Notice ) .'</p></div>';
 		}	
+		
+		// Block Layouts
+		$BlockLayots = WooDecimalProduct_Blocks_Check_BlockLayots();
+		WDPQ_Debugger ($BlockLayots, '$BlockLayots', $debug_process, __FUNCTION__, __LINE__);
+		
+		$BlockLayots_Items = '';
+		
+		foreach ($BlockLayots as $Item) {
+			if ($BlockLayots_Items) {
+				$BlockLayots_Items .= ', ';
+			}
+			$BlockLayots_Items .= $Item;
+		}
+		
+		if ($BlockLayots_Items) {
+			$Notice = __( 'The current version of the plugin "Decimal Product Quantity for Woocommerce" will not work correctly if the pages: Cart, Checkout, Order - have a block structure. Check the Pages: ', 'decimal-product-quantity-for-woocommerce' );
+			$Notice .= $BlockLayots_Items;
+			
+			echo '<div id="wdpq_warning_blocks" class="notice notice-warning notice-wdpq"><p>' .esc_html( $Notice ) .'</p></div>';
+		}
 	}
 	
 	/* Coupons. Disable.
@@ -1223,11 +1255,3 @@ License: GPLv2
 		
 		return $completed;
 	}
-	
-// add_filter ('wpdesk_ceneo_product_ceneo_avail', 'WooDecimalProduct_wpdesk_ceneo', 20, 2);
-// function WooDecimalProduct_wpdesk_ceneo ($result, $source) {
-	// $debug_process = 'wpdesk_ceneo';
-	
-	// WDPQ_Debugger ($result, '$result', $debug_process, __FUNCTION__, __LINE__);
-	// WDPQ_Debugger ($source, '$source', $debug_process, __FUNCTION__, __LINE__);
-// }

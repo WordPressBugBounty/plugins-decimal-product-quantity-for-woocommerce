@@ -1,7 +1,7 @@
 <?php
 /*
  * Decimal Product Quantity for WooCommerce
- *uninstall.php
+ * uninstall.php
  */
 
 	// if uninstall.php is not called by WordPress, die

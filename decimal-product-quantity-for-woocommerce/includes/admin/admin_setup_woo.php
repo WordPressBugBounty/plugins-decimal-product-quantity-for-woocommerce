@@ -52,20 +52,20 @@
 			<table class="wc_status_table widefat" cellspacing="0">
 				<thead>
 					<tr>
-						<th colspan="3" data-export-label="Status report information"><h2>WPGear Info<?php echo wc_help_tip( esc_html__( 'This section shows information about Ext. Data.', 'decimal-product-quantity-for-woocommerce' ) ); ?></h2></th>
+						<th colspan="3" data-export-label="Status report information"><h2>WPGear Info<?php echo wc_help_tip( esc_html__( 'This section shows information about Ext. Data.', 'decimal-product-quantity-for-woocommerce' ) ); // phpcs:ignore ?></h2></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td data-export-label="Generated at">Session: 'PHP_SESSION_NONE'</td>
-						<td class="help"><?php echo wc_help_tip( esc_html__( 'Displays is defined constant Session. For WPGear support.', 'decimal-product-quantity-for-woocommerce' ) ); /* phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped */ ?></td>
-						<td><?php echo $WDPQ_PHP_SESSION_NONE; ?></td>
+						<td class="help"><?php echo wc_help_tip( esc_html__( 'Displays is defined constant Session. For WPGear support.', 'decimal-product-quantity-for-woocommerce' ) ); // phpcs:ignore ?></td>
+						<td><?php echo esc_html( $WDPQ_PHP_SESSION_NONE ); ?></td>
 					</tr>
 					
 					<tr>
 						<td data-export-label="Generated at">Session 'PHP_SESSION_ACTIVE'</td>
-						<td class="help"><?php echo wc_help_tip( esc_html__( 'Displays is defined constant Session. For WPGear support.', 'decimal-product-quantity-for-woocommerce' ) ); /* phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped */ ?></td>
-						<td><?php echo $WDPQ_PHP_SESSION_ACTIVE; ?></td>
+						<td class="help"><?php echo wc_help_tip( esc_html__( 'Displays is defined constant Session. For WPGear support.', 'decimal-product-quantity-for-woocommerce' ) ); // phpcs:ignore ?></td>
+						<td><?php echo esc_html( $WDPQ_PHP_SESSION_ACTIVE ); ?></td>
 					</tr>					
 				</tbody>
 			</table>		

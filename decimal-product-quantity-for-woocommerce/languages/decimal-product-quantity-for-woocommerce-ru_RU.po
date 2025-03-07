@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Decimal Product Quantity for WooCommerce\n"
-"POT-Creation-Date: 2025-02-09 21:25+0300\n"
+"POT-Creation-Date: 2025-03-07 19:11+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: WPGear <wpgear.xyz@gmail.com>\n"
 "Language-Team: WPGear Team <wpgear.xyz@gmail.com>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.12\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: decimal-product-quantity-for-woocommerce.php:39
+#: decimal-product-quantity-for-woocommerce.php:41
 msgid ""
 "Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step "
 "& Default preset. Variable Products Supported. Auto correction \"No valid "
@@ -40,20 +40,20 @@ msgstr ""
 "Merchant Center\" (Product data specification) в том числе \"Price_Unit_Label"
 "\" -> [unit_pricing_measure], раздельно для иерархий Категории -> Товары."
 
-#: decimal-product-quantity-for-woocommerce.php:214
+#: decimal-product-quantity-for-woocommerce.php:239
 msgid ""
 "You have exceeded the allowed Maximum Quantity for this product. Check Cart."
 msgstr "Вы превысили максимально допустимое количество для этого Товара."
 
 # WooCommerce. No need Translate.
-#: decimal-product-quantity-for-woocommerce.php:290
+#: decimal-product-quantity-for-woocommerce.php:337
 #, php-format
 msgctxt "Item name in quotes"
 msgid "&ldquo;%s&rdquo;"
 msgstr ""
 
 # WooCommerce. No need Translate.
-#: decimal-product-quantity-for-woocommerce.php:300
+#: decimal-product-quantity-for-woocommerce.php:347
 #, php-format
 msgid "%s has been added to your cart."
 msgid_plural "%s have been added to your cart."
@@ -62,43 +62,36 @@ msgstr[1] ""
 msgstr[2] ""
 
 # WooCommerce. No need Translate.
-#: decimal-product-quantity-for-woocommerce.php:305
+#: decimal-product-quantity-for-woocommerce.php:352
 msgid "Continue shopping"
 msgstr ""
 
 # WooCommerce. No need Translate.
-#: decimal-product-quantity-for-woocommerce.php:307
+#: decimal-product-quantity-for-woocommerce.php:354
 msgid "View cart"
 msgstr ""
 
-#: decimal-product-quantity-for-woocommerce.php:476
+#: decimal-product-quantity-for-woocommerce.php:440
+#: decimal-product-quantity-for-woocommerce.php:511
 msgid "- No valid value. Auto correction nearest valid value:"
 msgstr "- Некорректное значение. Автокоррекция до ближайшего правильного:"
 
-#: decimal-product-quantity-for-woocommerce.php:486
-#: decimal-product-quantity-for-woocommerce.php:668
+#: decimal-product-quantity-for-woocommerce.php:441
+#: decimal-product-quantity-for-woocommerce.php:512
 msgid ""
 "- More than the maximum allowed for this Product. Auto correction to Max:"
 msgstr ""
 "- Больше, чем допустимо для данного Товара. Автокоррекция до Максимума:"
 
-#: decimal-product-quantity-for-woocommerce.php:1106
-msgid "Real value may be Rounded"
-msgstr "Реальное значение, может быть округленным"
-
-#: decimal-product-quantity-for-woocommerce.php:1107
-msgid "(may be Rounded)"
-msgstr "(Возможно, округление)"
-
-#: decimal-product-quantity-for-woocommerce.php:1265
+#: decimal-product-quantity-for-woocommerce.php:900
 msgid "Will be available after creating the Cart"
 msgstr "Будет доступно после создания Корзины"
 
-#: decimal-product-quantity-for-woocommerce.php:1274
+#: decimal-product-quantity-for-woocommerce.php:903
 msgid "Create Cart"
 msgstr "Создать Корзину"
 
-#: decimal-product-quantity-for-woocommerce.php:1287
+#: decimal-product-quantity-for-woocommerce.php:909
 msgid ""
 "These Products were in your previous Cart. You can \"Create Cart\" based on "
 "them."
@@ -106,7 +99,7 @@ msgstr ""
 "Эти товары были в вашей предыдущей Корзине. Можно \"Создать Корзину\" на их "
 "основе."
 
-#: decimal-product-quantity-for-woocommerce.php:1380
+#: decimal-product-quantity-for-woocommerce.php:1022
 msgid ""
 "Correct processing of coupons is possible only in the Pro version \"Decimal "
 "Product Quantity for WooCommerce\". Sorry."
@@ -114,7 +107,17 @@ msgstr ""
 "Корректная обработка Купонов возможна толька в PRO версии \"Decimal Product "
 "Quantity for WooCommerce\". Извините."
 
-#: decimal-product-quantity-for-woocommerce.php:1414
+#: decimal-product-quantity-for-woocommerce.php:1041
+msgid ""
+"The current version of the plugin \"Decimal Product Quantity for Woocommerce"
+"\" will not work correctly if the pages: Cart, Checkout, Order - have a "
+"block structure. Check the Pages: "
+msgstr ""
+"Текущая версия плагина \"Decimal Product Quantity for Woocommerce\" не будет "
+"работать корректно, если Страницы: Cart, Checkout, Order - имеют Блочную "
+"Структуру. Проверьте Страницы: "
+
+#: decimal-product-quantity-for-woocommerce.php:1080
 msgid "Coupons Disabled, sorry."
 msgstr "Купоны отключены, извините."
 
@@ -149,7 +152,7 @@ msgstr "Нач:"
 
 #: includes/admin/admin_setup_category.php:64
 #: includes/admin/admin_setup_category.php:69
-#: includes/admin/admin_setup_product.php:120
+#: includes/admin/admin_setup_product.php:122
 msgid "Disabled in Global Option."
 msgstr "Отключено в Основных Настройках."
 
@@ -171,7 +174,7 @@ msgstr "Но каждый Товар может иметь свои собств
 
 #: includes/admin/admin_setup_category.php:89
 #: includes/admin/admin_setup_category.php:176
-#: includes/admin/admin_setup_product.php:115 includes/admin/options.php:379
+#: includes/admin/admin_setup_product.php:117 includes/admin/options.php:379
 msgid "Price Unit-Label"
 msgstr "Метка Ценника"
 
@@ -232,60 +235,60 @@ msgstr "WooCommerce RSS Feed"
 
 #: includes/admin/admin_setup_category.php:134
 #: includes/admin/admin_setup_category.php:252
-#: includes/admin/admin_setup_product.php:217
-#: includes/admin/admin_setup_product.php:255 includes/admin/options.php:434
+#: includes/admin/admin_setup_product.php:219
+#: includes/admin/admin_setup_product.php:257 includes/admin/options.php:434
 #: includes/admin/options.php:453
 msgid "* PRO Version only!"
 msgstr "* для PRO Версии!"
 
-#: includes/admin/admin_setup_product.php:129
+#: includes/admin/admin_setup_product.php:131
 msgid "Quantity Options"
 msgstr "Опции Количества"
 
-#: includes/admin/admin_setup_product.php:135
+#: includes/admin/admin_setup_product.php:137
 msgid "* If not specified, it will be as in"
 msgstr "* Если не задано, то используются настройки из"
 
-#: includes/admin/admin_setup_product.php:145
+#: includes/admin/admin_setup_product.php:147
 msgid "Minimum"
 msgstr "Минимум"
 
-#: includes/admin/admin_setup_product.php:148
+#: includes/admin/admin_setup_product.php:150
 msgid "Set the Min of changing the quantity: 0.1 0.5 100 e.t.c (Default = "
 msgstr ""
 "Минимально допустимое значение для изменения количества. Например: 0.1 0.5 "
 "100 и.т.д. (По умолчанию = "
 
-#: includes/admin/admin_setup_product.php:156
+#: includes/admin/admin_setup_product.php:158
 msgid "Default Set"
 msgstr "Начальное значение"
 
-#: includes/admin/admin_setup_product.php:159
+#: includes/admin/admin_setup_product.php:161
 msgid "Set the Default quantity: 0.1 0.5 100 e.t.c (Default = "
 msgstr ""
 "Начальное значение количества. Например: 0.1 0.5 100 и.т.д. (По умолчанию = "
 
-#: includes/admin/admin_setup_product.php:167
+#: includes/admin/admin_setup_product.php:169
 msgid "Step change +/-"
 msgstr "Шаг изменения */-"
 
-#: includes/admin/admin_setup_product.php:170
+#: includes/admin/admin_setup_product.php:172
 msgid "Set the Step of changing the quantity: 0.1 0.5 100 e.t.c (Default = "
 msgstr ""
 "Шаг для изменения количества. Например: 0.1 0.5 100 и.т.д. (По умолчанию = "
 
-#: includes/admin/admin_setup_product.php:178
+#: includes/admin/admin_setup_product.php:180
 msgid "Maximum"
 msgstr "Максимум"
 
-#: includes/admin/admin_setup_product.php:181
+#: includes/admin/admin_setup_product.php:183
 msgid ""
 "Set the Max of changing the quantity: 0.1 0.5 100 e.t.c (or leave blank)"
 msgstr ""
 "Минимально допустимое значение для изменения количества. Например: 0.1 0.5 "
 "100 и.т.д. (Или оставьте пустым)"
 
-#: includes/admin/admin_setup_product.php:192
+#: includes/admin/admin_setup_product.php:194
 msgid ""
 "View Price Unit-Label. Sample: \"Price per Kg.\" / \"Price per Meter\". Or "
 "leave blank to use Category value."
@@ -293,37 +296,45 @@ msgstr ""
 "\"Метка Ценника\". Например: \"Цена за Кг\" / \"Цена за Метр\". Или оставьте "
 "пустым, будут использоваться Настройки из Категории или Основных Настроек."
 
-#: includes/admin/admin_setup_product.php:200
+#: includes/admin/admin_setup_product.php:202
 msgid "Disable Price Unit-Label"
 msgstr "Откл. Метку Ценника"
 
-#: includes/admin/admin_setup_product.php:202
+#: includes/admin/admin_setup_product.php:204
 msgid "Disable Price Unit-Label for this Product."
 msgstr "Отключить \"Метку Ценника\" для данного Товара."
 
-#: includes/admin/admin_setup_product.php:210
+#: includes/admin/admin_setup_product.php:212
 msgid "Disable RSS Feed"
 msgstr "Отключить RSS Feed"
 
-#: includes/admin/admin_setup_product.php:212
+#: includes/admin/admin_setup_product.php:214
 msgid "Disable RSS Feed for this Product."
 msgstr "Отключить RSS Feed для данного Товара."
 
-#: includes/admin/admin_setup_product.php:260
+#: includes/admin/admin_setup_product.php:262
 msgid "Min cart Quantity (if the variation has a separate value)"
 msgstr "Минимальное Кол-во (если вариация имеет раздельное значение)"
 
-#: includes/admin/admin_setup_product.php:267
+#: includes/admin/admin_setup_product.php:269
 msgid "Step change Quantity (if the variation has a separate value)"
 msgstr "Шаг изменения Кол-ва (если вариация имеет раздельное значение)"
 
-#: includes/admin/admin_setup_product.php:274
+#: includes/admin/admin_setup_product.php:276
 msgid "Default Quantity (if the variation has a separate value)"
 msgstr "Начальное Кол-во (если вариация имеет раздельное значение)"
 
-#: includes/admin/admin_setup_product.php:281
+#: includes/admin/admin_setup_product.php:283
 msgid "Max cart Quantity (if the variation has a separate value)"
 msgstr "Максимальное Кол-во (если вариация имеет раздельное значение)"
+
+#: includes/admin/admin_setup_woo.php:55
+msgid "This section shows information about Ext. Data."
+msgstr "В этом разделе показана информация о доп. Данных."
+
+#: includes/admin/admin_setup_woo.php:61 includes/admin/admin_setup_woo.php:67
+msgid "Displays is defined constant Session. For WPGear support."
+msgstr "Отображает системные константы Сессии. Для поддержки WPGear."
 
 #: includes/admin/options.php:47
 msgid "Warning! Data Incorrect. Update Disable."
@@ -500,6 +511,12 @@ msgstr "Удалять Мета-Данные при Удалении Плаги�
 #: includes/admin/options.php:527
 msgid "Save"
 msgstr "Сохранить"
+
+#~ msgid "Real value may be Rounded"
+#~ msgstr "Реальное значение, может быть округленным"
+
+#~ msgid "(may be Rounded)"
+#~ msgstr "(Возможно, округление)"
 
 #~ msgid "Ext:"
 #~ msgstr "Дополнительно:"
