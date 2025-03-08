@@ -7,7 +7,7 @@ Tested up to: 6.7.2
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 17.52
+Stable tag: 17.53
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -65,6 +65,10 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 17.53 =
+	2025.03.08
+	* Fix Cart Subtotal/Total if User LogedIn.
+	
 = 17.52 =
 	2025.03.07
 	* Add Notice if Pages: Cart, Checkout, Order - have Block Layouts. The current version of the plugin will not work correctly with Block Structure.

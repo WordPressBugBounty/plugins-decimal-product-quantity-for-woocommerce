@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 17.52
+Version: 17.53
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -11,7 +11,7 @@ Author URI: https://wpgear.xyz
 License: GPLv2
 */
 
-include_once( __DIR__ .'/includes/blocks/blocks.php' );	
+	include_once( __DIR__ .'/includes/blocks/blocks.php' );	
 	include_once( __DIR__ .'/includes/functions.php' );
 	include_once( __DIR__ .'/includes/admin/admin_setup_woo.php' );
 	include_once( __DIR__ .'/includes/admin/admin_setup_product.php' );
@@ -46,7 +46,7 @@ include_once( __DIR__ .'/includes/blocks/blocks.php' );
 	add_action ('admin_enqueue_scripts', 'WooDecimalProduct_Admin_Style');
 	function WooDecimalProduct_Admin_Style ($hook) {
 		$debug_process = 'enqueue_scripts';
-		
+				
 		global $WooDecimalProduct_Plugin_Version;			
 		wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_Version .'includes/wdpq_page_cart.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 
@@ -261,7 +261,7 @@ include_once( __DIR__ .'/includes/blocks/blocks.php' );
 
 		WDPQ_Debugger ($message, '$message', $debug_process, __FUNCTION__, __LINE__);
 		WDPQ_Debugger ($products, '$products', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__);// phpcs:ignore
+		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
 		
 		$Variation_ID = isset( $_REQUEST['variation_id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['variation_id'] ) ) : 0; // phpcs:ignore
 		
@@ -703,6 +703,32 @@ include_once( __DIR__ .'/includes/blocks/blocks.php' );
 		}
 		
 		return $should_clear_cart_after_payment;
+	}	
+	
+	/* Корзина
+	 * Переопределяем WC-Cart непосредственно перед формированием Контента Корзины
+	----------------------------------------------------------------- */
+	add_action('woocommerce_before_cart_contents', 'WooDecimalProduct_Action_before_cart_contents', 9999);
+	function WooDecimalProduct_Action_before_cart_contents () {
+		$debug_process = 'before_cart_contents';
+
+		$WooCart = WC() -> cart -> get_cart();
+		// WDPQ_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
+		
+		foreach ( $WooCart as $Cart_Item_Key => $cart_item ) {
+			WDPQ_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+			// WDPQ_Debugger ($cart_item, '$cart_item', $debug_process, __FUNCTION__, __LINE__);
+			
+			$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Cart_Item_Key);
+			WDPQ_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+			
+			$WDPQ_Cart_Item_Quantity = $WDPQ_Cart_Item['quantity'];
+			WDPQ_Debugger ($WDPQ_Cart_Item_Quantity, '$WDPQ_Cart_Item_Quantity', $debug_process, __FUNCTION__, __LINE__);
+			
+			if ($WDPQ_Cart_Item_Quantity > 0) {
+				WC() -> cart -> set_quantity( $Cart_Item_Key, $WDPQ_Cart_Item_Quantity, $refresh_totals = true );
+			}
+		}
 	}	
 	
 	/* Cart. Total.
