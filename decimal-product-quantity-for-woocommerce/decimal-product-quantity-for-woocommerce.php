@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 17.53
+Version: 17.53.1
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -47,14 +47,13 @@ License: GPLv2
 	function WooDecimalProduct_Admin_Style ($hook) {
 		$debug_process = 'enqueue_scripts';
 				
-		global $WooDecimalProduct_Plugin_Version;			
-		wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_Version .'includes/wdpq_page_cart.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
-
+		global $WooDecimalProduct_Plugin_Version;
 		global $WooDecimalProduct_Plugin_URL;
 		
+		wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_cart.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 		wp_enqueue_script ('woodecimalproduct', $WooDecimalProduct_Plugin_URL .'includes/woodecimalproduct.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 		
-		wp_enqueue_style ('wdpq_style', $WooDecimalProduct_Plugin_URL .'style.css'); // phpcs:ignore
+		wp_enqueue_style ('wdpq_style', $WooDecimalProduct_Plugin_URL .'style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 	}
 
 	/* AJAX Processing
