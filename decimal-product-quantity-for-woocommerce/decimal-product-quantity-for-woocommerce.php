@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 17.53.2
+Version: 17.53.3
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -50,7 +50,7 @@ License: GPLv2
 		global $WooDecimalProduct_Plugin_Version;
 		global $WooDecimalProduct_Plugin_URL;
 		
-		wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_cart.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
+		// wp_enqueue_script ('wdpq_page_cart', $WooDecimalProduct_Plugin_URL .'includes/wdpq_page_cart.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 		wp_enqueue_script ('woodecimalproduct', $WooDecimalProduct_Plugin_URL .'includes/woodecimalproduct.js', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 		
 		wp_enqueue_style ('wdpq_style', $WooDecimalProduct_Plugin_URL .'style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
@@ -462,7 +462,7 @@ License: GPLv2
 		WDPQ_Debugger ($WooDecimalProduct_Auto_Correction_Quantity, '$WooDecimalProduct_Auto_Correction_Quantity', $debug_process, __FUNCTION__, __LINE__);
 		WDPQ_Debugger ($WooDecimalProduct_AJAX_Cart_Update, '$WooDecimalProduct_AJAX_Cart_Update', $debug_process, __FUNCTION__, __LINE__);
 		
-		if ($WooDecimalProduct_Auto_Correction_Quantity || $WooDecimalProduct_AJAX_Cart_Update || $WooDecimalProduct_ButtonsPM_Cart_Enable) {	
+		// if ($WooDecimalProduct_Auto_Correction_Quantity || $WooDecimalProduct_AJAX_Cart_Update || $WooDecimalProduct_ButtonsPM_Cart_Enable) {	
 			$WooDecimalProduct_Cart = array();
 			
 			$No_MaxEmpty = '-1';	// Unlimited
@@ -513,7 +513,7 @@ License: GPLv2
 			WDPQ_Debugger ($Params, '$Params', $debug_process, __FUNCTION__, __LINE__);
 			
 			wp_localize_script('wdpq_page_cart', 'wdpq_script_params', $Params);			
-		}	
+		// }	
 	}
 	
 	/* Страница Товара. 
