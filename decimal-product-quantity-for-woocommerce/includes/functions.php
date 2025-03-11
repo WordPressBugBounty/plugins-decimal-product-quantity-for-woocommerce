@@ -491,7 +491,7 @@
 	 * Create New / Update
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_Cart, $isDraft = false) {
-		$debug_process = 'f_update_cartsession';
+		$debug_process = 'f_update_wdpqcart_session';
 
 		WDPQ_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
 		WDPQ_Debugger ($isDraft, '$isDraft', $debug_process, __FUNCTION__, __LINE__);
@@ -586,12 +586,14 @@
 				$Item_Exist = false;
 				
 				foreach ($WDPQ_Cart as $Cart_Product_Item) {
-					$Cart_Item_ProductID 	= $Cart_Product_Item['product_id'];
+					$Cart_Item_Key = $Cart_Product_Item['key'];
 					
 					if ($Add_to_Cart_Key == $Cart_Item_Key) {
 						$Item_Exist = true;
 					}
 				}
+				
+				WDPQ_Debugger ($Item_Exist, '$Item_Exist', $debug_process, __FUNCTION__, __LINE__);
 				
 				if (! $Item_Exist) {
 					$Item = array(
