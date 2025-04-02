@@ -6,10 +6,16 @@
 	
     if (!current_user_can('edit_dashboard')) {
         return;
-    }	
+    }
+
+	$debug_process = 'setup_options';
+	WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
 	
-	global $WooDecimalProduct_Plugin_URL;
-	wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'includes/admin/admin-style.css'); // phpcs:ignore	
+	$WooDecimalProduct_Plugin_URL = plugin_dir_url ( __FILE__ ); // со слэшем на конце
+
+	$Plugin_Data = get_plugin_data( __FILE__ );
+	$WooDecimalProduct_Plugin_Version = $Plugin_Data['Version'];
+	wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 	
 	$WooDecimalProduct_Nonce = 'Update_Options_DecimalProductQuantityForWooCommerce';
 	$nonce = wp_create_nonce ($WooDecimalProduct_Nonce);	
@@ -28,6 +34,8 @@
 	
 	$WooDecimalProduct_ConsoleLog_Debuging		= get_option ('woodecimalproduct_debug_log', 0);
 	$WooDecimalProduct_Uninstall_Del_MetaData 	= get_option ('woodecimalproduct_uninstall_del_metadata', 0);
+	
+	$WooDecimalProduct_StorageType 				= get_option ('woodecimalproduct_storage_type', 'system');
 	
 	$WooDecimalProduct_RSS_Feed_Link = get_site_url() ."?feed=products";
 	
@@ -65,6 +73,8 @@
 		
 		$New_WDPQ_ConsoleLog_Debuging 		= isset($_REQUEST['wdpq_debug_log']) ? 1 : 0;
 		$New_WDPQ_Uninstall_Del_MetaData	= isset($_REQUEST['wdpq_uninstall_del']) ? 1 : 0;
+		
+		$New_WDPQ_StorageType = isset($_REQUEST['wdpq_storage_type']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_storage_type'])) : 'local';
 
 		$New_WDPQ_Min 	= WooDecimalProduct_Normalize_Number ($New_WDPQ_Min);
 		$New_WDPQ_Max 	= WooDecimalProduct_Normalize_Number ($New_WDPQ_Max);
@@ -217,6 +227,11 @@
 		if ($New_WDPQ_Uninstall_Del_MetaData != $WooDecimalProduct_Uninstall_Del_MetaData) {
 			$WooDecimalProduct_Uninstall_Del_MetaData = $New_WDPQ_Uninstall_Del_MetaData;
 			update_option('woodecimalproduct_uninstall_del_metadata', $WooDecimalProduct_Uninstall_Del_MetaData);
+		}
+
+		if ($New_WDPQ_StorageType != $WooDecimalProduct_StorageType) {
+			$WooDecimalProduct_StorageType = $New_WDPQ_StorageType;
+			update_option('woodecimalproduct_storage_type', $WooDecimalProduct_StorageType);
 		}		
 	}	
 ?>
@@ -492,6 +507,59 @@
 						</tbody>
 					</table>
 				</div>
+				
+				<div style="margin-top: 10px; margin-bottom: 20px;">
+					<div style="margin-top: 10px;">
+						<hr>
+						<h3><?php echo esc_html( __('Cart Storage type:', 'decimal-product-quantity-for-woocommerce') ); ?></h3>
+					</div>	
+					
+					<table class="form-table" style="margin-left: 20px;">
+						<tbody>								
+							<tr>
+								<th scope="row" class="wdpq_options_field_label">
+									<label for="wdpq_storage_type_local">
+										<?php echo esc_html( __('System', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</label>
+								</th>
+								<td class="wdpq_options_field_input">
+									<input id="wdpq_storage_type_local" name="wdpq_storage_type" type="radio" value="system" <?php if($WooDecimalProduct_StorageType == 'system') {echo 'checked';} ?>>
+									<span class="wdpq_options_field_description">
+										<?php echo esc_html( __('Choose if Caching on Hosting is used. (Cart Data can be saved after the browser is closed).', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</span>
+								</td>
+							</tr>
+							
+							<tr>							
+								<th scope="row" class="wdpq_options_field_label">
+									<label for="wdpq_storage_type_session">
+										<?php echo esc_html( __('PHP Session', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</label>
+								</th>
+								<td class="wdpq_options_field_input">
+									<input id="wdpq_storage_type_session" name="wdpq_storage_type" type="radio" value="session" <?php if($WooDecimalProduct_StorageType == 'session') {echo 'checked';} ?>>
+									<span class="wdpq_options_field_description">
+										<?php echo esc_html( __('Choose if your users can use Public Terminals. (Cart Data deleted after the browser closed).', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</span>
+								</td>								
+							</tr>	
+
+							<tr>
+								<th scope="row" class="wdpq_options_field_label">
+									<label for="wdpq_storage_type_local">
+										<?php echo esc_html( __('Local Storage', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</label>
+								</th>
+								<td class="wdpq_options_field_input">
+									<input disabled="true" id="wdpq_storage_type_local" name="wdpq_storage_type" type="radio" value="local" <?php if($WooDecimalProduct_StorageType == 'local') {echo 'checked';} ?>>
+									<span class="wdpq_options_field_description">
+										<?php echo esc_html( __('Experimental option. Testing. Inaccessible..', 'decimal-product-quantity-for-woocommerce') ); ?>
+									</span>
+								</td>
+							</tr>							
+						</tbody>
+					</table>
+				</div>				
 				
 				<div style="margin-top: 10px; margin-bottom: 20px;">
 					<div style="margin-top: 10px;">

@@ -29,6 +29,13 @@
 		
 		var Element_Input_Quantity = jQuery("input[name=quantity]");
 		
+		// Fix Quatnity
+		if (WDPQ_Min_Qnt == WDPQ_Max_Qnt) {
+			WDPQ_ButtonsPM_Enable = 0;
+			
+			Element_Input_Quantity[0].type = 'text';
+		}		
+		
 		// Buttons [+ / -]
 		if (WDPQ_ButtonsPM_Enable) {
 			var WDPQ_Button_Minus 	= document.createElement("button");

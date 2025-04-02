@@ -13,15 +13,35 @@
 		var WDPQ_ButtonsPM_Cart_Enable 		= wdpq_script_params['buttons_pm_enable'];
 		var WDPQ_Msg_NoValidValue 			= wdpq_script_params['msg_no_valid_value'];
 		var WDPQ_Msg_MoreThanMaxAllowed 	= wdpq_script_params['msg_more_than_the_max_allowed'];	
+		var WDPQ_Storage_Type_Local 		= wdpq_script_params['storage_type_local'];
 
 		WDPQ_ConsoleLog_Debug_Enable 	= Number(WDPQ_ConsoleLog_Debug_Enable);	
 		WDPQ_Auto_Correction_Enable		= Number( WDPQ_Auto_Correction_Enable );
 		WDPQ_AJAX_Cart_Update_Enable	= Number( WDPQ_AJAX_Cart_Update_Enable );
 		WDPQ_ButtonsPM_Cart_Enable		= Number( WDPQ_ButtonsPM_Cart_Enable );
+WDPQ_Storage_Type_Local = Number( WDPQ_Storage_Type_Local );
 		
-		// Купоны доступны только в Pro Версии. Потому, что с ними все стало совсем не просто.
-		WDPQ_Hide_CouponBox ();
-		
+if (WDPQ_Storage_Type_Local) {
+	var WDPQ_Nonce = 'wdpq_ajax_processing';
+	
+	var WDPQ_Cart = localStorage.getItem ('wdpq_cart');
+	console.log(WDPQ_Cart);
+	
+	// var WDPQ_Ajax_URL = ajaxurl;	
+	// var WDPQ_Ajax_Data = 'action=get_wdpq_cart&cart=' + WDPQ_Cart + '&_wpnonce=' + WDPQ_Nonce;
+	
+	// jQuery.ajax({
+		// type:"POST",
+		// url: WDPQ_Ajax_URL,
+		// dataType: 'json',
+		// data: WDPQ_Ajax_Data,
+		// cache: false,
+		// success: function(jsondata) {
+			// var Obj_Request = jsondata;	
+		// }
+	// });	
+}
+	
 		// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину"
 		WDPQ_Hide_CartButton ();					
 
@@ -200,14 +220,24 @@
 				WDPQ_Element_InputQNT.attr('product_id', key);
 				
 				if (WDPQ_ButtonsPM_Cart_Enable) {
-					// Добавляем Кнопки: +/- для текущего Элемента Input Quantity.
-					if (Elements_ButtonsPM.length > 0) {
-						// Кнопки уже сформированы. Проходим мимо.							
+					var WDPQ_ItemProduct_QuantityData_Min = WDPQ_QuantityData[key].min_qnt;
+					var WDPQ_ItemProduct_QuantityData_Max = WDPQ_QuantityData[key].max_qnt;				
+										
+					if (WDPQ_ItemProduct_QuantityData_Min == WDPQ_ItemProduct_QuantityData_Max) {
+						// Fix Quantiy for Sale.
+						// console.log(WDPQ_Element_InputQNT);
+						
+						WDPQ_Element_InputQNT.attr('readonly', 'true');
+						WDPQ_Element_InputQNT[0].type = 'text';
 					} else {
-						WDPQ_Add_Buttons_QNT (key);
+						// Добавляем Кнопки: +/- для текущего Элемента Input Quantity.
+						if (Elements_ButtonsPM.length > 0) {
+							// Кнопки уже сформированы. Проходим мимо.							
+						} else {
+							WDPQ_Add_Buttons_QNT (key);
+						}
 					}
 				}
-
 			});	
 		}
 
@@ -247,8 +277,7 @@
 		// Событие после обновления корзины.
 		jQuery(document.body).on('updated_cart_totals', function(){
 			WDPQ_ConsoleLog_Debuging ('updated_cart_totals');
-			
-			WDPQ_Hide_CouponBox ();
+
 			WDPQ_Hide_CartButton ();
 			
 			WDPQ_Add_Attribute_ProductID_for_InputQNT ();
@@ -280,11 +309,5 @@
 			if (WDPQ_AJAX_Cart_Update_Enable) {
 				jQuery("[name='update_cart']").parent().css('display', 'none');
 			}
-		}
-		
-		// Удаляем Блок Купонов.
-		function WDPQ_Hide_CouponBox () {
-			var WooDecimalProduct_Element_CouponBox = jQuery("div[class='coupon']");
-			WooDecimalProduct_Element_CouponBox.remove();
 		}
 	});

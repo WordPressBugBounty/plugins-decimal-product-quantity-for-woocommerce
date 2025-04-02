@@ -70,8 +70,12 @@
 			$Style_and_Title_RSSFeedEnable = "style='display:inline-block; cursor:help; color:red;' title='$Title'";
 		}	
 
-		global $WooDecimalProduct_Plugin_URL;
-		wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'includes/admin/admin-style.css'); // phpcs:ignore		
+$WooDecimalProduct_Plugin_URL = plugin_dir_url ( __FILE__ ); // со слэшем на конце
+
+$Plugin_Data = get_plugin_data( __FILE__ );
+$WooDecimalProduct_Plugin_Version = $Plugin_Data['Version'];
+
+wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 		
 		if ($term == 'product_cat') {
 			// Mode: "Add new category"

@@ -1,6 +1,7 @@
 <?php
 /*
  * Decimal Product Quantity for WooCommerce
+ * Blocks
  * blocks.php
  */
  
@@ -22,6 +23,11 @@
 			WDPQ_Debugger ($key . ':' .$Page_ID, '$Page_ID', $debug_process, __FUNCTION__, __LINE__);
 
 			$Block_Name = 'woocommerce/' .$key;
+
+// Simulation			
+// if ($key == 'cart') {
+	// $Page_ID = 2130;
+// }
 			
 			$is_Page_BlockLayot = WC_Blocks_Utils::has_block_in_page( $Page_ID, $Block_Name );
 			WDPQ_Debugger ($is_Page_BlockLayot, '$is_Page_BlockLayot', $debug_process, __FUNCTION__, __LINE__);
@@ -34,3 +40,13 @@
 		WDPQ_Debugger ($Result, '$Result', $debug_process, __FUNCTION__, __LINE__);		
 		return $Result;
 	}
+	
+	/* AJAX Processing
+	----------------------------------------------------------------- */
+    add_action ('wp_ajax_WooDecimalProduct_Blocks_Get_WDPQ-Cart', 'WooDecimalProduct_Blocks_Ajax');
+	add_action ('wp_ajax_nopriv_WooDecimalProduct_Blocks_Get_WDPQ-Cart', 'WooDecimalProduct_Blocks_Ajax');
+    function WooDecimalProduct_Blocks_Ajax() {
+		include_once ('ajax_processing.php');
+    }	
+	
+	

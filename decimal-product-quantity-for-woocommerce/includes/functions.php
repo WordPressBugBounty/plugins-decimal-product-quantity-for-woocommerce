@@ -368,7 +368,7 @@
 		
 		$WDPQ_Cart_Total = 0;
 		
-		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession($isDraft = false);
+		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();	
 		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 		
 		if ($WDPQ_Cart) {
@@ -400,7 +400,7 @@
 		
 		$Item = null;
 		
-		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession ($isDraft = false);
+		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
 		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 
 		if ($WDPQ_Cart) {
@@ -428,9 +428,12 @@
 	/* WDPQ Cart. Get $Item by $CartProductKey.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Cart_Item_Key) {
+		$debug_process = 'f_get_cart_item_by_cartproductkey';
+		
 		$Item = null;
 		
-		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession ($isDraft = false);
+		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
+		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 
 		if ($WDPQ_Cart) {
 			foreach ($WDPQ_Cart as $Item) {
@@ -448,9 +451,12 @@
 	/* WDPQ Cart. Get $Product_ID by $CartProductKey.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_WDPQ_Cart_ProductID_by_CartProductKey ($Cart_Item_Key) {
+		$debug_process = 'f_get_cart_productid_by_cartproductkey';
+		
 		$Product_ID = 0;
 		
-		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession ($isDraft = false);
+		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
+		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 
 		if ($WDPQ_Cart) {
 			foreach ($WDPQ_Cart as $Item) {
@@ -471,7 +477,7 @@
 	function WooDecimalProduct_Get_WDPQ_Cart_Quantity_by_CartProductKey ($Cart_Item_Key) {
 		$Quantity = 1;
 		
-		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession ($isDraft = false);
+		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
 
 		if ($WDPQ_Cart) {
 			foreach ($WDPQ_Cart as $Item) {
@@ -495,15 +501,153 @@
 
 		WDPQ_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
 		WDPQ_Debugger ($isDraft, '$isDraft', $debug_process, __FUNCTION__, __LINE__);
+	
+		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
 		
-		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession ($isDraft);
+		if ($WooDecimalProduct_StorageType == 'system') {
+			// StorageType: System Storage	
+			$Cart_Name = 'wdpq_cart';
+			
+			if ($isDraft) {
+				// Черновая Корзина.
+				$Cart_Name = 'wdpq_draft_cart';
+			} 
+			WDPQ_Debugger ($Cart_Name, '$Cart_Name', $debug_process, __FUNCTION__, __LINE__);
+			
+			foreach ($Add_to_Cart as &$Item) {
+				$Product_ID = $Item['product_id'];
+
+				$QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
+				WDPQ_Debugger ($QuantityData, '$QuantityData', $debug_process, __FUNCTION__, __LINE__);
+				
+				$Item['quantity_precision'] = $QuantityData['precision'];
+			}
+
+			WDPQ_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);	
+		}
+		
+		if ($WooDecimalProduct_StorageType == 'local') {
+			// StorageType: Local Storage
+			$Cart_Name = 'wdpq_cart';
+			
+			if ($isDraft) {
+				// Черновая Корзина.
+				$Cart_Name = 'wdpq_draft_cart';
+			} 
+			WDPQ_Debugger ($Cart_Name, '$Cart_Name', $debug_process, __FUNCTION__, __LINE__);
+			
+			foreach ($Add_to_Cart as &$Item) {
+				$Product_ID = $Item['product_id'];
+
+				$QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
+				WDPQ_Debugger ($QuantityData, '$QuantityData', $debug_process, __FUNCTION__, __LINE__);
+				
+				$Item['quantity_precision'] = $QuantityData['precision'];
+			}
+			
+			$Add_to_Cart = wp_json_encode( $Add_to_Cart );
+			WDPQ_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+				
+			$Aajax_URL = admin_url( 'admin-ajax.php' ); // При Инициализации "ajaxurl" в JS еще может быть не определено.
+			
+			?>
+			<script type='text/javascript'>	
+				window.addEventListener ('load', function() {						
+					var WDPQ_Cart_Name = '<?php echo esc_html( $Cart_Name );?>';
+					var Add_to_Cart = '<?php echo esc_html( $Add_to_Cart );?>';
+					var WDPQ_Nonce = 'wdpq_ajax_processing';	
+
+					var WDPQ_Cart = localStorage.getItem (WDPQ_Cart_Name);		
+					
+					if (WDPQ_Cart) {
+						// Update Cart
+						
+						Add_to_Cart = JSON.parse(Add_to_Cart);
+						// console.log(Add_to_Cart);
+						
+						WDPQ_Cart = JSON.parse(WDPQ_Cart);
+						// console.log(WDPQ_Cart);
+						
+						for (i = 0; i < Add_to_Cart.length; i++) {
+							// console.log(Add_to_Cart[i]);
+							
+							var AddToCart_ProductID 		= Add_to_Cart[i].product_id;					
+							var AddToCart_QuantityPrecision = Add_to_Cart[i].quantity_precision;
+							var AddToCart_Quantity 			= Number( Add_to_Cart[i].quantity );
+							// console.log('AddToCart_ProductID: ' + AddToCart_ProductID);
+							
+							var CartItem_Exist = false;
+							
+							if (AddToCart_ProductID > 0) {
+								for (j = 0; j < WDPQ_Cart.length; j++) {
+									// console.log(WDPQ_Cart[j]);
+									
+									var WDPQCart_ProductID 	= WDPQ_Cart[j].product_id;
+									var WDPQCart_Quantity 	= Number( WDPQ_Cart[j].quantity );
+									// console.log('WDPQCart_ProductID: ' + WDPQCart_ProductID);
+									
+									if (WDPQCart_ProductID == AddToCart_ProductID) {
+										// Update Quantity
+										// console.log(WDPQ_Cart[j]);
+										
+										CartItem_Exist = true;
+										
+										var NewQuantity = WDPQCart_Quantity + AddToCart_Quantity;
+										// console.log(NewQuantity);
+										
+										NewQuantity = NewQuantity.toFixed(AddToCart_QuantityPrecision);
+										// console.log('NewQuantity: ' + NewQuantity);
+										
+										WDPQ_Cart[j].quantity = NewQuantity;
+										// console.log(WDPQ_Cart[j]);
+									}
+								}
+								
+								if (! CartItem_Exist) {
+									// Add Item
+									WDPQ_Cart.push( Add_to_Cart[i] );
+								}
+							}
+						}
+						// console.log(WDPQ_Cart);				
+						
+						WDPQ_Cart = JSON.stringify(WDPQ_Cart); 
+						localStorage.setItem( WDPQ_Cart_Name, WDPQ_Cart );
+						
+					} else {
+						// Create Cart
+						WDPQ_Cart = Add_to_Cart;
+						
+						localStorage.setItem( WDPQ_Cart_Name, Add_to_Cart );
+					}
+					
+					// CallBack Processing.
+					var WDPQ_Ajax_URL = '<?php echo esc_html( $Aajax_URL );?>';	
+					var WDPQ_Ajax_Data = 'action=update_wdpq_cart&cart_name=' + WDPQ_Cart_Name + '&cart=' + WDPQ_Cart + '&_wpnonce=' + WDPQ_Nonce;
+					
+					// jQuery.ajax({
+						// type:"POST",
+						// url: WDPQ_Ajax_URL,
+						// dataType: 'json',
+						// data: WDPQ_Ajax_Data,
+						// cache: false,
+						// success: function(jsondata) {
+							// var Obj_Request = jsondata;	
+						// }
+					// });
+				});	
+			</script>
+			<?php		
+		} 
+		
+		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
 		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 
 		if ($WDPQ_Cart)	{
 			// Корзина существует
 			$NewCart_Data = array();
 			
-			// Обновление Количества для имеющихся в Корзине Товаров.
+			// Обновление Количества для имеющихся в Корзине Товаров.			
 			foreach ($WDPQ_Cart as $Cart_Product_Item) {
 				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 				WDPQ_Debugger ($Cart_Product_Item, '$Cart_Product_Item', $debug_process, __FUNCTION__, __LINE__);
@@ -520,7 +664,7 @@
 				$Price_Incl_Tax 		= isset( $Cart_Product_Item['price_tax_incl'] ) ? $Cart_Product_Item['price_tax_incl']: 0;
 				$Tax_Amount 			= isset( $Cart_Product_Item['tax_amount'] ) ? $Cart_Product_Item['tax_amount']: 0;
 				
-				$Item = array(
+				$NewCart_Item = array(
 					'key' => $Cart_Item_Key,
 					'product_id' => $Cart_Item_ProductID,
 					'variation_id' => $Cart_Item_Variation_ID,
@@ -532,8 +676,8 @@
 					'price_tax_incl' => $Price_Incl_Tax,
 					'tax_amount' => $Tax_Amount,					
 				);		
-				
-				foreach ($Add_to_Cart as $Add_to_Cart_Product_Item) {	
+
+				foreach ($Add_to_Cart as $Add_to_Cart_Product_Item) {
 					$Add_to_Cart_Key 			= $Add_to_Cart_Product_Item['key'];
 					$Add_to_Cart_ProductID 		= $Add_to_Cart_Product_Item['product_id'];
 					$Add_to_Cart_VariationID 	= $Add_to_Cart_Product_Item['variation_id'];
@@ -548,10 +692,15 @@
 
 					if ($Add_to_Cart_Key == $Cart_Item_Key) {
 						// Суммируем
+
+						WDPQ_Debugger ($Add_to_Cart_Quantity, '$Add_to_Cart_Quantity', $debug_process, __FUNCTION__, __LINE__);
+						WDPQ_Debugger ($Cart_Item_Quantity, '$Cart_Item_Quantity', $debug_process, __FUNCTION__, __LINE__);
+						
 						$New_Quantity = $Add_to_Cart_Quantity + $Cart_Item_Quantity;
 						$New_Quantity = WooDecimalProduct_Round_ProductQuantity ($Cart_Item_ProductID, $New_Quantity);
+						WDPQ_Debugger ($New_Quantity, '$New_Quantity', $debug_process, __FUNCTION__, __LINE__);
 						
-						$Item = array(
+						$NewCart_Item = array(
 							'key' => $Cart_Item_Key,
 							'product_id' => $Cart_Item_ProductID,
 							'variation_id' => $Cart_Item_Variation_ID,
@@ -566,7 +715,7 @@
 					}
 				}
 				
-				$NewCart_Data[] = $Item;
+				$NewCart_Data[] = $NewCart_Item;
 			}
 
 			// Добавление Новых Товаров
@@ -596,7 +745,7 @@
 				WDPQ_Debugger ($Item_Exist, '$Item_Exist', $debug_process, __FUNCTION__, __LINE__);
 				
 				if (! $Item_Exist) {
-					$Item = array(
+					$NewCart_Item = array(
 						'key' => $Add_to_Cart_Key,
 						'product_id' => $Add_to_Cart_ProductID,
 						'variation_id' => $Add_to_Cart_VariationID,
@@ -609,7 +758,7 @@
 						'tax_amount' => $Add_to_Cart_Tax_Amount,						
 					);
 
-					$NewCart_Data[] = $Item;
+					$NewCart_Data[] = $NewCart_Item;
 				}
 			}
 			
@@ -623,13 +772,17 @@
 		WooDecimalProduct_Set_WDPQ_CartSession ($WDPQ_Cart, $isDraft);
 
 		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
-		return $WDPQ_Cart;
+		
+		return true;
 	}
 
 	/* WDPQ Cart. Set CartSession.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Set_WDPQ_CartSession ($WDPQ_Cart, $isDraft = false) {
 		$debug_process = 'f_set_cartsession';
+		
+		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
+		WDPQ_Debugger ($WooDecimalProduct_StorageType, '$WooDecimalProduct_StorageType', $debug_process, __FUNCTION__, __LINE__);
 
 		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 		WDPQ_Debugger ($isDraft, '$isDraft', $debug_process, __FUNCTION__, __LINE__);
@@ -642,14 +795,14 @@
 			$Cart_Name = 'wdpq_cart';
 		}
 		WDPQ_Debugger ($Cart_Name, '$Cart_Name', $debug_process, __FUNCTION__, __LINE__);
-		
-		$WDPQ_Cart = wp_json_encode( $WDPQ_Cart );
-		
+
 		$User_ID = get_current_user_id();
 		
 		if ($User_ID > 0) {
 			// Залогиненый Пользователь. Session User-Meta
+			$WDPQ_Cart = wp_json_encode( $WDPQ_Cart );
 			$WDPQ_Cart = serialize ($WDPQ_Cart);
+			WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 			
 			update_user_meta ($User_ID, $Cart_Name, $WDPQ_Cart);
 			
@@ -660,16 +813,29 @@
 	
 		} else {
 			// Анонимный Пользователь.
-			
-			// Session Cookie. Проблемы с AJAX Cart
-			// wc_setcookie('wdpq_cart', $WDPQ_Cart, time() + HOUR_IN_SECONDS);
-			
-			// PHP Sesion
-			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
-			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
-			
-			if ($Session_Started) {
-				$_SESSION[$Cart_Name] = $WDPQ_Cart;	
+
+			if ($WooDecimalProduct_StorageType == 'session') {
+				// StorageType: PHP Session
+				$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+				WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
+				
+				if ($Session_Started) {
+					$WDPQ_Cart = wp_json_encode( $WDPQ_Cart );
+					WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+					
+					$_SESSION[$Cart_Name] = $WDPQ_Cart;	
+				}			
+			}
+			if ($WooDecimalProduct_StorageType == 'system') {
+				// StorageType: System Storage
+				$WDPQ_Cart = wp_json_encode( $WDPQ_Cart );	
+				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+				
+				WC() -> session -> set( $Cart_Name, $WDPQ_Cart );
+			}
+			if ($WooDecimalProduct_StorageType == 'local') {
+				// StorageType: Local Storage			
+				
 			}			
 		}	
 	}
@@ -678,15 +844,17 @@
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_WDPQ_CartSession ($isDraft = false) {
 		$debug_process = 'f_get_cartsession';
+		
+		$WDPQ_Cart = array();
 
-		WDPQ_Debugger ($isDraft, '$isDraft', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($isDraft, '$isDraft', $debug_process, __FUNCTION__, __LINE__);		
 		
 		if ($isDraft) {
 			// Черновая Корзина.
 			$Cart_Name = 'wdpq_draft_cart';
 		} else {
 			// Основная Корзина.
-			$Cart_Name = 'wdpq_cart';
+			$Cart_Name = 'wdpq_cart';		
 		}
 		WDPQ_Debugger ($Cart_Name, '$Cart_Name', $debug_process, __FUNCTION__, __LINE__);
 		
@@ -697,26 +865,50 @@
 			$WDPQ_Cart = get_user_meta ($User_ID, $Cart_Name, true);
 			
 			$WDPQ_Cart = unserialize( $WDPQ_Cart );
+			
+			if ($WDPQ_Cart) {
+				$WDPQ_Cart = stripslashes( $WDPQ_Cart );
+				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);	
+				$WDPQ_Cart = json_decode( $WDPQ_Cart, true );
+			}
 		
 		} else {
 			// Анонимный Пользователь. 
-			
-			// Session Cookie. Проблемы с AJAX Cart
-			// $WDPQ_Cart = isset( $_COOKIE[$Cart_Name] ) ? $_COOKIE[$Cart_Name] : null; // phpcs:ignore	
-			
-			// PHP Sesion
-			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
-			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
 
-			$WDPQ_Cart = isset( $_SESSION[$Cart_Name] ) ? $_SESSION[$Cart_Name]: null; // phpcs:ignore
-			WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+			$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
+			WDPQ_Debugger ($WooDecimalProduct_StorageType, '$WooDecimalProduct_StorageType', $debug_process, __FUNCTION__, __LINE__);
+			
+			if ($WooDecimalProduct_StorageType == 'session') {
+				// StorageType: PHP Session
+				$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+				WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
+
+				$WDPQ_Cart = isset( $_SESSION[$Cart_Name] ) ? $_SESSION[$Cart_Name]: null; // phpcs:ignore
+				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+				
+				if ($WDPQ_Cart) {
+					$WDPQ_Cart = stripslashes( $WDPQ_Cart );
+					WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);	
+					$WDPQ_Cart = json_decode( $WDPQ_Cart, true );
+				}
+								
+			} 
+			if ($WooDecimalProduct_StorageType == 'system') {
+				// StorageType: System Storage	
+				$WDPQ_Cart = WC() -> session -> get( $Cart_Name );
+				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+
+				$WDPQ_Cart = stripslashes( $WDPQ_Cart );
+				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);	
+				$WDPQ_Cart = json_decode( $WDPQ_Cart, true );		
+			}
+			if ($WooDecimalProduct_StorageType == 'local') {
+				// StorageType: Local Storage	
+		
+			}			
 		}
 		
-		if ($WDPQ_Cart) {
-			$WDPQ_Cart = stripslashes( $WDPQ_Cart );
-			$WDPQ_Cart = json_decode( $WDPQ_Cart, true );
-		}	
-			
+		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 		return $WDPQ_Cart;
 	}
 
@@ -744,16 +936,30 @@
 			
 		} else {
 			// Анонимный Пользователь. 
+			$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
 			
-			// Session Cookie. Проблемы с AJAX Cart
-			// wc_setcookie('wdpq_cart', null, time() - HOUR_IN_SECONDS);
-			
-			// PHP Sesion
-			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
-			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
-			
-			if ($Session_Started) {
-				$_SESSION[$Cart_Name] = '';
+			if ($WooDecimalProduct_StorageType == 'session') {
+				// StorageType: PHP Session
+				$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+				WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);
+				
+				if ($Session_Started) {
+					$_SESSION[$Cart_Name] = '';
+				}
+			} 
+			if ($WooDecimalProduct_StorageType == 'system') {
+				// StorageType: System Storage
+				WC() -> session -> set( $Cart_Name, '' );			
+			}
+			if ($WooDecimalProduct_StorageType == 'local') {
+				// StorageType: Local Storage
+				?>
+				<script type='text/javascript'>						
+					window.addEventListener ('load', function() {
+						localStorage.removeItem( '<?php echo esc_html( $Cart_Name );?>');
+					});						
+				</script>
+				<?php
 			}
 		}	
 	}
@@ -888,8 +1094,18 @@
 	function WooDecimalProduct_is_WDPQCart_Empty () {
 		$debug_process = 'f_check_wdpqcart_empty';
 		
+		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
+		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+
+		if ($WDPQ_Cart && $WDPQ_Cart != '[]') {			
+			return false;
+			
+		} else {
+			return true;
+		}
+
 		$User_ID = get_current_user_id();
-		
+
 		if ($User_ID > 0) {
 			// Залогиненый Пользователь. Session User-Meta
 			$WDPQ_Cart = get_user_meta ($User_ID, 'wdpq_cart', true);
@@ -899,10 +1115,25 @@
 		} else {
 			// Анонимный Пользователь. 
 			
-			$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
-			WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);		
-			
-			$WDPQ_Cart = isset( $_SESSION["wdpq_cart"] ) ? $_SESSION["wdpq_cart"]: null; // phpcs:ignore
+			$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
+			WDPQ_Debugger ($WooDecimalProduct_StorageType, '$WooDecimalProduct_StorageType', $debug_process, __FUNCTION__, __LINE__);	
+
+			if ($WooDecimalProduct_StorageType == 'session') {
+				// StorageType: PHP Session
+				$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+				WDPQ_Debugger ($Session_Started, '$Session_Started', $debug_process, __FUNCTION__, __LINE__);		
+				
+				$WDPQ_Cart = isset( $_SESSION["wdpq_cart"] ) ? $_SESSION["wdpq_cart"]: null; // phpcs:ignore			
+
+			} 
+			if ($WooDecimalProduct_StorageType == 'system') {
+				// StorageType: System Storage
+				$WDPQ_Cart = WC() -> session -> get( "wdpq_cart" );
+			}				
+			if ($WooDecimalProduct_StorageType == 'local') {
+				// StorageType: Local Storage
+
+			}			
 		}
 
 		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
@@ -918,7 +1149,7 @@
 	/* Clear Woo Cart if WDPQ-Cart Emty. 
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Clear_WooCart_if_WDPQCart_Emty () {
-		$debug_process = 'clear_cart';
+		$debug_process = 'f_clear_cart';
 		
 		// Возможна ситуация, когда Корзина была сформирована, но Браузер закрыли и открыли снова. 
 		// Но открыли не на странице Корзина (там нормально это отрабатывается, а на странице Товара)
@@ -940,10 +1171,13 @@
 	function WDPQ_Debugger ($Content, $Subject = null, $Process = null, $Function = '', $Line = '') {
 		if (function_exists( 'WPGear_Debugger' )) {
 			$Source = 'WDPQ';
+			$Description = 'Plugin: Decimal Product Quantity for WooCommerce';
+			
 			$TimeStamp = true;
 			
 			$Parameters = array(
 				'source' => $Source,
+				'description' => $Description,
 				'content' => $Content,
 				'subject' => esc_html( $Subject ),
 				'process' => esc_html( $Process ),
@@ -956,7 +1190,7 @@
 		}
 
 		// OnLine ConsoleLog Debugger.
-		global $WooDecimalProduct_ConsoleLog_Debuging;
+		$WooDecimalProduct_ConsoleLog_Debuging = get_option ('woodecimalproduct_debug_log', 0);
 		
 		if ($WooDecimalProduct_ConsoleLog_Debuging) {
 			$is_DebugOnLine = isset( $_REQUEST['debug'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['debug'] ) ) : false; // phpcs:ignore

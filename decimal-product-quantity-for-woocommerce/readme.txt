@@ -7,7 +7,7 @@ Tested up to: 6.7.2
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 17.53.3
+Stable tag: 18.55
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -65,6 +65,17 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 18.55 =
+	2025.04.02
+	* The ability to choose the type of data storage when processing an order: "PHP Session" / "System".
+	"PHP Session" - Choose if your users can use Public Terminals. (Cart Data deleted after the browser closed). 
+	"System" - Default. Choose if Caching on Hosting is used. (Cart Data can be saved after the browser is closed).
+	* Restored Coupons Processing.
+	
+= 17.54 =
+	2025.03.25
+	* Fix Hide Buttons +/- if Quantity is Fixed (Min = Msx = Default). Thanks to Marcelldk.
+
 = 17.53.3 =
 	2025.03.11
 	* Fix page_cart enqueue scripts. 

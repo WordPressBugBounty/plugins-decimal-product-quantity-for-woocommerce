@@ -244,10 +244,10 @@
     ---*PRO-------------------------------------------------------------- */
 	add_action ('woocommerce_product_after_variable_attributes', 'WooDecimalProductPro_quantity_product_after_variable_attributes', 10);
 	function WooDecimalProductPro_quantity_product_after_variable_attributes () {
-        global $WooDecimalProduct_Min_Quantity_Default;
-		global $WooDecimalProduct_Step_Quantity_Default;
-		global $WooDecimalProduct_Item_Quantity_Default;
-		global $WooDecimalProduct_Max_Quantity_Default;
+		$WooDecimalProduct_Min_Quantity_Default 	= get_option ('woodecimalproduct_min_qnt_default', 1);  
+		$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');  
+		$WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
+		$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);		
 		
 		ob_start();
 		?>

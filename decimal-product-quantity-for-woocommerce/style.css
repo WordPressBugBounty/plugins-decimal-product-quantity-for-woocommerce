@@ -46,3 +46,7 @@
 	appearance: none;
 	-moz-appearance: textfield;	
 }
+.quantity input[type='text'] {
+	text-align: center;
+	border: none;
+}
