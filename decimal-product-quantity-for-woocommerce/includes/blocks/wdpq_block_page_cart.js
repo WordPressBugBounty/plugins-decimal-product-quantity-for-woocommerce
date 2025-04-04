@@ -19,7 +19,7 @@ WDPQ_localStorage = JSON.parse(WDPQ_localStorage);
 console.log( WDPQ_localStorage );
 			
 			var WooDecimalProductQNT_Ajax_URL = ajaxurl;
-			var WooDecimalProductQNT_Ajax_Data = 'action=WooDecimalProduct_Blocks_Get_WDPQ-Cart&wdpq_wpnonce=' + WDPQ_Nonce;
+			var WooDecimalProductQNT_Ajax_Data = 'action=wdpq_blocks_ext_processing&mode=get_wdpq-cart&wdpq_wpnonce=' + WDPQ_Nonce;
 			
 			jQuery.ajax({
 				type:"POST",

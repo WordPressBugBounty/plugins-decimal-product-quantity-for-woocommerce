@@ -43,8 +43,8 @@
 	
 	/* AJAX Processing
 	----------------------------------------------------------------- */
-    add_action ('wp_ajax_WooDecimalProduct_Blocks_Get_WDPQ-Cart', 'WooDecimalProduct_Blocks_Ajax');
-	add_action ('wp_ajax_nopriv_WooDecimalProduct_Blocks_Get_WDPQ-Cart', 'WooDecimalProduct_Blocks_Ajax');
+    add_action ('wp_ajax_wdpq_blocks_ext_processing', 'WooDecimalProduct_Blocks_Ajax');
+	add_action ('wp_ajax_nopriv_wdpq_blocks_ext_processing', 'WooDecimalProduct_Blocks_Ajax');
     function WooDecimalProduct_Blocks_Ajax() {
 		include_once ('ajax_processing.php');
     }	

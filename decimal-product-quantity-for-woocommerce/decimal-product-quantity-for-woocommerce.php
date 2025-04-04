@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 18.55
+Version: 18.55.1
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -55,8 +55,8 @@ License: GPLv2
 
 	/* AJAX Processing
 	----------------------------------------------------------------- */
-    add_action ('wp_ajax_WooDecimalProductQNT', 'WooDecimalProduct_Ajax');
-	add_action ('wp_ajax_nopriv_WooDecimalProductQNT', 'WooDecimalProduct_Ajax');
+    add_action ('wp_ajax_wdpq_ext_processing', 'WooDecimalProduct_Ajax');
+	add_action ('wp_ajax_nopriv_wdpq_ext_processing', 'WooDecimalProduct_Ajax');
 	add_action ('wp_ajax_nopriv_update_wdpq_cart', 'WooDecimalProduct_Ajax');
     function WooDecimalProduct_Ajax() {
 		$debug_process = 'ajax';
@@ -1057,11 +1057,11 @@ License: GPLv2
 		$screen_id = $screen -> id;
 		// WDPQ_Debugger ($screen_id, '$screen_id', $debug_process, __FUNCTION__, __LINE__);
 
-		if ($screen_id == 'edit-shop_coupon') {
-			$Notice = __( 'Correct processing of coupons is possible only in the Pro version "Decimal Product Quantity for WooCommerce". Sorry.', 'decimal-product-quantity-for-woocommerce' );
+		// if ($screen_id == 'edit-shop_coupon') {
+			// $Notice = __( 'Correct processing of coupons is possible only in the Pro version "Decimal Product Quantity for WooCommerce". Sorry.', 'decimal-product-quantity-for-woocommerce' );
 	
-			echo '<div id="wdpq_warning_coupons" class="notice notice-warning notice-wdpq"><p>' .esc_html( $Notice ) .'</p></div>';
-		}	
+			// echo '<div id="wdpq_warning_coupons" class="notice notice-warning notice-wdpq"><p>' .esc_html( $Notice ) .'</p></div>';
+		// }	
 		
 		// Block Layouts
 		$BlockLayots = WooDecimalProduct_Blocks_Check_BlockLayots();

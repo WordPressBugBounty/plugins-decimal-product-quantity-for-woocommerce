@@ -10,7 +10,7 @@
 	function WDPQ_Get_QuantityData (Product_ID) {
 		if (Product_ID) {
 			var WooDecimalProductQNT_Ajax_URL = ajaxurl;
-			var WooDecimalProductQNT_Ajax_Data = 'action=WooDecimalProductQNT&mode=get_product_quantity&id=' + Product_ID + '&_wpnonce=' + WDPQ_Nonce;
+			var WooDecimalProductQNT_Ajax_Data = 'action=wdpq_ext_processing&mode=get_product_quantity&id=' + Product_ID + '&_wpnonce=' + WDPQ_Nonce;
 
 			jQuery.ajax({
 				type:"POST",

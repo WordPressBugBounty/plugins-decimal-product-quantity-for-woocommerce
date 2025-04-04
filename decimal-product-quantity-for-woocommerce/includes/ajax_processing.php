@@ -11,7 +11,7 @@
 	$WooDecimalProduct_Nonce = 'wdpq_ajax_processing';
 	$nonce = wp_create_nonce ($WooDecimalProduct_Nonce);	
 	
-	$Action 	= isset($_REQUEST['action']) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : null; // phpcs:ignore	
+	$Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : null; // phpcs:ignore	
 	$Object_ID	= isset($_REQUEST['id']) ? sanitize_text_field( wp_unslash( $_REQUEST['id'] ) ) : 0; // phpcs:ignore
 	$WDPQ_Cart	= isset($_REQUEST['cart']) ? stripslashes( $_REQUEST['cart'] ) : array(); // phpcs:ignore
 	$Cart_Name	= isset($_REQUEST['cart_name']) ? $_REQUEST['cart_name'] : array(); // phpcs:ignore
@@ -24,7 +24,7 @@
 	$Result = false; 
 		
 	// Get Product Quantity by ProductID
-	if ($Action == 'get_product_quantity') {
+	if ($Mode == 'get_product_quantity') {
 		if ($Object_ID) {
 			$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Object_ID);
 			WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
@@ -41,7 +41,7 @@
 	}
 	
 	// Update Cart from Local Storage
-	if ($Action == 'update_wdpq_cart') {
+	if ($Mode == 'update_wdpq_cart') {
 		// WooCart может быть на этом этапе еще не сформирована.
 		
 die();
