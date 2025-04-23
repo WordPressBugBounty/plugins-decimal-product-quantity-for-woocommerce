@@ -79,7 +79,7 @@
 	function WooDecimalProduct_Tab_General_add_Options() {			
 		$debug_process = 'product_options_general';
 		
-		$WooDecimalProduct_Price_Unit_Label			= get_option ('woodecimalproduct_price_unit_label', 0);		
+		$WooDecimalProduct_Price_Unit_Label	= get_option ('woodecimalproduct_price_unit_label', 0);		
 
 		$Product_ID = get_the_ID();
 			
@@ -225,10 +225,11 @@
 	----------------------------------------------------------------- */	
 	add_action ('woocommerce_process_product_meta', 'WooDecimalProduct_save_product_field_step_Qnt');	
 	function WooDecimalProduct_save_product_field_step_Qnt ($post_id) {	
-        $new_min_Qnt    		= isset($_POST['woodecimalproduct_min_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_min_qnt'])): 1; // phpcs:ignore	
-        $new_step_Qnt   		= isset($_POST['woodecimalproduct_step_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_step_qnt'])): 1; // phpcs:ignore	  
-		$new_dft_Qnt    		= isset($_POST['woodecimalproduct_item_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_item_qnt'])): 1; // phpcs:ignore	
-		$new_max_Qnt			= isset($_POST['woodecimalproduct_max_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_max_qnt'])): ''; // phpcs:ignore	
+        $new_min_Qnt    = isset($_POST['woodecimalproduct_min_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_min_qnt'])): 1; // phpcs:ignore	
+        $new_step_Qnt   = isset($_POST['woodecimalproduct_step_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_step_qnt'])): 1; // phpcs:ignore	  
+		$new_dft_Qnt    = isset($_POST['woodecimalproduct_item_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_item_qnt'])): 1; // phpcs:ignore	
+		$new_max_Qnt	= isset($_POST['woodecimalproduct_max_qnt']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_max_qnt'])): ''; // phpcs:ignore	
+		
 		$new_Price_Unit_Label	= isset($_POST['woodecimalproduct_price_unit_label']) ? sanitize_text_field (wp_unslash($_POST['woodecimalproduct_price_unit_label'])): ''; // phpcs:ignore	
 		$new_Price_Unit_Disable	= isset($_POST['woodecimalproduct_price_unit_disable']) ? 'yes': '';	 // phpcs:ignore	
 		

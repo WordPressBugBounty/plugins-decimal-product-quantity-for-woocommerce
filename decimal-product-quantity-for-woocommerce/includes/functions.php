@@ -130,9 +130,16 @@
 		return true;
 	}
 	
-	/* Минимальное / Максимально кол-во выбора Товара, Шаг, Значение по-Умолчанию, Максимально-Необходимая Точность
+	/* Товар. Минимальное / Максимально кол-во выбора Товара, Шаг, Значение по-Умолчанию, 
+	 * Максимально-Необходимая Точность
+	 * PlaceHolders
 	----------------------------------------------------------------- */	
 	function WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty = '') {
+		$debug_process = 'f_get_quantitydata_by_productid';
+		
+		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($No_MaxEmpty, '$No_MaxEmpty', $debug_process, __FUNCTION__, __LINE__);
+		
 		$WooDecimalProduct_Min_Quantity_Default    	= get_option ('woodecimalproduct_min_qnt_default', 1);  
 		$WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
 		$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);
@@ -149,6 +156,7 @@
 			$WooDecimalProduct_QuantityData['product_id'] = $Product_ID;
 			
 			$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_ProductID ($Product_ID);
+			WDPQ_Debugger ($Term_QuantityData, '$Term_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 			
 			$Min_Qnt = get_post_meta ($Product_ID, 'woodecimalproduct_min_qnt', true);	// Минимальное Количество для данного Товара	
 			$Max_Qnt = get_post_meta ($Product_ID, 'woodecimalproduct_max_qnt', true);  // Максимальное Количество для данного Товара	
@@ -205,9 +213,11 @@
 
 			$WooDecimalProduct_QuantityData['precision'] = $QNT_Precision;				
 			
+			WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 			return $WooDecimalProduct_QuantityData;
 		}
 		
+		WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 		return $WooDecimalProduct_QuantityData;
 	}	
 	
@@ -296,33 +306,61 @@
 	}
 	
 	/* Получаем QuantityData Категории Товаров по Product_ID.
-	 * Категорий может быть несколько. Выбираем ту, в которой имеется Price_Unit_Label
+	 * Категорий может быть несколько.
+	 * В таком случае:
+	 * Min 	- Берем минимальное из всех.
+	 * Max 	- Берем максимальное из всех.
+	 * Step - Берем минимальное из всех.
+	 * Default - Берем минимальное из всех.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_Term_QuantityData_by_ProductID ($Product_ID) {
-		$Term_QuantityData = array();
+		$debug_process = 'f_get_term_quantitydata_by_productid';
 		
+		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		
+		$Terms_QuantityData_Min = array();
+		$Terms_QuantityData_Max = array();
+		$Terms_QuantityData_Def = array();
+		$Terms_QuantityData_Stp = array();
+			
 		$Price_Unit_Label = '';
 		
 		$Product_Category_IDs = wc_get_product_term_ids ($Product_ID, 'product_cat');
-		
-		// Берем первую из Категорий если их несколько - в которой имеется Price_Unit_Label.
-		// Если Price_Unit_Label отсутствует, то берем Первую из Категорий.
+		WDPQ_Debugger ($Product_Category_IDs, '$Product_Category_IDs', $debug_process, __FUNCTION__, __LINE__);
+				
 		foreach ($Product_Category_IDs as $Term_ID) {
-			if ( empty( $Term_QuantityData ) ) {
-				$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
-			}				
-			
-			if ($Price_Unit_Label == '') {
-				$Term_Price_Unit = get_term_meta ($Term_ID, 'woodecimalproduct_term_price_unit', $single = true);
+			WDPQ_Debugger ($Term_ID, '$Term_ID', $debug_process, __FUNCTION__, __LINE__);
 
+			$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
+			WDPQ_Debugger ($Term_QuantityData, '$Term_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+
+			$Terms_QuantityData_Min[] = $Term_QuantityData['min_qnt'];
+			$Terms_QuantityData_Max[] = $Term_QuantityData['max_qnt'];
+			$Terms_QuantityData_Def[] = $Term_QuantityData['def_qnt'];
+			$Terms_QuantityData_Stp[] = $Term_QuantityData['stp_qnt'];
+
+			$Term_Price_Unit = $Term_QuantityData['price_unit'];
+
+			// Price_Unit_Label берем Первый из наличия.
+			if ($Price_Unit_Label == '') {
 				if ($Term_Price_Unit) {
 					$Price_Unit_Label = $Term_Price_Unit;
-					
-					$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
 				}		
 			}
 		}
+		
+		WDPQ_Debugger ($Terms_QuantityData_Min, '$Terms_QuantityData_Min', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($Terms_QuantityData_Max, '$Terms_QuantityData_Max', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($Terms_QuantityData_Def, '$Terms_QuantityData_Def', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($Terms_QuantityData_Stp, '$Terms_QuantityData_Stp', $debug_process, __FUNCTION__, __LINE__);
 
+		$Term_QuantityData['min_qnt'] = min($Terms_QuantityData_Min);
+		$Term_QuantityData['max_qnt'] = max($Terms_QuantityData_Max);
+		$Term_QuantityData['def_qnt'] = min($Terms_QuantityData_Def);
+		$Term_QuantityData['stp_qnt'] = min($Terms_QuantityData_Stp);
+		$Term_QuantityData['price_unit'] = $Price_Unit_Label;
+				
+		WDPQ_Debugger ($Term_QuantityData, '$Term_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 		return $Term_QuantityData;		
 	}
 	
@@ -504,15 +542,8 @@
 	
 		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
 		
-		if ($WooDecimalProduct_StorageType == 'system') {
-			// StorageType: System Storage	
-			$Cart_Name = 'wdpq_cart';
-			
-			if ($isDraft) {
-				// Черновая Корзина.
-				$Cart_Name = 'wdpq_draft_cart';
-			} 
-			WDPQ_Debugger ($Cart_Name, '$Cart_Name', $debug_process, __FUNCTION__, __LINE__);
+		if ($WooDecimalProduct_StorageType == 'system' || $WooDecimalProduct_StorageType == 'session') {
+			// StorageType: System Storage / Session Storage
 			
 			foreach ($Add_to_Cart as &$Item) {
 				$Product_ID = $Item['product_id'];
@@ -652,11 +683,12 @@
 				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 				WDPQ_Debugger ($Cart_Product_Item, '$Cart_Product_Item', $debug_process, __FUNCTION__, __LINE__);
 				
-				$Cart_Item_Key 			= $Cart_Product_Item['key'];			
-				$Cart_Item_ProductID 	= $Cart_Product_Item['product_id'];
-				$Cart_Item_Variation_ID = $Cart_Product_Item['variation_id'];
-				$Cart_Item_Quantity 	= $Cart_Product_Item['quantity'];
-				$Cart_Item_Price 		= $Cart_Product_Item['price'];
+				$Cart_Item_Key 					= $Cart_Product_Item['key'];			
+				$Cart_Item_ProductID 			= $Cart_Product_Item['product_id'];
+				$Cart_Item_Variation_ID 		= $Cart_Product_Item['variation_id'];
+				$Cart_Item_Quantity 			= $Cart_Product_Item['quantity'];
+				$Cart_Item_Quantity_Precision	= $Cart_Product_Item['quantity_precision'];		
+				$Cart_Item_Price 				= $Cart_Product_Item['price'];
 				
 				$Item_RegularPrice 		= isset( $Cart_Product_Item['regular_price'] ) ? $Cart_Product_Item['regular_price']: 0;
 				$Item_SalePrice 		= isset( $Cart_Product_Item['sale_price'] ) ? $Cart_Product_Item['sale_price']: 0;
@@ -669,6 +701,7 @@
 					'product_id' => $Cart_Item_ProductID,
 					'variation_id' => $Cart_Item_Variation_ID,
 					'quantity' => $Cart_Item_Quantity,
+					'quantity_precision' => $Cart_Item_Quantity_Precision,
 					'price' => $Cart_Item_Price,
 					'regular_price' => $Item_RegularPrice,
 					'sale_price' => $Item_SalePrice,
@@ -678,17 +711,18 @@
 				);		
 
 				foreach ($Add_to_Cart as $Add_to_Cart_Product_Item) {
-					$Add_to_Cart_Key 			= $Add_to_Cart_Product_Item['key'];
-					$Add_to_Cart_ProductID 		= $Add_to_Cart_Product_Item['product_id'];
-					$Add_to_Cart_VariationID 	= $Add_to_Cart_Product_Item['variation_id'];
-					$Add_to_Cart_Quantity 		= $Add_to_Cart_Product_Item['quantity'];
-					$Add_to_Cart_Price 			= $Add_to_Cart_Product_Item['price'];
+					$Add_to_Cart_Key 				= $Add_to_Cart_Product_Item['key'];
+					$Add_to_Cart_ProductID 			= $Add_to_Cart_Product_Item['product_id'];
+					$Add_to_Cart_VariationID 		= $Add_to_Cart_Product_Item['variation_id'];
+					$Add_to_Cart_Quantity 			= $Add_to_Cart_Product_Item['quantity'];
+					$Add_to_Cart_Quantity_Precision = $Add_to_Cart_Product_Item['quantity_precision'];					
+					$Add_to_Cart_Price 				= $Add_to_Cart_Product_Item['price'];
 					
-					$Add_to_Cart_RegularPrice	= $Add_to_Cart_Product_Item['regular_price'];
-					$Add_to_Cart_SalePrice		= $Add_to_Cart_Product_Item['sale_price'];
-					$Add_to_Cart_Excl_Tax		= $Add_to_Cart_Product_Item['price_tax_excl'];
-					$Add_to_Cart_Incl_Tax		= $Add_to_Cart_Product_Item['price_tax_incl'];
-					$Add_to_Cart_Tax_Amount		= $Add_to_Cart_Product_Item['tax_amount'];
+					$Add_to_Cart_RegularPrice		= $Add_to_Cart_Product_Item['regular_price'];
+					$Add_to_Cart_SalePrice			= $Add_to_Cart_Product_Item['sale_price'];
+					$Add_to_Cart_Excl_Tax			= $Add_to_Cart_Product_Item['price_tax_excl'];
+					$Add_to_Cart_Incl_Tax			= $Add_to_Cart_Product_Item['price_tax_incl'];
+					$Add_to_Cart_Tax_Amount			= $Add_to_Cart_Product_Item['tax_amount'];
 
 					if ($Add_to_Cart_Key == $Cart_Item_Key) {
 						// Суммируем
@@ -705,6 +739,7 @@
 							'product_id' => $Cart_Item_ProductID,
 							'variation_id' => $Cart_Item_Variation_ID,
 							'quantity' => $New_Quantity,
+							'quantity_precision' => $Add_to_Cart_Quantity_Precision,							
 							'price' => $Add_to_Cart_Price,
 							'regular_price' => $Add_to_Cart_RegularPrice,
 							'sale_price' => $Add_to_Cart_SalePrice,
@@ -720,17 +755,18 @@
 
 			// Добавление Новых Товаров
 			foreach ($Add_to_Cart as $Add_to_Cart_Product_Item) {
-				$Add_to_Cart_Key 			= $Add_to_Cart_Product_Item['key'];
-				$Add_to_Cart_ProductID 		= $Add_to_Cart_Product_Item['product_id'];
-				$Add_to_Cart_VariationID 	= $Add_to_Cart_Product_Item['variation_id'];
-				$Add_to_Cart_Quantity 		= $Add_to_Cart_Product_Item['quantity'];
-				$Add_to_Cart_Price 			= $Add_to_Cart_Product_Item['price'];
+				$Add_to_Cart_Key 				= $Add_to_Cart_Product_Item['key'];
+				$Add_to_Cart_ProductID 			= $Add_to_Cart_Product_Item['product_id'];
+				$Add_to_Cart_VariationID 		= $Add_to_Cart_Product_Item['variation_id'];
+				$Add_to_Cart_Quantity 			= $Add_to_Cart_Product_Item['quantity'];
+				$Add_to_Cart_Quantity_Precision = $Add_to_Cart_Product_Item['quantity_precision'];				
+				$Add_to_Cart_Price 				= $Add_to_Cart_Product_Item['price'];
 				
-				$Add_to_Cart_RegularPrice	= $Add_to_Cart_Product_Item['regular_price'];
-				$Add_to_Cart_SalePrice		= $Add_to_Cart_Product_Item['sale_price'];
-				$Add_to_Cart_Excl_Tax		= $Add_to_Cart_Product_Item['price_tax_excl'];
-				$Add_to_Cart_Incl_Tax		= $Add_to_Cart_Product_Item['price_tax_incl'];
-				$Add_to_Cart_Tax_Amount		= $Add_to_Cart_Product_Item['tax_amount'];				
+				$Add_to_Cart_RegularPrice		= $Add_to_Cart_Product_Item['regular_price'];
+				$Add_to_Cart_SalePrice			= $Add_to_Cart_Product_Item['sale_price'];
+				$Add_to_Cart_Excl_Tax			= $Add_to_Cart_Product_Item['price_tax_excl'];
+				$Add_to_Cart_Incl_Tax			= $Add_to_Cart_Product_Item['price_tax_incl'];
+				$Add_to_Cart_Tax_Amount			= $Add_to_Cart_Product_Item['tax_amount'];				
 				
 				$Item_Exist = false;
 				
@@ -750,6 +786,7 @@
 						'product_id' => $Add_to_Cart_ProductID,
 						'variation_id' => $Add_to_Cart_VariationID,
 						'quantity' => $Add_to_Cart_Quantity,
+						'quantity_precision' => $Add_to_Cart_Quantity_Precision,						
 						'price' => $Add_to_Cart_Price,
 						'regular_price' => $Add_to_Cart_RegularPrice,
 						'sale_price' => $Add_to_Cart_SalePrice,
@@ -771,15 +808,14 @@
 		
 		WooDecimalProduct_Set_WDPQ_CartSession ($WDPQ_Cart, $isDraft);
 
-		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
-		
+		WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);		
 		return true;
 	}
 
 	/* WDPQ Cart. Set CartSession.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Set_WDPQ_CartSession ($WDPQ_Cart, $isDraft = false) {
-		$debug_process = 'f_set_cartsession';
+		$debug_process = 'f_set_wdpqcart_session';
 		
 		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
 		WDPQ_Debugger ($WooDecimalProduct_StorageType, '$WooDecimalProduct_StorageType', $debug_process, __FUNCTION__, __LINE__);
@@ -843,7 +879,7 @@
 	/* WDPQ Cart. Get CartSession .
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_WDPQ_CartSession ($isDraft = false) {
-		$debug_process = 'f_get_cartsession';
+		$debug_process = 'f_get_wdpqcart_session';
 		
 		$WDPQ_Cart = array();
 
@@ -891,7 +927,6 @@
 					WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);	
 					$WDPQ_Cart = json_decode( $WDPQ_Cart, true );
 				}
-								
 			} 
 			if ($WooDecimalProduct_StorageType == 'system') {
 				// StorageType: System Storage	

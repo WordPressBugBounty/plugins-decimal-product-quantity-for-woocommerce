@@ -20,9 +20,11 @@
 	// }	
 	
 	$Result = false;
+	
+$WDPQ_Cart = array();	
 
-	global $WDPQ_Cart;
-	WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
+	// global $WDPQ_Cart;
+	// WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
 	
 	foreach ($WDPQ_Cart as &$Item) {
 		$Product_ID 	= $Item['product_id'];
@@ -54,7 +56,7 @@
 		$Item['quantity_data'] = $QuantityData;
 	}
 	
-	WooDecimalProduct_Action_before_cart_contents ();
+	// WooDecimalProduct_Action_before_cart_contents ();
 	// wp_send_json_success();
 	
 	// $WooCart = WC() -> cart -> get_cart();

@@ -19,28 +19,28 @@
 		WDPQ_Auto_Correction_Enable		= Number( WDPQ_Auto_Correction_Enable );
 		WDPQ_AJAX_Cart_Update_Enable	= Number( WDPQ_AJAX_Cart_Update_Enable );
 		WDPQ_ButtonsPM_Cart_Enable		= Number( WDPQ_ButtonsPM_Cart_Enable );
-WDPQ_Storage_Type_Local = Number( WDPQ_Storage_Type_Local );
+		WDPQ_Storage_Type_Local 		= Number( WDPQ_Storage_Type_Local );
 		
-if (WDPQ_Storage_Type_Local) {
-	var WDPQ_Nonce = 'wdpq_ajax_processing';
-	
-	var WDPQ_Cart = localStorage.getItem ('wdpq_cart');
-	console.log(WDPQ_Cart);
-	
-	// var WDPQ_Ajax_URL = ajaxurl;	
-	// var WDPQ_Ajax_Data = 'action=get_wdpq_cart&cart=' + WDPQ_Cart + '&_wpnonce=' + WDPQ_Nonce;
-	
-	// jQuery.ajax({
-		// type:"POST",
-		// url: WDPQ_Ajax_URL,
-		// dataType: 'json',
-		// data: WDPQ_Ajax_Data,
-		// cache: false,
-		// success: function(jsondata) {
-			// var Obj_Request = jsondata;	
-		// }
-	// });	
-}
+		if (WDPQ_Storage_Type_Local) {
+			var WDPQ_Nonce = 'wdpq_ajax_processing';
+			
+			var WDPQ_Cart = localStorage.getItem ('wdpq_cart');
+			console.log(WDPQ_Cart);
+			
+			// var WDPQ_Ajax_URL = ajaxurl;	
+			// var WDPQ_Ajax_Data = 'action=get_wdpq_cart&cart=' + WDPQ_Cart + '&_wpnonce=' + WDPQ_Nonce;
+			
+			// jQuery.ajax({
+				// type:"POST",
+				// url: WDPQ_Ajax_URL,
+				// dataType: 'json',
+				// data: WDPQ_Ajax_Data,
+				// cache: false,
+				// success: function(jsondata) {
+					// var Obj_Request = jsondata;	
+				// }
+			// });	
+		}
 	
 		// AJAX Cart Update. Скрываем Кнопку "Обновить Корзину"
 		WDPQ_Hide_CartButton ();					
@@ -201,8 +201,7 @@ if (WDPQ_Storage_Type_Local) {
 			}
 
 			// AJAX Cart Update. Обновляем Корзину	
-			WDPQ_AJAX_Cart_Update ();
-			
+			WDPQ_AJAX_Cart_Update ();			
 		});
 		
 		// Input Quantity. Добавляем Аттрибуты "product_id". (Простой и Вариативный Товары)	

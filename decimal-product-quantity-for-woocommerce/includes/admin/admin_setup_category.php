@@ -70,13 +70,13 @@
 			$Style_and_Title_RSSFeedEnable = "style='display:inline-block; cursor:help; color:red;' title='$Title'";
 		}	
 
-$WooDecimalProduct_Plugin_URL = plugin_dir_url ( __FILE__ ); // со слэшем на конце
+		$WooDecimalProduct_Plugin_URL = plugin_dir_url ( __FILE__ ); // со слэшем на конце
 
-$Plugin_Data = get_plugin_data( __FILE__ );
-$WooDecimalProduct_Plugin_Version = $Plugin_Data['Version'];
+		$Plugin_Data = get_plugin_data( __FILE__ );
+		$WooDecimalProduct_Plugin_Version = $Plugin_Data['Version'];
 
-wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
-		
+		wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
+				
 		if ($term == 'product_cat') {
 			// Mode: "Add new category"
 			ob_start();
@@ -279,10 +279,16 @@ wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-styl
 	add_action ('edited_product_cat', 'WooDecimalProduct_action_edited_product_cat');
 	function WooDecimalProduct_action_edited_product_cat ($Term_ID) {
 		$Term_Price_Unit 	= isset ($_POST['wdpq_term_price_unit'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_price_unit'] ) ): ''; // phpcs:ignore	
+		
 		$Term_Min_Qnt 		= isset ($_POST['wdpq_term_min_qnt'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_min_qnt'] ) ): ''; // phpcs:ignore	
 		$Term_Max_Qnt 		= isset ($_POST['wdpq_term_max_qnt'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_max_qnt'] ) ): ''; // phpcs:ignore	
 		$Term_Step_Qnt 		= isset ($_POST['wdpq_term_step_qnt'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_step_qnt'] ) ): ''; // phpcs:ignore	
 		$Term_Set_Qnt 		= isset ($_POST['wdpq_term_set_qnt'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_set_qnt'] ) ): ''; // phpcs:ignore	
+		
+		$Term_Min_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Min_Qnt);
+		$Term_Max_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Max_Qnt);
+		$Term_Step_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Step_Qnt);
+		$Term_Set_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Set_Qnt);
 		
 		update_term_meta ($Term_ID, 'woodecimalproduct_term_price_unit', $Term_Price_Unit); // phpcs:ignore	
 		update_term_meta ($Term_ID, 'woodecimalproduct_term_min_qnt', $Term_Min_Qnt); // phpcs:ignore	

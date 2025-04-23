@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 18.55.1
+Version: 18.56
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -666,7 +666,8 @@ License: GPLv2
 					$Cart_Variation_ID 	= $Cart_Product_Item['variation_id'];
 					$Cart_Quantity 		= $Cart_Product_Item['quantity'];
 					$Cart_Price 		= $Cart_Product_Item['price'];
-					
+					$Quantity_Precision = $Cart_Product_Item['quantity_precision'];					
+				
 					$Item_RegularPrice 	= $Cart_Product_Item['regular_price'];
 					$Item_SalePrice 	= $Cart_Product_Item['sale_price'];
 					$Price_Excl_Tax 	= $Cart_Product_Item['price_tax_excl'];
@@ -679,6 +680,7 @@ License: GPLv2
 							'product_id' => $Cart_Product_ID,
 							'variation_id' => $Cart_Variation_ID,
 							'quantity' => $Cart_Quantity,
+							'quantity_precision' => $Quantity_Precision,							
 							'price' => $Cart_Price,
 							'regular_price' => $Item_RegularPrice,
 							'sale_price' => $Item_SalePrice,
@@ -697,7 +699,8 @@ License: GPLv2
 					
 				} else {
 					// Update WDPQ CartSession.
-					WooDecimalProduct_Set_WDPQ_CartSession ($NewCart_Data, $isDraft = false);
+					WooDecimalProduct_Delete_WDPQ_CartSession ($isDraft = false);					
+					WooDecimalProduct_Update_WDPQ_CartSession ($NewCart_Data, $isDraft = false);					
 				}
 			} else {
 				// Это странно.
@@ -734,17 +737,19 @@ License: GPLv2
 		// WDPQ_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
 			
 		foreach ( $WooCart as $Cart_Item_Key => $cart_item ) {
-		WDPQ_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
-		// WDPQ_Debugger ($cart_item, '$cart_item', $debug_process, __FUNCTION__, __LINE__);
+			WDPQ_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+			// WDPQ_Debugger ($cart_item, '$cart_item', $debug_process, __FUNCTION__, __LINE__);
 
 			$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Cart_Item_Key);
 			WDPQ_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+			
+			if ($WDPQ_Cart_Item) {
+				$WDPQ_Cart_Item_Quantity = $WDPQ_Cart_Item['quantity'];
+				WDPQ_Debugger ($WDPQ_Cart_Item_Quantity, '$WDPQ_Cart_Item_Quantity', $debug_process, __FUNCTION__, __LINE__);
 
-			$WDPQ_Cart_Item_Quantity = $WDPQ_Cart_Item['quantity'];
-			WDPQ_Debugger ($WDPQ_Cart_Item_Quantity, '$WDPQ_Cart_Item_Quantity', $debug_process, __FUNCTION__, __LINE__);
-
-			if ($WDPQ_Cart_Item_Quantity > 0) {
-				WC() -> cart -> set_quantity( $Cart_Item_Key, $WDPQ_Cart_Item_Quantity, $refresh_totals = true );
+				if ($WDPQ_Cart_Item_Quantity > 0) {
+					WC() -> cart -> set_quantity( $Cart_Item_Key, $WDPQ_Cart_Item_Quantity, $refresh_totals = true );
+				}
 			}
 		}
 	
