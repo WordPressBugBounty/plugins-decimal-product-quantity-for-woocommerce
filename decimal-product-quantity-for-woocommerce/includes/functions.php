@@ -236,8 +236,13 @@
 	/* Получаем Price_Unit_Label Товара.
 	----------------------------------------------------------------- */
 	function WooDecimalProduct_Get_PriceUnitLabel_by_ProductID ($Product_ID) {
+		$debug_process = 'f_get_priceunitlabel_by_productid';
+		
+		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		
 		$Price_Unit_Label = '<div class="woodecimalproduct_price_unit_label" style="min-height: 12px;"></div>';
 		
+		if ($Product_ID) {
 		$Product_Price_Unit_Disable = get_post_meta ($Product_ID, 'woodecimalproduct_price_unit_disable', true);
 		
 		if (! $Product_Price_Unit_Disable) {					
@@ -258,7 +263,8 @@
 					}	
 				}		
 			}			
-		}
+		}	
+	}
 		
 		return $Price_Unit_Label;
 	}
@@ -327,38 +333,56 @@
 		
 		$Product_Category_IDs = wc_get_product_term_ids ($Product_ID, 'product_cat');
 		WDPQ_Debugger ($Product_Category_IDs, '$Product_Category_IDs', $debug_process, __FUNCTION__, __LINE__);
-				
-		foreach ($Product_Category_IDs as $Term_ID) {
-			WDPQ_Debugger ($Term_ID, '$Term_ID', $debug_process, __FUNCTION__, __LINE__);
+	
+		if (!empty( $Product_Category_IDs )) {
+			foreach ($Product_Category_IDs as $Term_ID) {
+				WDPQ_Debugger ($Term_ID, '$Term_ID', $debug_process, __FUNCTION__, __LINE__);
 
-			$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
-			WDPQ_Debugger ($Term_QuantityData, '$Term_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+				$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID);
+				WDPQ_Debugger ($Term_QuantityData, '$Term_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 
-			$Terms_QuantityData_Min[] = $Term_QuantityData['min_qnt'];
-			$Terms_QuantityData_Max[] = $Term_QuantityData['max_qnt'];
-			$Terms_QuantityData_Def[] = $Term_QuantityData['def_qnt'];
-			$Terms_QuantityData_Stp[] = $Term_QuantityData['stp_qnt'];
+				$Terms_QuantityData_Min[] = $Term_QuantityData['min_qnt'];
+				$Terms_QuantityData_Max[] = $Term_QuantityData['max_qnt'];
+				$Terms_QuantityData_Def[] = $Term_QuantityData['def_qnt'];
+				$Terms_QuantityData_Stp[] = $Term_QuantityData['stp_qnt'];
 
-			$Term_Price_Unit = $Term_QuantityData['price_unit'];
+				$Term_Price_Unit = $Term_QuantityData['price_unit'];
 
-			// Price_Unit_Label берем Первый из наличия.
-			if ($Price_Unit_Label == '') {
-				if ($Term_Price_Unit) {
-					$Price_Unit_Label = $Term_Price_Unit;
-				}		
+				// Price_Unit_Label берем Первый из наличия.
+				if ($Price_Unit_Label == '') {
+					if ($Term_Price_Unit) {
+						$Price_Unit_Label = $Term_Price_Unit;
+					}		
+				}
 			}
-		}
-		
-		WDPQ_Debugger ($Terms_QuantityData_Min, '$Terms_QuantityData_Min', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($Terms_QuantityData_Max, '$Terms_QuantityData_Max', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($Terms_QuantityData_Def, '$Terms_QuantityData_Def', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($Terms_QuantityData_Stp, '$Terms_QuantityData_Stp', $debug_process, __FUNCTION__, __LINE__);
+			
+			WDPQ_Debugger ($Terms_QuantityData_Min, '$Terms_QuantityData_Min', $debug_process, __FUNCTION__, __LINE__);
+			WDPQ_Debugger ($Terms_QuantityData_Max, '$Terms_QuantityData_Max', $debug_process, __FUNCTION__, __LINE__);
+			WDPQ_Debugger ($Terms_QuantityData_Def, '$Terms_QuantityData_Def', $debug_process, __FUNCTION__, __LINE__);
+			WDPQ_Debugger ($Terms_QuantityData_Stp, '$Terms_QuantityData_Stp', $debug_process, __FUNCTION__, __LINE__);		
 
-		$Term_QuantityData['min_qnt'] = min($Terms_QuantityData_Min);
-		$Term_QuantityData['max_qnt'] = max($Terms_QuantityData_Max);
-		$Term_QuantityData['def_qnt'] = min($Terms_QuantityData_Def);
-		$Term_QuantityData['stp_qnt'] = min($Terms_QuantityData_Stp);
-		$Term_QuantityData['price_unit'] = $Price_Unit_Label;
+			$Term_QuantityData['min_qnt'] = min($Terms_QuantityData_Min);
+			$Term_QuantityData['max_qnt'] = max($Terms_QuantityData_Max);
+			$Term_QuantityData['def_qnt'] = min($Terms_QuantityData_Def);
+			$Term_QuantityData['stp_qnt'] = min($Terms_QuantityData_Stp);
+			$Term_QuantityData['price_unit'] = $Price_Unit_Label;
+		
+		} else {
+			// При Добавлении Нового Товар, на раннем этапе, Товар еще не принадлежит ни к одной из Категорий, даже к "UnCategories".
+			// Это вызывает Ошибку для min() & max().
+			// В таком случае, берем Default Settings.
+			
+			$WooDecimalProduct_Min_Quantity_Default 	= get_option ('woodecimalproduct_min_qnt_default', 1);  
+			$WooDecimalProduct_Max_Quantity_Default 	= get_option ('woodecimalproduct_max_qnt_default', '');  
+			$WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
+			$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);		
+			
+			$Term_QuantityData['min_qnt'] = $WooDecimalProduct_Min_Quantity_Default;
+			$Term_QuantityData['max_qnt'] = $WooDecimalProduct_Max_Quantity_Default;
+			$Term_QuantityData['def_qnt'] = $WooDecimalProduct_Item_Quantity_Default;
+			$Term_QuantityData['stp_qnt'] = $WooDecimalProduct_Step_Quantity_Default;
+			$Term_QuantityData['price_unit'] = '';
+		}
 				
 		WDPQ_Debugger ($Term_QuantityData, '$Term_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 		return $Term_QuantityData;		

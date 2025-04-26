@@ -7,7 +7,7 @@ Tested up to: 6.7.2
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 18.56
+Stable tag: 18.56.1
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -65,6 +65,10 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 18.56.1 =
+	2025.04.26
+	* Fix Min/Max for Add New Product. (Thanks to Alanstones)
+	
 = 18.56 =
 	2025.04.23
 	* Check and Convert Quantity Delimiter on Product Category Page.
