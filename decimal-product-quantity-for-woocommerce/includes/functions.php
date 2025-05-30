@@ -956,10 +956,12 @@
 				// StorageType: System Storage	
 				$WDPQ_Cart = WC() -> session -> get( $Cart_Name );
 				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
-
-				$WDPQ_Cart = stripslashes( $WDPQ_Cart );
-				WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);	
-				$WDPQ_Cart = json_decode( $WDPQ_Cart, true );		
+				
+				if ($WDPQ_Cart) {
+					$WDPQ_Cart = stripslashes( $WDPQ_Cart );
+					WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);	
+					$WDPQ_Cart = json_decode( $WDPQ_Cart, true );
+				}		
 			}
 			if ($WooDecimalProduct_StorageType == 'local') {
 				// StorageType: Local Storage	
