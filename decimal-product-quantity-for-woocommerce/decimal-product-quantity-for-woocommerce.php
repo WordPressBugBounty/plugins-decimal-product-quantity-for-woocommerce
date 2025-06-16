@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 18.56.2
+Version: 18.57
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -648,19 +648,26 @@ License: GPLv2
 		$debug_process = 'remove_cart_item';
 
 		WDPQ_Debugger ($cart_item_key, '$cart_item_key', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($instance, '$instance', $debug_process, __FUNCTION__, __LINE__);
 		
 		$Cart_Contents = $instance -> cart_contents;
 		
-		$Product_ID = $Cart_Contents[$cart_item_key]['product_id'];
-		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		$Product_ID 	= $Cart_Contents[$cart_item_key]['product_id'];
+		$Variation_ID 	= $Cart_Contents[$cart_item_key]['variation_id'];
 		
+		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		WDPQ_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
+
 		if ($Product_ID) {
 			$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
+			WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 			
 			if ($WDPQ_Cart) {
 				$NewCart_Data = array();
 				
 				foreach ($WDPQ_Cart as $Cart_Product_Item) {
+					WDPQ_Debugger ($Cart_Product_Item, '$Cart_Product_Item', $debug_process, __FUNCTION__, __LINE__);
+					
 					$Cart_Product_Key 	= $Cart_Product_Item['key'];
 					$Cart_Product_ID 	= $Cart_Product_Item['product_id'];
 					$Cart_Variation_ID 	= $Cart_Product_Item['variation_id'];
@@ -672,26 +679,54 @@ License: GPLv2
 					$Item_SalePrice 	= $Cart_Product_Item['sale_price'];
 					$Price_Excl_Tax 	= $Cart_Product_Item['price_tax_excl'];
 					$Price_Incl_Tax 	= $Cart_Product_Item['price_tax_incl'];
-					$Tax_Amount 		= $Cart_Product_Item['tax_amount'];					
+					$Tax_Amount 		= $Cart_Product_Item['tax_amount'];
 					
-					if ($Cart_Product_ID != $Product_ID) {
-						$Item = array(
-							'key' => $Cart_Product_Key,
-							'product_id' => $Cart_Product_ID,
-							'variation_id' => $Cart_Variation_ID,
-							'quantity' => $Cart_Quantity,
-							'quantity_precision' => $Quantity_Precision,							
-							'price' => $Cart_Price,
-							'regular_price' => $Item_RegularPrice,
-							'sale_price' => $Item_SalePrice,
-							'price_tax_excl' => $Price_Excl_Tax,
-							'price_tax_incl' => $Price_Incl_Tax,
-							'tax_amount' => $Tax_Amount,							
-						);
+					// Удаляемый Товар не включаем в $NewCart_Data.
+					
+					if ($Variation_ID > 0) {
+						// Вариативный Товар
+						
+						if ($Cart_Variation_ID != $Variation_ID) {
+							$Item = array(
+								'key' => $Cart_Product_Key,
+								'product_id' => $Cart_Product_ID,
+								'variation_id' => $Cart_Variation_ID,
+								'quantity' => $Cart_Quantity,
+								'quantity_precision' => $Quantity_Precision,							
+								'price' => $Cart_Price,
+								'regular_price' => $Item_RegularPrice,
+								'sale_price' => $Item_SalePrice,
+								'price_tax_excl' => $Price_Excl_Tax,
+								'price_tax_incl' => $Price_Incl_Tax,
+								'tax_amount' => $Tax_Amount,							
+							);
 
-						$NewCart_Data[] = $Item;
-					}
+							$NewCart_Data[] = $Item;
+						}
+						
+					} else {
+						// Обычный Товар
+						
+						if ($Cart_Product_ID != $Product_ID) {
+							$Item = array(
+								'key' => $Cart_Product_Key,
+								'product_id' => $Cart_Product_ID,
+								'variation_id' => $Cart_Variation_ID,
+								'quantity' => $Cart_Quantity,
+								'quantity_precision' => $Quantity_Precision,							
+								'price' => $Cart_Price,
+								'regular_price' => $Item_RegularPrice,
+								'sale_price' => $Item_SalePrice,
+								'price_tax_excl' => $Price_Excl_Tax,
+								'price_tax_incl' => $Price_Incl_Tax,
+								'tax_amount' => $Tax_Amount,							
+							);
+
+							$NewCart_Data[] = $Item;
+						}						
+					}					
 				}
+				WDPQ_Debugger ($NewCart_Data, '$NewCart_Data', $debug_process, __FUNCTION__, __LINE__);
 
 				if( empty( $NewCart_Data ) ) {
 					// Delete WDPQ CartSession.
