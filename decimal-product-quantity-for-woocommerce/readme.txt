@@ -3,11 +3,11 @@ Contributors: WPGear
 Donate link: https://wpgear.xyz/decimal-product-quantity-woo
 Tags: woocommerce,decimal,quantity,piece,variation
 Requires at least: 5.0
-Tested up to: 6.7.2
+Tested up to: 6.8
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 18.57
+Stable tag: 18.58
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -65,6 +65,11 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 18.58 =
+	* Tested to WP: 6.8.2
+	* Tested to WooCommerce: 10.0.4
+	* Fix "Translation loading was triggered too early"
+
 = 18.57 =
 	2025.06.16
 	* Fix Cart Processing after remove Variation Item. (Thanks to Alanstones)

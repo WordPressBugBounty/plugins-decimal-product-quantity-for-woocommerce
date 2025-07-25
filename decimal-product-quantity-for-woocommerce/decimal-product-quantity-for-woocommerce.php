@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 18.57
+Version: 18.58
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -20,7 +20,7 @@ License: GPLv2
 
 	WooDecimalProduct_Check_Updated ();
 
-	__('Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.', 'decimal-product-quantity-for-woocommerce');	
+	// __('Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.', 'decimal-product-quantity-for-woocommerce');	
 	
 	/* JS Script.
 	----------------------------------------------------------------- */	
@@ -53,6 +53,36 @@ License: GPLv2
 		wp_enqueue_style ('wdpq_style', $WooDecimalProduct_Plugin_URL .'style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 		
 	}
 
+	/* Init. Инициализация.
+	* Запускаем самым последним, чтобы быть уверенным, что WooCommerce уже инициализировался.
+	----------------------------------------------------------------- */
+	add_action ('init', 'WooDecimalProduct_Action_init', 999999);
+	function WooDecimalProduct_Action_init() {
+		$debug_process = 'init';
+		
+		// Translate.
+		$WooDecimalProduct_LocalePath = dirname (plugin_basename ( __FILE__ )) . '/languages/';	
+		
+		load_plugin_textdomain ('decimal-product-quantity-for-woocommerce', false, $WooDecimalProduct_LocalePath);			
+		
+		// Инициализация Сессии, для Незалогиненых Пользователей.
+		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
+				
+		if (! is_user_logged_in() ) {
+			if ($WooDecimalProduct_StorageType == 'session') {
+				// StorageType: PHP Session
+				$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
+			}	
+		} 	
+		
+		// WooCommerce.
+		WooDecimalProduct_Woo_remove_filters();	
+
+		// "WooCommerce High-Performance Order Storage" Mode
+		$WooDecimalProduct_is_HPOS_Mode_Enable = filter_var( get_option( 'woocommerce_custom_orders_table_enabled', false ), FILTER_VALIDATE_BOOLEAN );
+		WDPQ_Debugger ($WooDecimalProduct_is_HPOS_Mode_Enable, '$WooDecimalProduct_is_HPOS_Mode_Enable', $debug_process, __FUNCTION__, __LINE__);		
+	}	
+	
 	/* AJAX Processing
 	----------------------------------------------------------------- */
     add_action ('wp_ajax_wdpq_ext_processing', 'WooDecimalProduct_Ajax');
@@ -63,39 +93,6 @@ License: GPLv2
 		
 		include_once ('includes/ajax_processing.php');
     }	
-
-	/* Translate.
-	----------------------------------------------------------------- */
-	add_action ('plugins_loaded', 'WooDecimalProduct_Action_plugins_loaded');
-	function WooDecimalProduct_Action_plugins_loaded() {
-		$WooDecimalProduct_LocalePath = dirname (plugin_basename ( __FILE__ )) . '/languages/';	
-		
-		load_plugin_textdomain ('decimal-product-quantity-for-woocommerce', false, $WooDecimalProduct_LocalePath);	
-	}
-	
-	/* Init. Инициализация.
-     * Запускаем самым последним, чтобы быть уверенным, что WooCommerce уже инициализировался.
-	----------------------------------------------------------------- */ 
-	add_action ('init', 'WooDecimalProduct_Init', 999999);
-	function WooDecimalProduct_Init () {		
-		$debug_process = 'init';
-		
-		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
-		
-		// Инициализация Сессии, для Незалогиненых Пользователей.
-		if (! is_user_logged_in() ) {
-			if ($WooDecimalProduct_StorageType == 'session') {
-				// StorageType: PHP Session
-				$Session_Started = WooDecimalProduct_StartSession( $Initiator = __FUNCTION__ );
-			}	
-		} 	
-		
-		WooDecimalProduct_Woo_remove_filters();	
-
-		// "WooCommerce High-Performance Order Storage" Mode
-		$WooDecimalProduct_is_HPOS_Mode_Enable = filter_var( get_option( 'woocommerce_custom_orders_table_enabled', false ), FILTER_VALIDATE_BOOLEAN );
-		WDPQ_Debugger ($WooDecimalProduct_is_HPOS_Mode_Enable, '$WooDecimalProduct_is_HPOS_Mode_Enable', $debug_process, __FUNCTION__, __LINE__);
-	}
 	
 	/* Страница Товара и Корзина. Классический вариант. Не Блочные.
      * Минимальное / Максимально кол-во выбора Товара, Шаг, Значение по-Умолчанию на странице Товара и Корзины.
