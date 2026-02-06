@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 18.58
+Version: 20.62
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -35,7 +35,7 @@ License: GPLv2
 		$WooDecimalProduct_Plugin_Version = $Plugin_Data['Version'];	
 		
 		$BlockLayots = WooDecimalProduct_Blocks_Check_BlockLayots();
-		WDPQ_Debugger ($BlockLayots, '$BlockLayots', $debug_process, __FUNCTION__, __LINE__);				
+		WooDecimalProduct_Debugger ($BlockLayots, '$BlockLayots', $debug_process, __FUNCTION__, __LINE__);				
 				
 		if (in_array('Cart', $BlockLayots))	{
 			// Block Cart
@@ -63,7 +63,7 @@ License: GPLv2
 		// Translate.
 		$WooDecimalProduct_LocalePath = dirname (plugin_basename ( __FILE__ )) . '/languages/';	
 		
-		load_plugin_textdomain ('decimal-product-quantity-for-woocommerce', false, $WooDecimalProduct_LocalePath);			
+		load_plugin_textdomain ('decimal-product-quantity-for-woocommerce', false, $WooDecimalProduct_LocalePath); // phpcs:ignore
 		
 		// Инициализация Сессии, для Незалогиненых Пользователей.
 		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
@@ -80,7 +80,7 @@ License: GPLv2
 
 		// "WooCommerce High-Performance Order Storage" Mode
 		$WooDecimalProduct_is_HPOS_Mode_Enable = filter_var( get_option( 'woocommerce_custom_orders_table_enabled', false ), FILTER_VALIDATE_BOOLEAN );
-		WDPQ_Debugger ($WooDecimalProduct_is_HPOS_Mode_Enable, '$WooDecimalProduct_is_HPOS_Mode_Enable', $debug_process, __FUNCTION__, __LINE__);		
+		WooDecimalProduct_Debugger ($WooDecimalProduct_is_HPOS_Mode_Enable, '$WooDecimalProduct_is_HPOS_Mode_Enable', $debug_process, __FUNCTION__, __LINE__);		
 	}	
 	
 	/* AJAX Processing
@@ -103,15 +103,15 @@ License: GPLv2
     function WooDecimalProduct_Filter_quantity_input_args($args, $product) {
 		$debug_process = 'quantity_input_args';
 
-		WDPQ_Debugger ($args, '$args', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($args, '$args', $debug_process, __FUNCTION__, __LINE__);
 
 		if ($product) {
 			$Product_ID = $product -> get_id();
-			WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
 			
 			if ($Product_ID) {
 				$item_product_id = $product -> get_parent_id();
-				WDPQ_Debugger ($item_product_id, '$item_product_id', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($item_product_id, '$item_product_id', $debug_process, __FUNCTION__, __LINE__);
 				
 				if ($item_product_id > 0) {
 					// Вариативный Товар.
@@ -121,7 +121,7 @@ License: GPLv2
 				}
 				
 				$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($item_product_id);
-				WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 				
 				$Min_Qnt = $WooDecimalProduct_QuantityData['min_qnt'];
 				$Max_Qnt = $WooDecimalProduct_QuantityData['max_qnt'];
@@ -134,7 +134,7 @@ License: GPLv2
 
 				$Field_Input_Name 	= isset($args['input_name']) ? $args['input_name']: '';
 				$Field_Input_Value 	= isset($args['input_value']) ? $args['input_value']: '';
-				WDPQ_Debugger ($Field_Input_Name, '$Field_Input_Name', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Field_Input_Name, '$Field_Input_Name', $debug_process, __FUNCTION__, __LINE__);
 
 				if ($Field_Input_Name == 'quantity') {
 					// Страница Товара.
@@ -151,19 +151,19 @@ License: GPLv2
 			
 				// Возможно, это - Корзина. Например: 'cart[e00da03b685a0dd18fb6a08af0923de0][qty]'	
 				$PosStart_Cart_Item_Key	= strpos( $Field_Input_Name, 'art[' );
-				WDPQ_Debugger ($PosStart_Cart_Item_Key, '$PosStart_Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($PosStart_Cart_Item_Key, '$PosStart_Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
 
 				if ( $PosStart_Cart_Item_Key > 0) {
 					$PosEnd_Cart_Item_Key = strpos( $Field_Input_Name, '][qty]' );
 
 					if ($PosEnd_Cart_Item_Key > 0) {
 						$Cart_Item_Key = substr($Field_Input_Name, $PosStart_Cart_Item_Key + 4, $PosEnd_Cart_Item_Key - 5);
-						WDPQ_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
 						
 						// Корзина. Корректируем $Quantity из WDPQ-Cart
 						if ($Cart_Item_Key) {
 							$Cart_Quantity = WooDecimalProduct_Get_WDPQ_Cart_Quantity_by_CartProductKey ($Cart_Item_Key);
-							WDPQ_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+							WooDecimalProduct_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
 						
 							if ($Cart_Quantity > 0) {
 								$args['input_value'] = $Cart_Quantity;
@@ -174,7 +174,7 @@ License: GPLv2
 			}				
 		}
 			
-		WDPQ_Debugger ($args, '$args', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($args, '$args', $debug_process, __FUNCTION__, __LINE__);
         return $args;
     }     
 
@@ -185,10 +185,10 @@ License: GPLv2
 		$debug_process = 'variation';
 		
         $Product_ID = $product -> get_id();
-		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
 
 		$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
-		WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 		
 		$Min_Qnt = $WooDecimalProduct_QuantityData['min_qnt'];
 		$Max_Qnt = $WooDecimalProduct_QuantityData['max_qnt'];		
@@ -206,9 +206,9 @@ License: GPLv2
 	function WooDecimalProduct_Filter_add_to_cart_validation ($Passed, $Product_ID, $Quantity) {
 		$debug_process = 'add_to_cart_validation';
 
-		WDPQ_Debugger ($Passed, '$Passed', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Passed, '$Passed', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
 		
 		if ($Passed) {
 			$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');  
@@ -228,7 +228,7 @@ License: GPLv2
 							if ($Item_Quantity) {
 								$No_MaxEmpty = '';								
 								$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
-								WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+								WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 
 								$Max_Qnt = $WooDecimalProduct_QuantityData['max_qnt'];
 
@@ -261,9 +261,9 @@ License: GPLv2
 	function WooDecimalProduct_Filter_wc_add_to_cart_message_html ($message, $products) {
 		$debug_process = 'add_to_cart_message';
 
-		WDPQ_Debugger ($message, '$message', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($products, '$products', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
+		WooDecimalProduct_Debugger ($message, '$message', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($products, '$products', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
 		
 		$Variation_ID = isset( $_REQUEST['variation_id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['variation_id'] ) ) : 0; // phpcs:ignore
 		
@@ -272,11 +272,11 @@ License: GPLv2
 		$count = 0;	
 
 		foreach ($products as $Product_ID => $Quantity) {
-			WDPQ_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
 			
 			if ($Quantity > 0) {				
 				$Cart_Item_Key = WooDecimalProduct_Get_CartItem_Key_by_ProductID ($Product_ID);
-				WDPQ_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
 				
 				$Item_Price = 0;
 									
@@ -284,7 +284,7 @@ License: GPLv2
 					//Вариативный Товар.
 					
 					// $Product_Variation_Prices = $Product -> get_variation_prices();
-					// WDPQ_Debugger ($Product_Variation_Prices, '$Product_Variation_Prices', $debug_process, __FUNCTION__, __LINE__);
+					// WooDecimalProduct_Debugger ($Product_Variation_Prices, '$Product_Variation_Prices', $debug_process, __FUNCTION__, __LINE__);
 											
 					// $Item_Price = $Product_Variation_Prices['price'][$Variation_ID]; // price						
 					// $Item_RegularPrice = $Product_Variation_Prices['regular_price'][$Variation_ID]; // regular_price
@@ -298,7 +298,7 @@ License: GPLv2
 					$Product = wc_get_product( $Product_ID );
 				}	
 
-				// WDPQ_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__);
+				// WooDecimalProduct_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__);
 				if ($Product) {	
 					$Item_Price 		= $Product -> get_price();
 					$Item_RegularPrice 	= $Product -> get_regular_price();
@@ -308,17 +308,17 @@ License: GPLv2
 					$Item_RegularPrice 	= floatval( $Item_RegularPrice );
 					$Item_SalePrice 	= floatval( $Item_SalePrice );
 
-					WDPQ_Debugger ($Item_Price, '$Item_Price', $debug_process, __FUNCTION__, __LINE__);
-					WDPQ_Debugger ($Item_RegularPrice, '$Item_RegularPrice', $debug_process, __FUNCTION__, __LINE__);
-					WDPQ_Debugger ($Item_SalePrice, '$Item_SalePrice', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Item_Price, '$Item_Price', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Item_RegularPrice, '$Item_RegularPrice', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Item_SalePrice, '$Item_SalePrice', $debug_process, __FUNCTION__, __LINE__);
 				
 					$Price_Excl_Tax = wc_get_price_excluding_tax( $Product ); 	// price without VAT
 					$Price_Incl_Tax = wc_get_price_including_tax( $Product );  	// price with VAT
 					$Tax_Amount     = $Price_Incl_Tax - $Price_Excl_Tax; 		// VAT amount
 
-					WDPQ_Debugger ($Price_Excl_Tax, '$Price_Excl_Tax', $debug_process, __FUNCTION__, __LINE__);
-					WDPQ_Debugger ($Price_Incl_Tax, '$Price_Incl_Tax', $debug_process, __FUNCTION__, __LINE__);
-					WDPQ_Debugger ($Tax_Amount, '$Tax_Amount', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Price_Excl_Tax, '$Price_Excl_Tax', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Price_Incl_Tax, '$Price_Incl_Tax', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Tax_Amount, '$Tax_Amount', $debug_process, __FUNCTION__, __LINE__);
 
 					$Item = array(
 						'key' => $Cart_Item_Key,
@@ -332,7 +332,7 @@ License: GPLv2
 						'price_tax_incl' => $Price_Incl_Tax,
 						'tax_amount' => $Tax_Amount,
 					);
-					WDPQ_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
 
 					$Add_to_Cart[] = $Item;
 				}					
@@ -342,7 +342,7 @@ License: GPLv2
 			$count   += $Quantity;
 		}
 
-		WDPQ_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
 
 		WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_Cart, $isDraft = false);
 		
@@ -351,7 +351,7 @@ License: GPLv2
 
 		// Output success messages.
 		if ('yes' === get_option ('woocommerce_cart_redirect_after_add')) {
-			$return_to = apply_filters ('woocommerce_continue_shopping_redirect', wc_get_raw_referer() ? wp_validate_redirect( wc_get_raw_referer(), false ) : wc_get_page_permalink('shop'));
+			$return_to = apply_filters ('woocommerce_continue_shopping_redirect', wc_get_raw_referer() ? wp_validate_redirect( wc_get_raw_referer(), false ) : wc_get_page_permalink('shop'));  // phpcs:ignore	
 			$message = sprintf ('<a href="%s" class="button wc-forward">%s</a> %s', esc_url ($return_to), esc_html__('Continue shopping', 'woocommerce'), esc_html ($added_text)); // phpcs:ignore	
 		} else {
 			$message = sprintf ('<a href="%s" class="button wc-forward">%s</a> %s', esc_url (wc_get_page_permalink('cart')), esc_html__('View cart', 'woocommerce'), esc_html($added_text)); // phpcs:ignore	
@@ -359,40 +359,44 @@ License: GPLv2
 
 		if (has_filter( 'wc_add_to_cart_message')) {
 			wc_deprecated_function ('The wc_add_to_cart_message filter', '3.0', 'wc_add_to_cart_message_html');
-			$message = apply_filters ('wc_add_to_cart_message', $message, $Product_ID);
+			$message = apply_filters ('wc_add_to_cart_message', $message, $Product_ID); // phpcs:ignore	
 		}	
 
-		WDPQ_Debugger ($message, '$message', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($message, '$message', $debug_process, __FUNCTION__, __LINE__);
 		return $message;
 	}
 
-    /* Добавление Товара не со Страницы Товара, а из Каталога (без выбора Количества), с учетом возможного минимального Значения Количества и Количества по-Умолчанию.
+    /* Каталог Товаров (без выбора Количества), с учетом возможного минимального Значения Количества и Количества по-Умолчанию.
 	 * \woocommerce\includes\wc-template-functions.php
 	 * \woocommerce\templates\loop\add-to-cart.php
     ----------------------------------------------------------------- */	
 	add_filter ('woocommerce_loop_add_to_cart_args', 'WooDecimalProduct_Filter_loop_add_to_cart_args', 10, 2);
-	function WooDecimalProduct_Filter_loop_add_to_cart_args ($args, $product) {
+	function WooDecimalProduct_Filter_loop_add_to_cart_args ($args, $Product) {
 		$debug_process = 'add_to_cart_args';
 
-		WDPQ_Debugger ($args, '$args', $debug_process, __FUNCTION__, __LINE__);
-		// WDPQ_Debugger ($product, '$product', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($args, '$args', $debug_process, __FUNCTION__, __LINE__);
+		// WooDecimalProduct_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__);
+		// WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore		
 		
-		$Product_ID = $product -> get_id();	
-		
-		if ($Product_ID) {
-			$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
-			WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+		if ($Product) {
+			$Product_ID = $Product -> get_id();	
 			
-			$Min_Qnt = $WooDecimalProduct_QuantityData['min_qnt'];
-			$Max_Qnt = $WooDecimalProduct_QuantityData['max_qnt'];
-			$Def_Qnt = $WooDecimalProduct_QuantityData['def_qnt'];
-			$Stp_Qnt = $WooDecimalProduct_QuantityData['stp_qnt'];
-			
-			$args['quantity'] = $Def_Qnt;
-			
-			return $args;
-		}		
+			if ($Product_ID) {
+				$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
+				WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+				
+				$Min_Qnt = $WooDecimalProduct_QuantityData['min_qnt'];
+				$Max_Qnt = $WooDecimalProduct_QuantityData['max_qnt'];
+				$Def_Qnt = $WooDecimalProduct_QuantityData['def_qnt'];
+				$Stp_Qnt = $WooDecimalProduct_QuantityData['stp_qnt'];
+				
+				$Quantity = $Def_Qnt;
+				
+				$args['quantity'] = $Quantity;
+			}
+		}
 
+		WooDecimalProduct_Debugger ($args, '$args', $debug_process, __FUNCTION__, __LINE__);
 		return $args;
 	}
 	
@@ -413,12 +417,12 @@ License: GPLv2
 		global $product;
 		
 		$Product_ID = $product -> get_id();	
-		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
 		
 		if ($Product_ID) {
 			$No_MaxEmpty = '-1';	// Unlimited
 			$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
-			WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 			
 			$Min_Qnt 		= $WooDecimalProduct_QuantityData['min_qnt'];
 			$Max_Qnt 		= $WooDecimalProduct_QuantityData['max_qnt'];
@@ -444,7 +448,7 @@ License: GPLv2
 				'msg_no_valid_value' => esc_html( __('- No valid value. Auto correction nearest valid value:', 'decimal-product-quantity-for-woocommerce') ),
 				'msg_more_than_the_max_allowed' => esc_html( __('- More than the maximum allowed for this Product. Auto correction to Max:', 'decimal-product-quantity-for-woocommerce') ),
 			);
-			WDPQ_Debugger ($Params, '$Params', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($Params, '$Params', $debug_process, __FUNCTION__, __LINE__);
 			
 			wp_localize_script('wdpq_page_product', 'wdpq_script_params', $Params);
 		}
@@ -463,20 +467,20 @@ License: GPLv2
 		$WooDecimalProduct_AJAX_Cart_Update			= get_option ('woodecimalproduct_ajax_cart_update', 0);	
 		$WooDecimalProduct_ButtonsPM_Cart_Enable	= get_option ('woodecimalproduct_buttonspm_cart_enable', 0);
 
-		WDPQ_Debugger ($WooDecimalProduct_Auto_Correction_Quantity, '$WooDecimalProduct_Auto_Correction_Quantity', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($WooDecimalProduct_AJAX_Cart_Update, '$WooDecimalProduct_AJAX_Cart_Update', $debug_process, __FUNCTION__, __LINE__);		
+		WooDecimalProduct_Debugger ($WooDecimalProduct_Auto_Correction_Quantity, '$WooDecimalProduct_Auto_Correction_Quantity', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_AJAX_Cart_Update, '$WooDecimalProduct_AJAX_Cart_Update', $debug_process, __FUNCTION__, __LINE__);		
 		
 		$WooDecimalProduct_Cart = array();
 		
 		$No_MaxEmpty = '-1';	// Unlimited
 		
 		foreach( WC() -> cart -> get_cart() as $cart_item ){	
-			// WDPQ_Debugger ($cart_item, '$cart_item', $cart_item, __FUNCTION__, __LINE__);			
+			// WooDecimalProduct_Debugger ($cart_item, '$cart_item', $cart_item, __FUNCTION__, __LINE__);			
 			
 			$product_id 		= $cart_item['data']->get_id();
 			$parent_product_id 	= $cart_item['data']->get_parent_id();
-			WDPQ_Debugger ($product_id, '$product_id', $debug_process, __FUNCTION__, __LINE__);
-			WDPQ_Debugger ($parent_product_id, '$parent_product_id', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($product_id, '$product_id', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($parent_product_id, '$parent_product_id', $debug_process, __FUNCTION__, __LINE__);
 
 			if ($parent_product_id > 0) {
 				// Вариативный Товар.
@@ -487,16 +491,16 @@ License: GPLv2
 				// Простой Товар.
 				$item_product_id = $product_id;
 			}
-			WDPQ_Debugger ($item_product_id, '$item_product_id', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($item_product_id, '$item_product_id', $debug_process, __FUNCTION__, __LINE__);
 
 			$cart_item_key 	= $cart_item['key'];
-			WDPQ_Debugger ($cart_item_key, '$cart_item_key', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($cart_item_key, '$cart_item_key', $debug_process, __FUNCTION__, __LINE__);
 
 			$WooDecimalProduct_Cart[$item_product_id] = $cart_item_key;
-			WDPQ_Debugger ($WooDecimalProduct_Cart, '$WooDecimalProduct_Cart', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($WooDecimalProduct_Cart, '$WooDecimalProduct_Cart', $debug_process, __FUNCTION__, __LINE__);
 			
 			$WooDecimalProduct_QuantityData[$item_product_id] = WooDecimalProduct_Get_QuantityData_by_ProductID ($product_id, $No_MaxEmpty);
-			WDPQ_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
 		}
 		
 		$WooDecimalProduct_Plugin_URL = plugin_dir_url ( __FILE__ ); // со слэшем на конце
@@ -528,7 +532,7 @@ License: GPLv2
 		'storage_type_local' => $StorageType_Local,
 		);		
 		
-		WDPQ_Debugger ($Params, '$Params', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Params, '$Params', $debug_process, __FUNCTION__, __LINE__);
 		
 		wp_localize_script( 'wdpq_page_cart', 'wdpq_script_params', $Params );
 	}
@@ -541,17 +545,17 @@ License: GPLv2
 		$debug_process = 'product_page';
 		
 		$WooDecimalProduct_Price_Unit_Label	= get_option ('woodecimalproduct_price_unit_label', 0);	
-		WDPQ_Debugger ($WooDecimalProduct_Price_Unit_Label, '$WooDecimalProduct_Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_Price_Unit_Label, '$WooDecimalProduct_Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
 		
 		if ($WooDecimalProduct_Price_Unit_Label) {
 			global $product;
 
 			if ($product) {
 				$Product_ID = $product -> get_id();
-				WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
 				
 				$Price_Unit_Label = WooDecimalProduct_Get_PriceUnitLabel_by_ProductID ($Product_ID);
-				WDPQ_Debugger ($Price_Unit_Label, '$Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Price_Unit_Label, '$Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
 				
 				echo $Price_Unit_Label; // phpcs:ignore 					
 			}				
@@ -565,19 +569,19 @@ License: GPLv2
 	function WooDecimalProduct_Filter_loop_add_to_cart_link ($add_to_cart_html, $product) {
 		$debug_process = 'catalog_page';
 
-		WDPQ_Debugger ($add_to_cart_html, '$add_to_cart_html', $debug_process, __FUNCTION__, __LINE__);
-		// WDPQ_Debugger ($product, '$product', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($add_to_cart_html, '$add_to_cart_html', $debug_process, __FUNCTION__, __LINE__);
+		// WooDecimalProduct_Debugger ($product, '$product', $debug_process, __FUNCTION__, __LINE__);
 		
 		$WooDecimalProduct_Price_Unit_Label	= get_option ('woodecimalproduct_price_unit_label', 0);
-		WDPQ_Debugger ($WooDecimalProduct_Price_Unit_Label, '$WooDecimalProduct_Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_Price_Unit_Label, '$WooDecimalProduct_Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
 		
 		if ($WooDecimalProduct_Price_Unit_Label) {
 			$Product_ID = $product -> get_id();
-			WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
 			
 			if ($Product_ID) {
 				$Price_Unit_Label = WooDecimalProduct_Get_PriceUnitLabel_by_ProductID ($Product_ID);
-				WDPQ_Debugger ($Price_Unit_Label, '$Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Price_Unit_Label, '$Price_Unit_Label', $debug_process, __FUNCTION__, __LINE__);
 				
 				if ($Price_Unit_Label) {
 					$add_to_cart_html = $Price_Unit_Label .$add_to_cart_html;
@@ -596,10 +600,10 @@ License: GPLv2
 	function WooDecimalProduct_Filter_cart_contents_changed ($Cart_Content) {	
 		$debug_process = 'cart_contents_changed';
 		
-		WDPQ_Debugger ($Cart_Content, '$Cart_Content', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Cart_Content, '$Cart_Content', $debug_process, __FUNCTION__, __LINE__);
 		
 		$Cart_Items = isset( $_REQUEST['cart'] ) ? $_REQUEST['cart'] : null; // phpcs:ignore	
-		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
+		WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
 		
 		// Это - Корзина.
 		if ($Cart_Items) {
@@ -609,7 +613,7 @@ License: GPLv2
 				$Item_Quantity = $Item_Value['qty'];
 				
 				$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Item_Key);
-				WDPQ_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
 				
 				if ($WDPQ_Cart_Item) {
 					$Item = array(
@@ -624,7 +628,7 @@ License: GPLv2
 				}
 			}
 
-			WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 			
 			WooDecimalProduct_Delete_WDPQ_CartSession ($isDraft = false);
 			WooDecimalProduct_Update_WDPQ_CartSession ($WDPQ_Cart, $isDraft = false);
@@ -644,26 +648,26 @@ License: GPLv2
 	function WooDecimalProduct_Action_remove_cart_item ($cart_item_key, $instance) {
 		$debug_process = 'remove_cart_item';
 
-		WDPQ_Debugger ($cart_item_key, '$cart_item_key', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($instance, '$instance', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($cart_item_key, '$cart_item_key', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($instance, '$instance', $debug_process, __FUNCTION__, __LINE__);
 		
 		$Cart_Contents = $instance -> cart_contents;
 		
 		$Product_ID 	= $Cart_Contents[$cart_item_key]['product_id'];
 		$Variation_ID 	= $Cart_Contents[$cart_item_key]['variation_id'];
 		
-		WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
-		WDPQ_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
 
 		if ($Product_ID) {
 			$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
-			WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 			
 			if ($WDPQ_Cart) {
 				$NewCart_Data = array();
 				
 				foreach ($WDPQ_Cart as $Cart_Product_Item) {
-					WDPQ_Debugger ($Cart_Product_Item, '$Cart_Product_Item', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Cart_Product_Item, '$Cart_Product_Item', $debug_process, __FUNCTION__, __LINE__);
 					
 					$Cart_Product_Key 	= $Cart_Product_Item['key'];
 					$Cart_Product_ID 	= $Cart_Product_Item['product_id'];
@@ -723,7 +727,7 @@ License: GPLv2
 						}						
 					}					
 				}
-				WDPQ_Debugger ($NewCart_Data, '$NewCart_Data', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($NewCart_Data, '$NewCart_Data', $debug_process, __FUNCTION__, __LINE__);
 
 				if( empty( $NewCart_Data ) ) {
 					// Delete WDPQ CartSession.
@@ -747,7 +751,7 @@ License: GPLv2
 	function WooDecimalProduct_Filter_should_clear_cart_after_payment ($should_clear_cart_after_payment) {	
 		$debug_process = 'clear_cart_after_payment';
 
-		WDPQ_Debugger ($should_clear_cart_after_payment, '$should_clear_cart_after_payment', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($should_clear_cart_after_payment, '$should_clear_cart_after_payment', $debug_process, __FUNCTION__, __LINE__);
 		
 		if ($should_clear_cart_after_payment) {
 			// Clear.
@@ -766,18 +770,18 @@ License: GPLv2
 		$debug_process = 'before_cart_contents';
 
 		$WooCart = WC() -> cart -> get_cart();
-		// WDPQ_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
+		// WooDecimalProduct_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
 			
 		foreach ( $WooCart as $Cart_Item_Key => $cart_item ) {
-			WDPQ_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
-			// WDPQ_Debugger ($cart_item, '$cart_item', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+			// WooDecimalProduct_Debugger ($cart_item, '$cart_item', $debug_process, __FUNCTION__, __LINE__);
 
 			$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Cart_Item_Key);
-			WDPQ_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
 			
 			if ($WDPQ_Cart_Item) {
 				$WDPQ_Cart_Item_Quantity = $WDPQ_Cart_Item['quantity'];
-				WDPQ_Debugger ($WDPQ_Cart_Item_Quantity, '$WDPQ_Cart_Item_Quantity', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($WDPQ_Cart_Item_Quantity, '$WDPQ_Cart_Item_Quantity', $debug_process, __FUNCTION__, __LINE__);
 
 				if ($WDPQ_Cart_Item_Quantity > 0) {
 					WC() -> cart -> set_quantity( $Cart_Item_Key, $WDPQ_Cart_Item_Quantity, $refresh_totals = true );
@@ -798,7 +802,7 @@ License: GPLv2
 	function WooDecimalProduct_Filter_cart_get_total ($Cart_Total) {
 		$debug_process = 'cart_get_total';
 
-		WDPQ_Debugger ($Cart_Total, '$Cart_Total', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Cart_Total, '$Cart_Total', $debug_process, __FUNCTION__, __LINE__);
 		
 		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
 		
@@ -823,7 +827,7 @@ License: GPLv2
 	function WooDecimalProduct_Filter_cart_totals_taxes_total_html ($Tax_html) {	
 		$debug_process = 'taxes_total';
 
-		WDPQ_Debugger ($Tax_html, '$Tax_html', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Tax_html, '$Tax_html', $debug_process, __FUNCTION__, __LINE__);
 		
 		// $Tax_About_Title = __('Real value may be Rounded', 'decimal-product-quantity-for-woocommerce');
 		// $Tax_About_Text  = __('(may be Rounded)', 'decimal-product-quantity-for-woocommerce');
@@ -842,7 +846,7 @@ License: GPLv2
 	function WooDecimalProduct_Filter_cart_totals_order_total_html ($Total_html) {	
 		$debug_process = 'cart_total';
 
-		WDPQ_Debugger ($Total_html, '$Total_html', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Total_html, '$Total_html', $debug_process, __FUNCTION__, __LINE__);
 		
 		// $Total_About_Title = __('Real value may be Rounded', 'decimal-product-quantity-for-woocommerce');
 		// $Total_About_Text  = __('(may be Rounded)', 'decimal-product-quantity-for-woocommerce');
@@ -860,10 +864,10 @@ License: GPLv2
 	function WooDecimalProduct_Filter_cart_product_subtotal ($Product_Subtotal, $Product, $Quantity, $Cart_Items) {	
 		$debug_process = 'item_subtotal';
 
-		WDPQ_Debugger ($Product_Subtotal, '$Product_Subtotal', $debug_process, __FUNCTION__, __LINE__);
-		// WDPQ_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__);
-		// WDPQ_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
-		// WDPQ_Debugger ($Cart_Items, '$Cart_Items', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Product_Subtotal, '$Product_Subtotal', $debug_process, __FUNCTION__, __LINE__);
+		// WooDecimalProduct_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__);
+		// WooDecimalProduct_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
+		// WooDecimalProduct_Debugger ($Cart_Items, '$Cart_Items', $debug_process, __FUNCTION__, __LINE__);
 
 		return $Product_Subtotal;
 	}
@@ -878,10 +882,10 @@ License: GPLv2
 	function WooDecimalProduct_Filter_cart_get_subtotal ($Cart_Subtotal) {
 		$debug_process = 'cart_subtotal';
 
-		WDPQ_Debugger ($Cart_Subtotal, '$Cart_Subtotal', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($Cart_Subtotal, '$Cart_Subtotal', $debug_process, __FUNCTION__, __LINE__);
 		
 		$isWDPQ_Cart_Empty = WooDecimalProduct_is_WDPQCart_Empty ();
-		WDPQ_Debugger ($isWDPQ_Cart_Empty, '$isWDPQ_Cart_Empty', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($isWDPQ_Cart_Empty, '$isWDPQ_Cart_Empty', $debug_process, __FUNCTION__, __LINE__);
 
 		if ($isWDPQ_Cart_Empty) {	
 			return 0;
@@ -899,28 +903,28 @@ License: GPLv2
 		$debug_process = 'after_cart';
 		
 		$isWDPQ_Cart_Empty = WooDecimalProduct_is_WDPQCart_Empty ();
-		WDPQ_Debugger ($isWDPQ_Cart_Empty, '$isWDPQ_Cart_Empty', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($isWDPQ_Cart_Empty, '$isWDPQ_Cart_Empty', $debug_process, __FUNCTION__, __LINE__);
 		
 		if ($isWDPQ_Cart_Empty) {			
 			$Add_to_DraftCart = array ();
 				
 			$WooCart = WC() -> cart;
-			// WDPQ_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
+			// WooDecimalProduct_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
 
 			if ($WooCart) {
 				$Cart_Contents = $WooCart -> cart_contents;	
-				// WDPQ_Debugger ($Cart_Contents, '$Cart_Contents', $debug_process, __FUNCTION__, __LINE__);
+				// WooDecimalProduct_Debugger ($Cart_Contents, '$Cart_Contents', $debug_process, __FUNCTION__, __LINE__);
 				
 				if ($Cart_Contents) {							
 					foreach ($Cart_Contents as $key => $Cart_Item) {
-						WDPQ_Debugger ($Cart_Item, '$Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Cart_Item, '$Cart_Item', $debug_process, __FUNCTION__, __LINE__);
 						
 						$Item_Key 			= $Cart_Item['key'];
 						$Item_ProductID 	= $Cart_Item['product_id'];
 						$Item_VariationID 	= $Cart_Item['variation_id'];
 						
 						$Cart_Item_Product 	= $Cart_Item['data'];
-						// WDPQ_Debugger ($Cart_Item_Product, '$Cart_Item_Product', $debug_process, __FUNCTION__, __LINE__);
+						// WooDecimalProduct_Debugger ($Cart_Item_Product, '$Cart_Item_Product', $debug_process, __FUNCTION__, __LINE__);
 						
 						$Item_Price 		= $Cart_Item_Product -> get_price();							
 						$Item_RegularPrice 	= $Cart_Item_Product -> get_regular_price();
@@ -930,17 +934,17 @@ License: GPLv2
 						$Item_RegularPrice 	= floatval( $Item_RegularPrice );
 						$Item_SalePrice 	= floatval( $Item_SalePrice );
 
-						WDPQ_Debugger ($Item_Price, '$Item_Price', $debug_process, __FUNCTION__, __LINE__);
-						WDPQ_Debugger ($Item_RegularPrice, '$Item_RegularPrice', $debug_process, __FUNCTION__, __LINE__);
-						WDPQ_Debugger ($Item_SalePrice, '$Item_SalePrice', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Item_Price, '$Item_Price', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Item_RegularPrice, '$Item_RegularPrice', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Item_SalePrice, '$Item_SalePrice', $debug_process, __FUNCTION__, __LINE__);
 
 						$Price_Excl_Tax = wc_get_price_excluding_tax( $Cart_Item_Product ); 	// price without VAT
 						$Price_Incl_Tax = wc_get_price_including_tax( $Cart_Item_Product );  	// price with VAT
 						$Tax_Amount     = $Price_Incl_Tax - $Price_Excl_Tax; 		// VAT amount
 
-						WDPQ_Debugger ($Price_Excl_Tax, '$Price_Excl_Tax', $debug_process, __FUNCTION__, __LINE__);
-						WDPQ_Debugger ($Price_Incl_Tax, '$Price_Incl_Tax', $debug_process, __FUNCTION__, __LINE__);
-						WDPQ_Debugger ($Tax_Amount, '$Tax_Amount', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Price_Excl_Tax, '$Price_Excl_Tax', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Price_Incl_Tax, '$Price_Incl_Tax', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Tax_Amount, '$Tax_Amount', $debug_process, __FUNCTION__, __LINE__);
 						
 						$Item_Quantity = 1;
 						
@@ -958,7 +962,7 @@ License: GPLv2
 						);
 						
 						$Add_to_DraftCart[] = $Item;
-						WDPQ_Debugger ($Add_to_DraftCart, '$Add_to_DraftCart', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Add_to_DraftCart, '$Add_to_DraftCart', $debug_process, __FUNCTION__, __LINE__);
 					}
 					
 					WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_DraftCart, $isDraft = true);
@@ -980,7 +984,7 @@ License: GPLv2
 						'button_value' => esc_html( 'create_cart', 'decimal-product-quantity-for-woocommerce'),
 						'button_label' => esc_html( __('Create Cart', 'decimal-product-quantity-for-woocommerce') ),
 					);
-					WDPQ_Debugger ($Params, '$Params', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Params, '$Params', $debug_process, __FUNCTION__, __LINE__);
 					
 					wp_localize_script('wdpq_page_cart_restore', 'wdpq_script_cart_restore_params', $Params);			
 					
@@ -999,7 +1003,7 @@ License: GPLv2
 	function WooDecimalProduct_Action_cart_is_empty () {
 		$debug_process = 'cart-empty';
 
-		WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
+		WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
 
 		$Action = isset($_REQUEST['wdpq_create_cart']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_create_cart'])) : null; // phpcs:ignore
 		$Nonce 	= isset($_REQUEST['wdpq_wpnonce']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_wpnonce'])) : 'none'; // phpcs:ignore	
@@ -1012,14 +1016,14 @@ License: GPLv2
 			}
 			
 			$Cart_Items = isset( $_REQUEST['cart'] ) ? $_REQUEST['cart'] : null; // phpcs:ignore	
-			WDPQ_Debugger ($Cart_Items, '$Cart_Items', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($Cart_Items, '$Cart_Items', $debug_process, __FUNCTION__, __LINE__);
 				
 			$isWDPQ_Cart_Empty = WooDecimalProduct_is_WDPQCart_Empty ();
-			WDPQ_Debugger ($isWDPQ_Cart_Empty, '$isWDPQ_Cart_Empty', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($isWDPQ_Cart_Empty, '$isWDPQ_Cart_Empty', $debug_process, __FUNCTION__, __LINE__);
 			
 			if ($isWDPQ_Cart_Empty) {
 				$Draft_Cart = WooDecimalProduct_Get_WDPQ_CartSession ($isDraft = true);	
-				WDPQ_Debugger ($Draft_Cart, '$Draft_Cart', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Draft_Cart, '$Draft_Cart', $debug_process, __FUNCTION__, __LINE__);
 				
 				// Create WDPQ-Cart
 				if ($Draft_Cart) {
@@ -1054,7 +1058,7 @@ License: GPLv2
 							'price_tax_incl' => $Price_Incl_Tax,
 							'tax_amount' => $Tax_Amount,							
 						);
-						WDPQ_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
+						WooDecimalProduct_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
 						
 						$Add_to_Cart[] = $Item;
 						
@@ -1062,7 +1066,7 @@ License: GPLv2
 						WC() -> cart -> add_to_cart( $Item_ProductID, $Item_Quantity, $Item_VariationID );
 					}
 					
-					WDPQ_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+					WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
 					
 					WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_Cart, $isDraft = false);
 
@@ -1087,22 +1091,42 @@ License: GPLv2
 	----------------------------------------------------------------- */	
 	add_action ('admin_notices', 'WooDecimalProduct_Action_admin_notices');
 	function WooDecimalProduct_Action_admin_notices () {
-		$debug_process = 'admin_notices';
+		$debug_process = 'admin_notices';		
+				
+		$screen = get_current_screen();		
+		WooDecimalProduct_Debugger ($screen, '$screen', $debug_process, __FUNCTION__, __LINE__);		
 		
-		// Coupons
-		$screen = get_current_screen();
-		$screen_id = $screen -> id;
-		// WDPQ_Debugger ($screen_id, '$screen_id', $debug_process, __FUNCTION__, __LINE__);
-
-		// if ($screen_id == 'edit-shop_coupon') {
-			// $Notice = __( 'Correct processing of coupons is possible only in the Pro version "Decimal Product Quantity for WooCommerce". Sorry.', 'decimal-product-quantity-for-woocommerce' );
-	
-			// echo '<div id="wdpq_warning_coupons" class="notice notice-warning notice-wdpq"><p>' .esc_html( $Notice ) .'</p></div>';
-		// }	
+		if ($screen) {
+			$screen_id 				= $screen -> id;
+			$screen_base 			= $screen -> base;
+			$screen_parent_base		= $screen -> parent_base;
+			$screen_post_type		= $screen -> post_type;
+						
+			// Admin. WooCommerce. Product Setup Page. Edit Mode.	
+			if ( $screen_id === 'product' && $screen_base === 'post' && $screen_parent_base === 'edit' ) {
+				// Check Notice about Corrections: Min, Max, Step, Set.
+				
+				WooDecimalProduct_Check_AdminNotice_AboutCorrection($screen, $Admin_Notice = array());
+			}
+			
+			// Admin. WooCommerce. Category Product Setup Page. Edit Mode.	
+			if ( $screen_id === 'edit-product_cat' && $screen_post_type === 'product' ) {		
+				// Check Notice about Corrections: Min, Max, Step, Set.
+				
+				WooDecimalProduct_Check_AdminNotice_AboutCorrection($screen, $Admin_Notice = array());
+			}
+						
+			// Admin. Coupons
+			// if ($screen_id == 'edit-shop_coupon') {				
+				// $Notice = __( 'Correct processing of coupons is possible only in the Pro version "Decimal Product Quantity for WooCommerce". Sorry.', 'decimal-product-quantity-for-woocommerce' );
+		
+				// echo '<div id="wdpq_warning_coupons" class="notice notice-warning notice-wdpq"><p>' .esc_html( $Notice ) .'</p></div>';
+			// }
+		}	
 		
 		// Block Layouts
 		$BlockLayots = WooDecimalProduct_Blocks_Check_BlockLayots();
-		WDPQ_Debugger ($BlockLayots, '$BlockLayots', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($BlockLayots, '$BlockLayots', $debug_process, __FUNCTION__, __LINE__);
 		
 		$BlockLayots_Items = '';
 		
@@ -1135,9 +1159,9 @@ License: GPLv2
 			// update_order_item_metadata
 			// 	update_metadata( 'order_item', $object_id, $meta_key, $meta_value, $prev_value );		
 
-			WDPQ_Debugger ($Order_ID, '$Order_ID', $debug_process, __FUNCTION__, __LINE__);
-			// WDPQ_Debugger ($posted_data, '$posted_data', $debug_process, __FUNCTION__, __LINE__);
-			// WDPQ_Debugger ($order, '$order', $debug_process, __FUNCTION__, __LINE__);
+			WooDecimalProduct_Debugger ($Order_ID, '$Order_ID', $debug_process, __FUNCTION__, __LINE__);
+			// WooDecimalProduct_Debugger ($posted_data, '$posted_data', $debug_process, __FUNCTION__, __LINE__);
+			// WooDecimalProduct_Debugger ($order, '$order', $debug_process, __FUNCTION__, __LINE__);
 
 			if ($Order_ID) {
 				global $wpdb;
@@ -1154,7 +1178,7 @@ License: GPLv2
 				";			
 				
 				$OrderItems = $wpdb -> get_results( $wpdb -> prepare( $Query, $Order_ID ) ); // phpcs:ignore 
-				WDPQ_Debugger ($OrderItems, '$OrderItems', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($OrderItems, '$OrderItems', $debug_process, __FUNCTION__, __LINE__);
 				
 				if ($OrderItems) {
 					foreach ($OrderItems as $Item) {
@@ -1177,7 +1201,7 @@ License: GPLv2
 								";
 								
 								$Product_ID = $wpdb -> get_var( $wpdb -> prepare( $Query, $Item_ID ) ); // phpcs:ignore 
-								WDPQ_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+								WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
 								
 								// Variation_ID
 								$Query = "
@@ -1191,7 +1215,7 @@ License: GPLv2
 								";								
 								
 								$Variation_ID = $wpdb -> get_var( $wpdb -> prepare( $Query, $Item_ID ) ); // phpcs:ignore 
-								WDPQ_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
+								WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
 								
 								if ($Variation_ID) {
 									//Вариативный Товар.
@@ -1205,7 +1229,7 @@ License: GPLv2
 								
 								if ($Product_ID) {
 									$WDPQ_CartItem = WooDecimalProduct_Get_WDPQ_CartItem_by_ProductID ($Product_ID, $isVariation);
-									WDPQ_Debugger ($WDPQ_CartItem, '$WDPQ_CartItem', $debug_process, __FUNCTION__, __LINE__);
+									WooDecimalProduct_Debugger ($WDPQ_CartItem, '$WDPQ_CartItem', $debug_process, __FUNCTION__, __LINE__);
 									
 									if ($WDPQ_CartItem) {
 										$WDPQ_CartItem_Quantity = isset( $WDPQ_CartItem['quantity'] ) ? $WDPQ_CartItem['quantity'] : 1;
@@ -1245,11 +1269,11 @@ License: GPLv2
 	 * woocommerce\includes\wc-template-functions.php
 	 * woocommerce_order_again_button ()
 	----------------------------------------------------------------- */	
-	add_filter('woocommerce_valid_order_statuses_for_order_again', 'WooDecimalProduct_valid_order_statuses_for_order_again', 9999, 1);
-	function WooDecimalProduct_valid_order_statuses_for_order_again ($completed) {
+	add_filter('woocommerce_valid_order_statuses_for_order_again', 'WooDecimalProduct_Filter_valid_order_statuses_for_order_again', 9999, 1);
+	function WooDecimalProduct_Filter_valid_order_statuses_for_order_again ($completed) {
 		$debug_process = 'order_again';
 		
-		WDPQ_Debugger ($completed, '$completed', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($completed, '$completed', $debug_process, __FUNCTION__, __LINE__);
 		
 		// Возможно, это будет в PRO версии.
 		// Но пока, просто скрываем такую Кнопку.
@@ -1258,3 +1282,90 @@ License: GPLv2
 		
 		return $completed;
 	}
+
+/* AJAX. Каталог Товаров. Добавление Товара в Корзину.
+ * woocommerce\includes\class-wc-ajax.php
+----------------------------------------------------------------- */	
+add_action('woocommerce_ajax_added_to_cart', 'WooDecimalProduct_Action_ajax_added_to_cart_action');
+function WooDecimalProduct_Action_ajax_added_to_cart_action( $Product_ID ){
+	$debug_process = 'ajax_added_to_cart';
+
+	WooDecimalProduct_Debugger ($Product_ID, '$Product_ID', $debug_process, __FUNCTION__, __LINE__);
+	WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
+	
+	if ($Product_ID) {
+		$cart_redirect_after_add  = get_option( 'woocommerce_cart_redirect_after_add' ) === 'yes';
+		$ajax_add_to_cart_enabled = get_option( 'woocommerce_enable_ajax_add_to_cart' ) === 'yes';
+		
+		// В Настройках Woo:
+		// "Автопереход в корзину"
+			// OFF 	- "Перенаправить в корзину после успешного добавления" 
+			// ON	- "Включить Ajax для кнопки добавления в корзину из архивов"
+		
+		WooDecimalProduct_Debugger ($cart_redirect_after_add, '$cart_redirect_after_add', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
+		WooDecimalProduct_Debugger ($ajax_add_to_cart_enabled, '$ajax_add_to_cart_enabled', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
+		
+		if ( !$cart_redirect_after_add && $ajax_add_to_cart_enabled ) {
+			$Add_to_Cart = array();
+			
+			$Variation_ID = 0;
+			
+			$Cart_Item_Key = WooDecimalProduct_Get_CartItem_Key_by_ProductID ($Product_ID);
+			WooDecimalProduct_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+			
+			$Product = wc_get_product( $Product_ID );
+			
+			if ($Product) {	
+				$Item_Price 		= $Product -> get_price();
+				$Item_RegularPrice 	= $Product -> get_regular_price();
+				$Item_SalePrice 	= $Product -> get_sale_price();
+				
+				$Item_Price 		= floatval( $Item_Price );
+				$Item_RegularPrice 	= floatval( $Item_RegularPrice );
+				$Item_SalePrice 	= floatval( $Item_SalePrice );
+
+				WooDecimalProduct_Debugger ($Item_Price, '$Item_Price', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Item_RegularPrice, '$Item_RegularPrice', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Item_SalePrice, '$Item_SalePrice', $debug_process, __FUNCTION__, __LINE__);
+			
+				$Price_Excl_Tax = wc_get_price_excluding_tax( $Product ); 	// price without VAT
+				$Price_Incl_Tax = wc_get_price_including_tax( $Product );  	// price with VAT
+				$Tax_Amount     = $Price_Incl_Tax - $Price_Excl_Tax; 		// VAT amount
+
+				WooDecimalProduct_Debugger ($Price_Excl_Tax, '$Price_Excl_Tax', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Price_Incl_Tax, '$Price_Incl_Tax', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($Tax_Amount, '$Tax_Amount', $debug_process, __FUNCTION__, __LINE__);
+				
+				$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
+				WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+				
+				$Min_Qnt = $WooDecimalProduct_QuantityData['min_qnt'];
+				$Max_Qnt = $WooDecimalProduct_QuantityData['max_qnt'];
+				$Def_Qnt = $WooDecimalProduct_QuantityData['def_qnt'];
+				$Stp_Qnt = $WooDecimalProduct_QuantityData['stp_qnt'];
+				
+				$Quantity = $Def_Qnt;
+
+				$Item = array(
+					'key' => $Cart_Item_Key,
+					'product_id' => $Product_ID,
+					'variation_id' => $Variation_ID,
+					'quantity' => $Quantity,
+					'price' => $Item_Price,
+					'regular_price' => $Item_RegularPrice,
+					'sale_price' => $Item_SalePrice,
+					'price_tax_excl' => $Price_Excl_Tax,
+					'price_tax_incl' => $Price_Incl_Tax,
+					'tax_amount' => $Tax_Amount,
+				);
+				WooDecimalProduct_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
+
+				$Add_to_Cart[] = $Item;
+				
+				WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+
+				WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_Cart, $isDraft = false);
+			}
+		}
+	}	
+}

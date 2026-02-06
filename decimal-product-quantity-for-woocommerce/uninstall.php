@@ -35,15 +35,15 @@
 			global $wpdb;
 			
 			// Remove Users Meta
-			$UserMeta_Table = $wpdb -> prefix .'usermeta';
+			$WooDecimalProduct_UserMeta_Table = $wpdb -> prefix .'usermeta';
 			
-			$Query = "DELETE FROM $UserMeta_Table WHERE meta_key = 'wdpq_cart'";			
-			$wpdb -> query( $Query ); // phpcs:ignore 
+			$WooDecimalProduct_Query = "DELETE FROM $WooDecimalProduct_UserMeta_Table WHERE meta_key = 'wdpq_cart'";			
+			$wpdb -> query( $WooDecimalProduct_Query ); // phpcs:ignore 
 			
 			// Remove Post Meta			
-			$PostMeta_Table = $wpdb -> prefix .'postmeta';
+			$WooDecimalProduct_PostMeta_Table = $wpdb -> prefix .'postmeta';
 			
-			$Query = "DELETE FROM $PostMeta_Table WHERE meta_key LIKE 'woodecimalproduct_%'";			
-			$wpdb -> query( $Query ); // phpcs:ignore 
+			$WooDecimalProduct_Query = "DELETE FROM $WooDecimalProduct_PostMeta_Table WHERE meta_key LIKE 'woodecimalproduct_%'";			
+			$wpdb -> query( $WooDecimalProduct_Query ); // phpcs:ignore 
 		}		
 	}

@@ -540,6 +540,10 @@ msgstr "Очитка данных"
 msgid "Delete Quantity-MetaData with Uninstall Plugin. On/Off"
 msgstr "Удалять Мета-Данные при Удалении Плагина. Вкл/Откл"
 
+#: includes/admin/options.php:597
+msgid "With this plugin fully compatible Plugin for Composite Products: "
+msgstr "С этим плагином полностью совместим Плагин для Композитных Товаров: "
+
 #: includes/admin/options.php:595
 msgid "Save"
 msgstr "Сохранить"

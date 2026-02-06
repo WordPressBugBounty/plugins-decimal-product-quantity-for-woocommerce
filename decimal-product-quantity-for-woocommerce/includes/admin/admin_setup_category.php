@@ -4,7 +4,7 @@
  * Admin Product-Category Setup Page.
  * admin_setup_category.php
  */
-
+ 
 	/* DashBoard. WooCommerce. List Product-Categories. 
 	 * Добавляем новые Колонки в Списке Категорий Товаров.
 	----------------------------------------------------------------- */	
@@ -34,12 +34,17 @@
 			$No_MaxEmpty = '---';
 
 			$Term_QuantityData = WooDecimalProduct_Get_Term_QuantityData_by_TermID ($Term_ID, $No_MaxEmpty);
+			
+$Min_Qnt = WooDecimalProduct_DecimalValueFormatting( $Term_QuantityData['min_qnt'] );
+$Max_Qnt = WooDecimalProduct_DecimalValueFormatting( $Term_QuantityData['max_qnt'] );
+$Stp_Qnt = WooDecimalProduct_DecimalValueFormatting( $Term_QuantityData['stp_qnt'] );
+$Def_Qnt = WooDecimalProduct_DecimalValueFormatting( $Term_QuantityData['def_qnt'] );			
 
 			if ($Term_QuantityData) {
-				echo esc_html( __('Min:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Term_QuantityData['min_qnt']) ."<br>";
-				echo esc_html( __('Max:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Term_QuantityData['max_qnt']) ."<br>";
-				echo esc_html( __('Step:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Term_QuantityData['stp_qnt']) ."<br>";
-				echo esc_html( __('Set:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Term_QuantityData['def_qnt']) ."<br>";
+				echo esc_html( __('Min:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Min_Qnt) ."<br>";
+				echo esc_html( __('Max:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Max_Qnt) ."<br>";
+				echo esc_html( __('Step:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Stp_Qnt) ."<br>";
+				echo esc_html( __('Set:', 'decimal-product-quantity-for-woocommerce') ) .' ' .esc_html ($Def_Qnt) ."<br>";
 			}
 		}
 	}	
@@ -50,12 +55,25 @@
 	add_action ('product_cat_add_form_fields', 'WooDecimalProduct_action_product_cat_edit_form_fields', 9999);
 	add_action ('product_cat_edit_form_fields', 'WooDecimalProduct_action_product_cat_edit_form_fields', 9999);	
 	function WooDecimalProduct_action_product_cat_edit_form_fields ($term) {
+		$debug_process = 'product_cat_edit_form_fields';
+		
+		WooDecimalProduct_Debugger ($term, '$term', $debug_process, __FUNCTION__, __LINE__);
+		WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
+
+$WooDecimalProduct_Admin_Notice = get_option ('woodecimalproduct_admin_notice', '');
+WooDecimalProduct_Debugger ($WooDecimalProduct_Admin_Notice, '$WooDecimalProduct_Admin_Notice', $debug_process, __FUNCTION__, __LINE__);
+		
 		$WooDecimalProduct_Min_Quantity_Default    	= get_option ('woodecimalproduct_min_qnt_default', 1);  
 		$WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
 		$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);
 		$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');
 		$WooDecimalProduct_Price_Unit_Label			= get_option ('woodecimalproduct_price_unit_label', 0);
 		$WooDecimalProduct_RSS_Feed_Enable = false;
+		
+$WooDecimalProduct_Min_Quantity_Default    	= WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Min_Quantity_Default );
+$WooDecimalProduct_Max_Quantity_Default    	= WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Max_Quantity_Default );
+$WooDecimalProduct_Step_Quantity_Default    = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Step_Quantity_Default );
+$WooDecimalProduct_Item_Quantity_Default    = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Item_Quantity_Default );		
 		
 		$Style_and_Title_PriceUnitLabel = '';
 		$Style_and_Title_RSSFeedEnable = "style='display:inline-block;'";
@@ -156,6 +174,11 @@
 			$Term_Max_Qnt 		= get_term_meta ($Term_ID, 'woodecimalproduct_term_max_qnt', $single = true);
 			$Term_Step_Qnt 		= get_term_meta ($Term_ID, 'woodecimalproduct_term_step_qnt', $single = true);
 			$Term_Set_Qnt 		= get_term_meta ($Term_ID, 'woodecimalproduct_term_item_qnt', $single = true);
+			
+$Term_Min_Qnt   = WooDecimalProduct_DecimalValueFormatting( $Term_Min_Qnt );
+$Term_Max_Qnt   = WooDecimalProduct_DecimalValueFormatting( $Term_Max_Qnt );
+$Term_Step_Qnt  = WooDecimalProduct_DecimalValueFormatting( $Term_Step_Qnt );
+$Term_Set_Qnt   = WooDecimalProduct_DecimalValueFormatting( $Term_Set_Qnt );			
 			
 			ob_start();
 				?>				
@@ -263,12 +286,30 @@
 					</td>
 				</tr>				
 				
-				<?php
+				<?php	
+				
+// Проверяем наличие Сообщения о Коррекции Значений.
+if (! empty($WooDecimalProduct_Admin_Notice) ) {
+	
+	echo "<div style='margin-bottom: 20px; border-style: solid; border-width: 1px; border-radius: 5px; padding: 10px; background: white; border-color: grey;'>";
+	echo esc_html( __('Warning!', 'decimal-product-quantity-for-woocommerce') );
+	echo "<ul style='color: red; list-style-type: circle; margin-left: 20px;'>";
+	 
+	foreach ($WooDecimalProduct_Admin_Notice as $NoticeItem) {
+		echo "<li>" .esc_html ($NoticeItem) ."</li>";
+	}
+
+	echo "</ul>";
+	echo esc_html( __('Check this Settings.', 'decimal-product-quantity-for-woocommerce') );
+	echo "</div>";	
+
+	update_option('woodecimalproduct_admin_notice', '');
+}				
 
 			$contents = ob_get_contents();
 			ob_end_clean();
 			
-			echo $contents; // phpcs:ignore 	
+			echo $contents; // phpcs:ignore 
 		}
 	}
 	
@@ -278,6 +319,8 @@
 	add_action ('create_product_cat', 'WooDecimalProduct_action_edited_product_cat');
 	add_action ('edited_product_cat', 'WooDecimalProduct_action_edited_product_cat');
 	function WooDecimalProduct_action_edited_product_cat ($Term_ID) {
+		$debug_process = 'edited_product_cat';
+		
 		$Term_Price_Unit 	= isset ($_POST['wdpq_term_price_unit'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_price_unit'] ) ): ''; // phpcs:ignore	
 		
 		$Term_Min_Qnt 		= isset ($_POST['wdpq_term_min_qnt'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_min_qnt'] ) ): ''; // phpcs:ignore	
@@ -285,11 +328,59 @@
 		$Term_Step_Qnt 		= isset ($_POST['wdpq_term_step_qnt'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_step_qnt'] ) ): ''; // phpcs:ignore	
 		$Term_Set_Qnt 		= isset ($_POST['wdpq_term_set_qnt'])? sanitize_text_field( wp_unslash( $_POST['wdpq_term_set_qnt'] ) ): ''; // phpcs:ignore	
 		
+$WooDecimalProduct_CatOptions = array(
+	'min' => $Term_Min_Qnt,
+	'max' => $Term_Max_Qnt,
+	'step' => $Term_Step_Qnt,
+	'default' => $Term_Set_Qnt,
+	'price_unit_labale' => $Term_Price_Unit,
+);
+WooDecimalProduct_Debugger ($WooDecimalProduct_CatOptions, '$WooDecimalProduct_CatOptions', $debug_process, __FUNCTION__, __LINE__);
+		
 		$Term_Min_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Min_Qnt);
 		$Term_Max_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Max_Qnt);
 		$Term_Step_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Step_Qnt);
-		$Term_Set_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Set_Qnt);
+		$Term_Set_Qnt 	= WooDecimalProduct_Normalize_Number ($Term_Set_Qnt);		
 		
+		
+$Input_Parameters = array();
+
+$Input_Parameters['new_min'] 	= $Term_Min_Qnt;
+$Input_Parameters['new_max'] 	= $Term_Max_Qnt;
+$Input_Parameters['new_step'] 	= $Term_Step_Qnt;
+$Input_Parameters['new_set'] 	= $Term_Set_Qnt;
+
+$WooDecimalProduct_Checked_Input_Parameters = WooDecimalProduct_Check_Input_Parameters ($Input_Parameters);
+WooDecimalProduct_Debugger ($WooDecimalProduct_Checked_Input_Parameters, '$WooDecimalProduct_Checked_Input_Parameters', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__);
+
+$Term_Min_Qnt 	= $WooDecimalProduct_Checked_Input_Parameters['new_min'];
+$Term_Max_Qnt 	= $WooDecimalProduct_Checked_Input_Parameters['new_max'];
+$Term_Step_Qnt 	= $WooDecimalProduct_Checked_Input_Parameters['new_step'];
+$Term_Set_Qnt 	= $WooDecimalProduct_Checked_Input_Parameters['new_set'];
+
+$WooDecimalProduct_Errors_Msg = $WooDecimalProduct_Checked_Input_Parameters['errors_msg'];
+
+// Передаем Сообщения о Коррекции Значений в Админку.
+// другими способами выводить непосредственно от сюда не получается.
+if ( !empty($WooDecimalProduct_Errors_Msg) ) {	
+	$WooDecimalProduct_Admin_Notice = array();
+	
+	foreach ( $WooDecimalProduct_Errors_Msg as $Error_Msg ) {
+		$WooDecimalProduct_Admin_Notice[] = $Error_Msg;
+	}
+}
+WooDecimalProduct_Debugger ($WooDecimalProduct_Admin_Notice, '$WooDecimalProduct_Admin_Notice', $debug_process, __FUNCTION__, __LINE__);
+update_option('woodecimalproduct_admin_notice', $WooDecimalProduct_Admin_Notice);
+
+$WooDecimalProduct_CatOptions = array(
+	'min' => $Term_Min_Qnt,
+	'max' => $Term_Max_Qnt,
+	'step' => $Term_Step_Qnt,
+	'default' => $Term_Set_Qnt,
+	'price_unit_labale' => $Term_Price_Unit,
+);
+WooDecimalProduct_Debugger ($WooDecimalProduct_CatOptions, '$WooDecimalProduct_CatOptions', $debug_process, __FUNCTION__, __LINE__);
+	
 		update_term_meta ($Term_ID, 'woodecimalproduct_term_price_unit', $Term_Price_Unit); // phpcs:ignore	
 		update_term_meta ($Term_ID, 'woodecimalproduct_term_min_qnt', $Term_Min_Qnt); // phpcs:ignore	
 		update_term_meta ($Term_ID, 'woodecimalproduct_term_max_qnt', $Term_Max_Qnt); // phpcs:ignore	

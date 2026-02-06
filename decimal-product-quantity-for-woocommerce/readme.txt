@@ -7,7 +7,7 @@ Tested up to: 6.8
 Requires PHP: 5.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 18.58
+Stable tag: 20.62
 
 Products like: Pizza, Liquid on the filling, Custom weight, etc.
 (Piece of Product). Min, Max, Step & Default preset Quantity. Variable Supported.
@@ -35,6 +35,7 @@ For example:
 * It is possible to use Product - JS Object for Ext.Integration: QNT_Data. Function: WDPQ_Get_QuantityData (Product_ID).
 * Works with WooCommerce specifics from v3.4.8 & more
 * Buttons: +/- To select the Quantity on the Product page and in the Cart.
+* Compatibility with Plugin: "WPGear Composite Products for WooCommerce" (https://wpgear.xyz/wpgear-composite-products-woo).
 
 	<a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> Features:
 * You can set separate Minimum Product Quantity, Step of Changing the Quantity & Default preset Quantity - for each Variable Product Variation.
@@ -65,6 +66,24 @@ About Stock Management:
 7. screenshot-7.png Admin page | WooCommerce Products -> Categories. "Price Unit-Label" and "Quantity options" for all Products in this Category.
 
 == Changelog ==	
+= 20.62 =
+	2025.12.11
+	* Fix Add Product to Cart from Catalog (AJAX Processing).
+	
+= 20.61 =
+	2025.12.05
+	* Fix using the Decimal Separator from Woo Settings. (Exception: Orders. The System Separator will be displayed.)
+	* Tested to WooCommerce: 10.3.5
+
+= 19.60 =
+	2025.11.06
+	* Fix Rounding the result of Quantity correction when entering manually. (Thanks to Chris Murphy)
+	* Tested to WP: 6.8.3
+	* Tested to WooCommerce: 10.2.2
+	
+= 19.59 =
+	* Ensuring compatibility with Plugin: "WPGear Composite Products for WooCommerce" (https://wpgear.xyz/wpgear-composite-products-woo).
+
 = 18.58 =
 	* Tested to WP: 6.8.2
 	* Tested to WooCommerce: 10.0.4

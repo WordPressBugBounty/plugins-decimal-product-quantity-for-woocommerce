@@ -5,70 +5,70 @@
  * ajax_processing.php
  */
  
-	$debug_process = 'blocks_ajax_processing';
+	$WooDecimalProduct_Вebug_Process = 'blocks_ajax_processing';
 	
 	// $Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : null; // phpcs:ignore	
 	// $Object_ID	= isset($_REQUEST['id']) ? sanitize_text_field( wp_unslash( $_REQUEST['id'] ) ) : 0; // phpcs:ignore
-	$Nonce 	= isset($_REQUEST['wdpq_wpnonce']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_wpnonce'])) : 'none'; // phpcs:ignore	
+	$WooDecimalProduct_NonceRequest = isset($_REQUEST['wdpq_wpnonce']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_wpnonce'])) : 'none'; // phpcs:ignore	
 
-	WDPQ_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
+	WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $WooDecimalProduct_Вebug_Process, __FUNCTION__, __LINE__); // phpcs:ignore
 	
-	$WDPQ_Nonce = 'WooDecimalProduct_Blocks_Get_WDPQ-Cart';
+	$WooDecimalProduct_NonceKey = 'WooDecimalProduct_Blocks_Get_WDPQ-Cart';
 	
-	// if (!wp_verify_nonce( $Nonce, $WDPQ_Nonce )) {
+	// if (!wp_verify_nonce( $WooDecimalProduct_NonceRequest, $WooDecimalProduct_NonceKey )) {
 		// exit;
 	// }	
 	
-	$Result = false;
+	$WooDecimalProduct_Result = false;
 	
-$WDPQ_Cart = array();	
+$WooDecimalProduct_Cart = array();	
 
-	// global $WDPQ_Cart;
-	// WDPQ_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
+	// global $WooDecimalProduct_Cart;
+	// WooDecimalProduct_Debugger ($WooDecimalProduct_Cart, '$WooDecimalProduct_Cart', $WooDecimalProduct_Вebug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
 	
-	foreach ($WDPQ_Cart as &$Item) {
-		$Product_ID 	= $Item['product_id'];
-		$Variation_ID 	= $Item['variation_id'];
+	foreach ($WooDecimalProduct_Cart as &$WooDecimalProduct_Item) {
+		$WooDecimalProduct_Product_ID 	= $WooDecimalProduct_Item['product_id'];
+		$WooDecimalProduct_Variation_ID 	= $WooDecimalProduct_Item['variation_id'];
 		
-		if ($Variation_ID) {
+		if ($WooDecimalProduct_Variation_ID) {
 			//Вариативный Товар.
-			$Product = wc_get_product( $Variation_ID );
+			$WooDecimalProduct_Product = wc_get_product( $WooDecimalProduct_Variation_ID );
 			
 		} else {
 			//Простой Товар.
-			$Product = wc_get_product( $Product_ID );
+			$WooDecimalProduct_Product = wc_get_product( $WooDecimalProduct_Product_ID );
 		}
 		
-		// WDPQ_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
+		// WooDecimalProduct_Debugger ($WooDecimalProduct_Product, '$WooDecimalProduct_Product', $WooDecimalProduct_Вebug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
 		
-		$Slug = '';
-		$QuantityData = '';
+		$WooDecimalProduct_Slug = '';
+		$WooDecimalProduct_QuantityData = '';
 		
-		if ($Product) {
-			$Slug = $Product -> get_slug();	
-			WDPQ_Debugger ($Slug, '$Slug', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore	
+		if ($WooDecimalProduct_Product) {
+			$WooDecimalProduct_Slug = $WooDecimalProduct_Product -> get_slug();	
+			WooDecimalProduct_Debugger ($WooDecimalProduct_Slug, '$WooDecimalProduct_Slug', $WooDecimalProduct_Вebug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
 			
-			$QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
-			WDPQ_Debugger ($QuantityData, '$QuantityData', $debug_process, __FUNCTION__, __LINE__);			
+			$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($WooDecimalProduct_Product_ID);
+			WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $WooDecimalProduct_Вebug_Process, __FUNCTION__, __LINE__);			
 		}
 		
-		$Item['slug'] = $Slug;
-		$Item['quantity_data'] = $QuantityData;
+		$WooDecimalProduct_Item['slug'] = $WooDecimalProduct_Slug;
+		$WooDecimalProduct_Item['quantity_data'] = $WooDecimalProduct_QuantityData;
 	}
 	
 	// WooDecimalProduct_Action_before_cart_contents ();
 	// wp_send_json_success();
 	
 	// $WooCart = WC() -> cart -> get_cart();
-	// WDPQ_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
+	// WooDecimalProduct_Debugger ($WooCart, '$WooCart', $WooDecimalProduct_Вebug_Process, __FUNCTION__, __LINE__);
 	
-	$Result = true;
+	$WooDecimalProduct_Result = true;
 
-	$Obj_Request = new stdClass();
-	$Obj_Request -> status 	= 'OK';
-	$Obj_Request -> answer 	= $Result;
-	$Obj_Request -> wdpq_cart = $WDPQ_Cart;
+	$WooDecimalProduct_Obj_Request = new stdClass();
+	$WooDecimalProduct_Obj_Request -> status 	= 'OK';
+	$WooDecimalProduct_Obj_Request -> answer 	= $WooDecimalProduct_Result;
+	$WooDecimalProduct_Obj_Request -> wdpq_cart = $WooDecimalProduct_Cart;
 
-	wp_send_json( $Obj_Request );    
+	wp_send_json( $WooDecimalProduct_Obj_Request );    
 
 	die; // Complete.	

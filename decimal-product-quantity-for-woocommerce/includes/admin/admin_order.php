@@ -139,3 +139,33 @@
 		
 		return $products;		
 	}
+
+/* WooCommerce Order Page.
+ * Отображение Quantity с учетом "Десятичный разделитель" Woo.
+ * \woocommerce\includes\admin\meta-boxes\views\html-order-item.php	
+----------------------------------------------------------------- */
+// !!! для Разделителя "," не получается. Т.к. Item_Cost пытается пересчитываться после изменения Quantity
+// Фильтра для возможности изменения HTML Quantity нет.
+// add_filter( 'woocommerce_order_get_items', 'WooDecimalProduct_Filter_Order_Get_iItems', 9999 );
+// function WooDecimalProduct_Filter_Order_Get_iItems( $items ){
+	// $debug_process = 'order_get_items';
+	
+	// WooDecimalProduct_Debugger ($items, '$items', $debug_process, __FUNCTION__, __LINE__);
+
+    // foreach ($items as $item){
+		// WooDecimalProduct_Debugger ($item, '$item', $debug_process, __FUNCTION__, __LINE__);
+		
+		// if ( $item instanceof WC_Order_Item_Product ) {
+			// $Quantity = $item->get_quantity();
+			// WooDecimalProduct_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
+			
+			// $Quantity = WooDecimalProduct_DecimalValueFormatting ( $Quantity );
+			// WooDecimalProduct_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
+			
+			// $item->set_quantity( $Quantity );
+		// }
+    // }
+	
+	// WooDecimalProduct_Debugger ($items, '$items', $debug_process, __FUNCTION__, __LINE__);
+	// return $items;
+// }	

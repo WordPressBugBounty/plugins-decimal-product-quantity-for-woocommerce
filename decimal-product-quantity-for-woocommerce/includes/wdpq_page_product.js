@@ -121,11 +121,15 @@
 			var WDPQ_QNT_Valid = WDPQ_QNT_Input_Normal;
 			
 			// Check Validation
-			if (WDPQ_QNT_Input_Normal != WDPQ_QNT_Input_Check) {																
-				var WDPQ_QNT_Valid = Number((WDPQ_QNT_Input_Check + WDPQ_Step_Qnt).toFixed(WDPQ_QNT_Precision));
-				WDPQ_ConsoleLog_Debuging ('Valid: ' + WDPQ_QNT_Valid);
+			if (WDPQ_QNT_Input_Normal != WDPQ_QNT_Input_Check) {
+				if (WDPQ_QNT_Input_Check < WDPQ_QNT_Input_Normal) {
+					var WDPQ_QNT_Valid = Number((WDPQ_QNT_Input_Check + WDPQ_Step_Qnt).toFixed(WDPQ_QNT_Precision));
+				} else {
+					var WDPQ_QNT_Valid = WDPQ_QNT_Input_Check;
+				}
 				
 				WDPQ_QNT_Msg = WDPQ_QNT_Input_Normal + ' ' + WDPQ_Msg_NoValidValue + ' ' + WDPQ_QNT_Valid;
+				WDPQ_ConsoleLog_Debuging ('Valid: ' + WDPQ_QNT_Valid);
 			}
 
 			// Check Max.
