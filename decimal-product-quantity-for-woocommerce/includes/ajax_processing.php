@@ -4,8 +4,9 @@
  * JS Product Object.
  * ajax_processing.php
  */ 
+ 
+	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
-// require_once( $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php' );	
 	$WooDecimalProduct_Вebug_Process = 'ajax_processing';
 	
 	$WooDecimalProduct_NonceKey = 'wdpq_ajax_processing';

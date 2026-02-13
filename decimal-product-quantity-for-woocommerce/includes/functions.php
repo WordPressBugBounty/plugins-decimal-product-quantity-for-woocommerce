@@ -3,6 +3,8 @@
  * Decimal Product Quantity for WooCommerce
  * functions.php
  */
+ 
+	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	/* Check PRO Plugin Installed
 	----------------------------------------------------------------- */		
@@ -236,7 +238,20 @@ $WooDecimalProduct_QuantityData['price_unit'] = $Price_Unit_Label;
 		
 		$Result_Value = str_replace ('.', $Locale_Delimiter, $Value);
 		$Result_Value = str_replace (',', $Locale_Delimiter, $Result_Value);
-		$Result_Value = rtrim( rtrim( $Result_Value, '0' ), '.' );
+		
+$Result_Value_Parts = explode( '.', $Result_Value );
+WooDecimalProduct_Debugger ($Result_Value_Parts, '$Result_Value_Parts', $debug_process, __FUNCTION__, __LINE__);
+
+$Result_Value_Parts_Decimal	= isset($Result_Value_Parts[1]) ? $Result_Value_Parts[1]: '';
+WooDecimalProduct_Debugger ($Result_Value_Parts_Decimal, '$Result_Value_Parts_Decimal', $debug_process, __FUNCTION__, __LINE__);
+
+if ($Result_Value_Parts_Decimal){
+	$Result_Value_Parts_Decimal = rtrim( $Result_Value_Parts_Decimal, '0' );
+	
+	$Result_Value = $Result_Value_Parts[0] .$Locale_Delimiter .$Result_Value_Parts_Decimal;
+} else {
+	$Result_Value = rtrim( $Result_Value, '.' );
+}
 		
 		WooDecimalProduct_Debugger ($Result_Value, '$Result_Value', $debug_process, __FUNCTION__, __LINE__);
 		return $Result_Value;	
@@ -511,16 +526,20 @@ $WooDecimalProduct_QuantityData['price_unit'] = $Price_Unit_Label;
 		$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
 		WooDecimalProduct_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 
-		if ($WDPQ_Cart) {
+if (!empty ($WDPQ_Cart)) {
 			foreach ($WDPQ_Cart as $Item) {
+				WooDecimalProduct_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
+				
 				$Item_Key = $Item['key'];	
 				
 				if ($Cart_Item_Key == $Item_Key) {
+					WooDecimalProduct_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
 					return $Item;
 				}	
 			}
 		}
 		
+		WooDecimalProduct_Debugger ($Item, '$Item', $debug_process, __FUNCTION__, __LINE__);
 		return $Item;
 	}
 
@@ -617,7 +636,7 @@ $WooDecimalProduct_QuantityData['price_unit'] = $Price_Unit_Label;
 			$Add_to_Cart = wp_json_encode( $Add_to_Cart );
 			WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
 				
-			$Aajax_URL = admin_url( 'admin-ajax.php' ); // При Инициализации "ajaxurl" в JS еще может быть не определено.
+			$Ajax_URL = admin_url( 'admin-ajax.php' ); // При Инициализации "ajaxurl" в JS еще может быть не определено.
 			
 			?>
 			<script type='text/javascript'>	
@@ -691,7 +710,7 @@ $WooDecimalProduct_QuantityData['price_unit'] = $Price_Unit_Label;
 					}
 					
 					// CallBack Processing.
-					var WDPQ_Ajax_URL = '<?php echo esc_html( $Aajax_URL );?>';	
+					var WDPQ_Ajax_URL = '<?php echo esc_html( $Ajax_URL );?>';	
 					var WDPQ_Ajax_Data = 'action=update_wdpq_cart&cart_name=' + WDPQ_Cart_Name + '&cart=' + WDPQ_Cart + '&_wpnonce=' + WDPQ_Nonce;
 					
 					// jQuery.ajax({
@@ -1253,11 +1272,26 @@ $WooDecimalProduct_QuantityData['price_unit'] = $Price_Unit_Label;
 		// При Переопределении "Десятичный разделитель" например "," Woo автоматически изменяет отображение Цены в Настройках Товара. 
 		// (Значение не изменяется в DB "_price" Там все равно будет использоваться Символ из Настроек Сервера). По умолчанию ".")
 		
-		// Принудительная Нормализация, если в раних версиях было сохранено Десятичное Значение с Разделителем типа ","
+		// Принудительная Нормализация, если в ранних версиях было сохранено Десятичное Значение с Разделителем типа ","
 		$Result_Value = str_replace( ',', '.', strval( $Value ) );
+		WooDecimalProduct_Debugger ($Result_Value, '$Result_Value', $debug_process, __FUNCTION__, __LINE__);
 		
 		$Result_Value = wc_format_localized_decimal( $Result_Value );
-		$Result_Value = rtrim( rtrim( $Result_Value, '0' ), '.' );		
+		WooDecimalProduct_Debugger ($Result_Value, '$Result_Value', $debug_process, __FUNCTION__, __LINE__);
+		
+$Result_Value_Parts = explode( '.', $Result_Value );
+WooDecimalProduct_Debugger ($Result_Value_Parts, '$Result_Value_Parts', $debug_process, __FUNCTION__, __LINE__);
+
+$Result_Value_Parts_Decimal	= isset($Result_Value_Parts[1]) ? $Result_Value_Parts[1]: '';
+WooDecimalProduct_Debugger ($Result_Value_Parts_Decimal, '$Result_Value_Parts_Decimal', $debug_process, __FUNCTION__, __LINE__);
+
+if ($Result_Value_Parts_Decimal){
+	$Result_Value_Parts_Decimal = rtrim( $Result_Value_Parts_Decimal, '0' );
+	
+	$Result_Value = $Result_Value_Parts[0] .'.' .$Result_Value_Parts_Decimal;
+} else {
+	$Result_Value = rtrim( $Result_Value, '.' );
+}
 		
 		WooDecimalProduct_Debugger ($Result_Value, '$Result_Value', $debug_process, __FUNCTION__, __LINE__);
 		return $Result_Value;
@@ -1268,7 +1302,7 @@ $WooDecimalProduct_QuantityData['price_unit'] = $Price_Unit_Label;
  * Product Setup Page
 ----------------------------------------------------------------- */
 function WooDecimalProduct_Check_AdminNotice_AboutCorrection ( $screen, $Admin_Notice = array() ) {
-	$debug_process = 'check_admin_notice_about_correction';
+	$debug_process = 'f_check_admin_notice_about_correction';
 	
 	WooDecimalProduct_Debugger ($screen, '$screen', $debug_process, __FUNCTION__, __LINE__);
 	WooDecimalProduct_Debugger ($Admin_Notice, '$Admin_Notice', $debug_process, __FUNCTION__, __LINE__);
@@ -1301,103 +1335,514 @@ function WooDecimalProduct_Check_AdminNotice_AboutCorrection ( $screen, $Admin_N
  * General Options Setup Page
 ----------------------------------------------------------------- */
 function WooDecimalProduct_Check_Input_Parameters ($Input_Parameters) {
-	$debug_process = 'check_input_parameters';
+	$debug_process = 'f_check_input_parameters';
 	
+	WooDecimalProduct_Debugger ($Input_Parameters, '$Input_Parameters', $debug_process, __FUNCTION__, __LINE__);
+	
+	if ($Input_Parameters['new_min'] != '') {
+		$Input_Parameters['new_min'] = (float)$Input_Parameters['new_min'];
+	}
+	if ($Input_Parameters['new_max'] != '') {
+		$Input_Parameters['new_max'] = (float)$Input_Parameters['new_max'];
+	}
+	if ($Input_Parameters['new_step'] != '') {
+		$Input_Parameters['new_step'] = (float)$Input_Parameters['new_step'];
+	}
+	if ($Input_Parameters['new_set'] != '') {
+		$Input_Parameters['new_set'] = (float)$Input_Parameters['new_set'];
+	}
 	WooDecimalProduct_Debugger ($Input_Parameters, '$Input_Parameters', $debug_process, __FUNCTION__, __LINE__);
 	
 	$Errors_Msg = array();
 	
 	if ($Input_Parameters) {
 		// Проверка Значений
-		if (! is_numeric ( $Input_Parameters['new_min'] )) {
-			$ErrorMsg 	= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
-			if ($Input_Parameters['new_min']) {
-				$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') - ';
-			} else {
-				$ErrorMsg .= ' - ';
-			}
-			$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
-			$Errors_Msg[] = $ErrorMsg;
+		
+		$Object_Type = isset ($Input_Parameters['object'])? ( $Input_Parameters['object'] ): 'general';
+		
+		if ($Object_Type == 'category') {
+			// Product Category Settings.
+			// Некоторые Значения могут быть Пустые (Будут применяться Общие).
 			
-			$Input_Parameters['new_min'] = 1;
-		}
-		if (! is_numeric ( $Input_Parameters['new_max'] )) {
+			// Min
+			if ($Input_Parameters['new_min'] != '') {
+				if (! is_numeric ( $Input_Parameters['new_min'] )) {
+					$ErrorMsg 	= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+					if ($Input_Parameters['new_min']) {
+						$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') - ';
+					} else {
+						$ErrorMsg .= ' - ';
+					}
+					$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+					$Errors_Msg[] = $ErrorMsg;
+					
+					$Input_Parameters['new_min'] = 1;
+				}
+			}
+			
+			// Max
 			if ($Input_Parameters['new_max'] != '') {
-				$ErrorMsg 	= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
-				if ($Input_Parameters['new_max']) {
-					$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') - ';
+				if (! is_numeric ( $Input_Parameters['new_max'] )) {
+					if ($Input_Parameters['new_max'] != '') {
+						$ErrorMsg 	= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						if ($Input_Parameters['new_max']) {
+							$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') - ';
+						} else {
+							$ErrorMsg .= ' - ';
+						}					
+						$ErrorMsg .= __('Not a Valid Number. Set = empty', 'decimal-product-quantity-for-woocommerce');
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_max'] = '';
+					}
+				}
+			}
+			
+			// Step
+			if ($Input_Parameters['new_step'] != '') {
+				if (! is_numeric ( $Input_Parameters['new_step'] )) {
+					$ErrorMsg 	= __('Step Quantity', 'decimal-product-quantity-for-woocommerce');
+					if ($Input_Parameters['new_step']) {
+						$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') - ';
+					} else {
+						$ErrorMsg .= ' - ';
+					}				
+					$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+					$Errors_Msg[] = $ErrorMsg;
+					
+					$Input_Parameters['new_step'] = 1;
+				}
+			}
+			
+			// Default Set
+			if ($Input_Parameters['new_set'] != '') {
+				if (! is_numeric ( $Input_Parameters['new_set'] )) {
+					$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+					if ($Input_Parameters['new_set'] ) {
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') - ';
+					} else {
+						$ErrorMsg .= ' - ';
+					}				
+					$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+					$Errors_Msg[] = $ErrorMsg;
+					
+					$Input_Parameters['new_set'] = 1;
+				}
+			}
+			
+			// Проверка взаимосвязей.			
+			// Default Set
+			if ($Input_Parameters['new_set'] != '') {
+				if ($Input_Parameters['new_min'] != '') {
+					// Default Set (Category) & Min (Category)
+					
+					if ($Input_Parameters['new_set'] < $Input_Parameters['new_min']) {
+						$ErrorMsg  = __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') < ';
+						$ErrorMsg .= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Min', 'decimal-product-quantity-for-woocommerce');		
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_set'] = $Input_Parameters['new_min'];
+					}
+				} else {
+					// Default Set (Category) & Min (General)
+					
+					$General_Min_Quantity = get_option ('woodecimalproduct_min_qnt_default', 1);
+					WooDecimalProduct_Debugger ($General_Min_Quantity, '$General_Min_Quantity', $debug_process, __FUNCTION__, __LINE__);
+					
+					if ($Input_Parameters['new_set'] < $General_Min_Quantity) {
+						$ErrorMsg  = __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') < ';
+						$ErrorMsg .= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$General_Min_Quantity .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Min', 'decimal-product-quantity-for-woocommerce');		
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_set'] = $General_Min_Quantity;
+					}
+				}
+			}
+			if ($Input_Parameters['new_set'] != '') {
+				if ($Input_Parameters['new_max'] != '') {
+					// Default Set (Category) & Max (Category)
+					
+					if ($Input_Parameters['new_max'] && $Input_Parameters['new_set'] > $Input_Parameters['new_max']) {
+						$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Max', 'decimal-product-quantity-for-woocommerce');
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_set'] = $Input_Parameters['new_max'];
+					}
+				} else {
+					// Default Set (Category) & Max (General)
+					
+					$General_Max_Quantity = get_option ('woodecimalproduct_max_qnt_default', '');
+					WooDecimalProduct_Debugger ($General_Max_Quantity, '$General_Max_Quantity', $debug_process, __FUNCTION__, __LINE__);
+					
+					if ($General_Max_Quantity && $Input_Parameters['new_set'] > $General_Max_Quantity) {
+						$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$General_Max_Quantity .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Max', 'decimal-product-quantity-for-woocommerce');
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_set'] = $General_Max_Quantity;
+					}
+				}
+			}
+			
+			// Step
+			if ($Input_Parameters['new_step'] != '') {
+				if ($Input_Parameters['new_max'] != '') {
+					// Step (Category) & Max (Category)
+					
+					if ($Input_Parameters['new_max'] && $Input_Parameters['new_step'] > $Input_Parameters['new_max']) {
+						$ErrorMsg 	= __('Step change Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Default', 'decimal-product-quantity-for-woocommerce');			
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_step'] = $Input_Parameters['new_set'];
+					}
+				} else {
+					// Step (Category) & Max (General)
+					
+					$General_Max_Quantity = get_option ('woodecimalproduct_max_qnt_default', '');
+					WooDecimalProduct_Debugger ($General_Max_Quantity, '$General_Max_Quantity', $debug_process, __FUNCTION__, __LINE__);
+					
+					if ($General_Max_Quantity && $Input_Parameters['new_step'] > $General_Max_Quantity) {
+						$ErrorMsg 	= __('Step change Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$General_Max_Quantity .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Default', 'decimal-product-quantity-for-woocommerce');			
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_step'] = $Input_Parameters['new_set'];
+					}
+				}
+			}
+			
+		} else if ($Object_Type == 'product') {
+			// Product Settings.
+			// Некоторые Значения могут быть Пустые (Будут применяться из Категорий).
+			
+			// Min
+			if ($Input_Parameters['new_min'] != '') {
+				if (! is_numeric ( $Input_Parameters['new_min'] )) {
+					$ErrorMsg 	= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+					if ($Input_Parameters['new_min']) {
+						$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') - ';
+					} else {
+						$ErrorMsg .= ' - ';
+					}
+					$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+					$Errors_Msg[] = $ErrorMsg;
+					
+					$Input_Parameters['new_min'] = 1;
+				}
+			}
+			
+			// Max
+			if ($Input_Parameters['new_max'] != '') {
+				if (! is_numeric ( $Input_Parameters['new_max'] )) {
+					if ($Input_Parameters['new_max'] != '') {
+						$ErrorMsg 	= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						if ($Input_Parameters['new_max']) {
+							$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') - ';
+						} else {
+							$ErrorMsg .= ' - ';
+						}					
+						$ErrorMsg .= __('Not a Valid Number. Set = empty', 'decimal-product-quantity-for-woocommerce');
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_max'] = '';
+					}
+				}
+			}
+			
+			// Step
+			if ($Input_Parameters['new_step'] != '') {
+				if (! is_numeric ( $Input_Parameters['new_step'] )) {
+					$ErrorMsg 	= __('Step Quantity', 'decimal-product-quantity-for-woocommerce');
+					if ($Input_Parameters['new_step']) {
+						$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') - ';
+					} else {
+						$ErrorMsg .= ' - ';
+					}				
+					$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+					$Errors_Msg[] = $ErrorMsg;
+					
+					$Input_Parameters['new_step'] = 1;
+				}
+			}
+			
+			// Default Set
+			if ($Input_Parameters['new_set'] != '') {
+				if (! is_numeric ( $Input_Parameters['new_set'] )) {
+					$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+					if ($Input_Parameters['new_set'] ) {
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') - ';
+					} else {
+						$ErrorMsg .= ' - ';
+					}				
+					$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+					$Errors_Msg[] = $ErrorMsg;
+					
+					$Input_Parameters['new_set'] = 1;
+				}
+			}
+			
+			// Проверка взаимосвязей.	
+			$Product_ID = isset ($Input_Parameters['object_id'])? ( $Input_Parameters['object_id'] ): null;
+			
+			if ($Product_ID) {
+				// Получаем PlaceHolders. В них Значения для Пустых Полей в Иерархии: Product -> Category -> General.
+				$WooDecimalProduct_QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID, $No_MaxEmpty);
+				WooDecimalProduct_Debugger ($WooDecimalProduct_QuantityData, '$WooDecimalProduct_QuantityData', $debug_process, __FUNCTION__, __LINE__);
+				
+				// PlaceHolders
+				$PlaceHolder_Min_Qnt = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_QuantityData['placeholder_min_qnt'] );
+				$PlaceHolder_Max_Qnt = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_QuantityData['placeholder_max_qnt'] );
+				$PlaceHolder_Def_Qnt = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_QuantityData['placeholder_def_qnt'] );
+				$PlaceHolder_Stp_Qnt = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_QuantityData['placeholder_stp_qnt'] );
+				
+				if ($PlaceHolder_Min_Qnt != '') {
+					$PlaceHolder_Min_Qnt = (float)$PlaceHolder_Min_Qnt;
+				}
+				if ($PlaceHolder_Max_Qnt != '') {
+					$PlaceHolder_Max_Qnt = (float)$PlaceHolder_Max_Qnt;
+				}
+				if ($PlaceHolder_Def_Qnt != '') {
+					$PlaceHolder_Def_Qnt = (float)$PlaceHolder_Def_Qnt;
+				}
+				if ($PlaceHolder_Stp_Qnt != '') {
+					$PlaceHolder_Stp_Qnt = (float)$PlaceHolder_Stp_Qnt;
+				}
+				
+				WooDecimalProduct_Debugger ($PlaceHolder_Min_Qnt, '$PlaceHolder_Min_Qnt', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($PlaceHolder_Max_Qnt, '$PlaceHolder_Max_Qnt', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($PlaceHolder_Def_Qnt, '$PlaceHolder_Def_Qnt', $debug_process, __FUNCTION__, __LINE__);
+				WooDecimalProduct_Debugger ($PlaceHolder_Stp_Qnt, '$PlaceHolder_Stp_Qnt', $debug_process, __FUNCTION__, __LINE__);
+				
+				// Default Set
+				if ($Input_Parameters['new_set'] != '') {
+					if ($Input_Parameters['new_min'] != '') {
+						// Default Set (Product) & Min (Product)
+						
+						if ($Input_Parameters['new_set'] < $Input_Parameters['new_min']) {
+							$ErrorMsg  = __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+							$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') < ';
+							$ErrorMsg .= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+							$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') ';
+							$Errors_Msg[] = $ErrorMsg;
+							
+							$ErrorMsg  = __('Set = Min', 'decimal-product-quantity-for-woocommerce');		
+							$Errors_Msg[] = $ErrorMsg;
+							
+							$Input_Parameters['new_set'] = $Input_Parameters['new_min'];
+						}
+					} else {
+						// Default Set (Product) & Min (Category -> General)
+
+						if ($Input_Parameters['new_set'] < $PlaceHolder_Min_Qnt) {
+							$ErrorMsg  = __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+							$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') < ';
+							$ErrorMsg .= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+							$ErrorMsg .= ' (' .$PlaceHolder_Min_Qnt .') ';
+							$Errors_Msg[] = $ErrorMsg;
+							
+							$ErrorMsg  = __('Set = Min', 'decimal-product-quantity-for-woocommerce');		
+							$Errors_Msg[] = $ErrorMsg;
+							
+							$Input_Parameters['new_set'] = $PlaceHolder_Min_Qnt;
+						}
+					}
+				}
+			}
+			if ($Input_Parameters['new_set'] != '') {
+				if ($Input_Parameters['new_max'] != '') {
+					// Default Set (Product) & Max (Product)
+					
+					if ($Input_Parameters['new_max'] && $Input_Parameters['new_set'] > $Input_Parameters['new_max']) {
+						$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Max', 'decimal-product-quantity-for-woocommerce');
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_set'] = $Input_Parameters['new_max'];
+					}
+				} else {
+					// Default Set (Product) & Max (Category -> General)
+
+					if ($PlaceHolder_Max_Qnt && $Input_Parameters['new_set'] > $PlaceHolder_Max_Qnt) {
+						$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$PlaceHolder_Max_Qnt .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Max', 'decimal-product-quantity-for-woocommerce');
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_set'] = $PlaceHolder_Max_Qnt;
+					}
+				}
+			}
+			
+			// Step
+			if ($Input_Parameters['new_step'] != '') {
+				if ($Input_Parameters['new_max'] != '') {
+					// Step (Product) & Max (Product)
+					
+					if ($Input_Parameters['new_max'] && $Input_Parameters['new_step'] > $Input_Parameters['new_max']) {
+						$ErrorMsg 	= __('Step change Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Default', 'decimal-product-quantity-for-woocommerce');			
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_step'] = $Input_Parameters['new_set'];
+					}
+				} else {
+					// Step (Product) & Max (Category -> General)
+						
+					if ($PlaceHolder_Max_Qnt && $Input_Parameters['new_step'] > $PlaceHolder_Max_Qnt) {
+						$ErrorMsg 	= __('Step change Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') > ';
+						$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+						$ErrorMsg .= ' (' .$PlaceHolder_Max_Qnt .') ';
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$ErrorMsg  = __('Set = Default', 'decimal-product-quantity-for-woocommerce');			
+						$Errors_Msg[] = $ErrorMsg;
+						
+						$Input_Parameters['new_step'] = $Input_Parameters['new_set'];
+					}
+				}
+			}
+			
+		} else {
+			// General Settings.
+			
+			if (! is_numeric ( $Input_Parameters['new_min'] )) {
+				$ErrorMsg 	= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+				if ($Input_Parameters['new_min']) {
+					$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') - ';
 				} else {
 					$ErrorMsg .= ' - ';
-				}					
-				$ErrorMsg .= __('Not a Valid Number. Set = empty', 'decimal-product-quantity-for-woocommerce');
+				}
+				$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
 				$Errors_Msg[] = $ErrorMsg;
 				
-				$Input_Parameters['new_max'] = '';
+				$Input_Parameters['new_min'] = 1;
 			}
-		}
-		if (! is_numeric ( $Input_Parameters['new_step'] )) {
-			$ErrorMsg 	= __('Step Quantity', 'decimal-product-quantity-for-woocommerce');
-			if ($Input_Parameters['new_step']) {
-				$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') - ';
-			} else {
-				$ErrorMsg .= ' - ';
-			}				
-			$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
-			$Errors_Msg[] = $ErrorMsg;
+			if (! is_numeric ( $Input_Parameters['new_max'] )) {
+				if ($Input_Parameters['new_max'] != '') {
+					$ErrorMsg 	= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+					if ($Input_Parameters['new_max']) {
+						$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') - ';
+					} else {
+						$ErrorMsg .= ' - ';
+					}					
+					$ErrorMsg .= __('Not a Valid Number. Set = empty', 'decimal-product-quantity-for-woocommerce');
+					$Errors_Msg[] = $ErrorMsg;
+					
+					$Input_Parameters['new_max'] = '';
+				}
+			}
+			if (! is_numeric ( $Input_Parameters['new_step'] )) {
+				$ErrorMsg 	= __('Step Quantity', 'decimal-product-quantity-for-woocommerce');
+				if ($Input_Parameters['new_step']) {
+					$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') - ';
+				} else {
+					$ErrorMsg .= ' - ';
+				}				
+				$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$Input_Parameters['new_step'] = 1;
+			}
+			if (! is_numeric ( $Input_Parameters['new_set'] )) {
+				$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+				if ($Input_Parameters['new_set'] ) {
+					$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') - ';
+				} else {
+					$ErrorMsg .= ' - ';
+				}				
+				$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$Input_Parameters['new_set'] = 1;
+			}
 			
-			$Input_Parameters['new_step'] = 1;
-		}
-		if (! is_numeric ( $Input_Parameters['new_set'] )) {
-			$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
-			if ($Input_Parameters['new_set'] ) {
-				$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') - ';
-			} else {
-				$ErrorMsg .= ' - ';
-			}				
-			$ErrorMsg .= __('Not a Valid Number. Set = 1', 'decimal-product-quantity-for-woocommerce');
-			$Errors_Msg[] = $ErrorMsg;
+			// Проверка взаимосвязей.
+			// Default Set
+			if ($Input_Parameters['new_set'] < $Input_Parameters['new_min']) {
+				$ErrorMsg  = __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+				$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') < ';
+				$ErrorMsg .= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
+				$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') ';
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$ErrorMsg  = __('Set = Min', 'decimal-product-quantity-for-woocommerce');		
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$Input_Parameters['new_set'] = $Input_Parameters['new_min'];
+			}			
+			if ($Input_Parameters['new_max'] && $Input_Parameters['new_set'] > $Input_Parameters['new_max']) {
+				$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
+				$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') > ';
+				$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+				$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$ErrorMsg  = __('Set = Max', 'decimal-product-quantity-for-woocommerce');
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$Input_Parameters['new_set'] = $Input_Parameters['new_max'];
+			}	
 			
-			$Input_Parameters['new_set'] = 1;
-		}
-
-		// Проверка взаимосвязей.
-		if ($Input_Parameters['new_set'] < $Input_Parameters['new_min']) {
-			$ErrorMsg  = __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
-			$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') < ';
-			$ErrorMsg .= __('Min Quantity', 'decimal-product-quantity-for-woocommerce');
-			$ErrorMsg .= ' (' .$Input_Parameters['new_min'] .') ';
-			$Errors_Msg[] = $ErrorMsg;
-			
-			$ErrorMsg  = __('Set = Min', 'decimal-product-quantity-for-woocommerce');		
-			$Errors_Msg[] = $ErrorMsg;
-			
-			$Input_Parameters['new_set'] = $Input_Parameters['new_min'];
-		}
-		
-		if ($Input_Parameters['new_max'] && $Input_Parameters['new_set'] > $Input_Parameters['new_max']) {
-			$ErrorMsg 	= __('Default set Quantity', 'decimal-product-quantity-for-woocommerce');
-			$ErrorMsg .= ' (' .$Input_Parameters['new_set'] .') > ';
-			$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
-			$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
-			$Errors_Msg[] = $ErrorMsg;
-			
-			$ErrorMsg  = __('Set = Max', 'decimal-product-quantity-for-woocommerce');
-			$Errors_Msg[] = $ErrorMsg;
-			
-			$Input_Parameters['new_set'] = $Input_Parameters['new_max'];
-		}	
-		
-		if ($Input_Parameters['new_max'] && $Input_Parameters['new_step'] > $Input_Parameters['new_max']) {
-			$ErrorMsg 	= __('Step change Quantity', 'decimal-product-quantity-for-woocommerce');
-			$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') > ';
-			$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
-			$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
-			$Errors_Msg[] = $ErrorMsg;
-			
-			$ErrorMsg  = __('Set = Default', 'decimal-product-quantity-for-woocommerce');			
-			$Errors_Msg[] = $ErrorMsg;
-			
-			$Input_Parameters['new_step'] = $Input_Parameters['new_set'];
+			// Step
+			if ($Input_Parameters['new_max'] && $Input_Parameters['new_step'] > $Input_Parameters['new_max']) {
+				$ErrorMsg 	= __('Step change Quantity', 'decimal-product-quantity-for-woocommerce');
+				$ErrorMsg .= ' (' .$Input_Parameters['new_step'] .') > ';
+				$ErrorMsg .= __('Max Quantity', 'decimal-product-quantity-for-woocommerce');
+				$ErrorMsg .= ' (' .$Input_Parameters['new_max'] .') ';
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$ErrorMsg  = __('Set = Default', 'decimal-product-quantity-for-woocommerce');			
+				$Errors_Msg[] = $ErrorMsg;
+				
+				$Input_Parameters['new_step'] = $Input_Parameters['new_set'];
+			}
 		}
 	}
 	
@@ -1405,6 +1850,26 @@ function WooDecimalProduct_Check_Input_Parameters ($Input_Parameters) {
 	
 	WooDecimalProduct_Debugger ($Input_Parameters, '$Input_Parameters', $debug_process, __FUNCTION__, __LINE__);
 	return $Input_Parameters;
+}
+	
+/* Get VariationID by ProductID
+----------------------------------------------------------------- */
+function WooDecimalProduct_Get_VariationID_by_CartItemKey ($Cart_Item_Key) {
+	$debug_process = 'f_get_variationid_by_cartitemkey';
+	
+	WooDecimalProduct_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
+	
+	$Variation_ID = 0;
+	
+	if ( WC()->cart ) {
+		$Cart_Item = WC() -> cart -> get_cart_item( $Cart_Item_Key );
+		WooDecimalProduct_Debugger ($Cart_Item, '$Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+		
+		$Variation_ID = $Cart_Item['variation_id'];
+	}
+	
+	WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
+	return $Variation_ID;
 }
 	
 	/* Debugger. 

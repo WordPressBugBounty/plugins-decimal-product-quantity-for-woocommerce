@@ -68,3 +68,11 @@
 .wdpq-term-footer td {
 	padding-bottom: 0px;
 }
+.post-type-product table.wp-list-table th#quantity,
+.post-type-product table.wp-list-table th.column-quantity,
+.post-type-product table.wp-list-table td.quantity {
+	
+}
+.manage-column column-quantity {
+	width: 12%;
+}

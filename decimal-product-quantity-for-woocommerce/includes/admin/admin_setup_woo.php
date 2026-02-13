@@ -4,6 +4,8 @@
  * Admin WooCommerce Setup Page.
  * admin_setup_woo.php
  */
+ 
+	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	/* Инициализация.
      * Запускаем самым последним, чтобы быть уверенным, что WooCommerce уже инициализировался.

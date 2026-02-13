@@ -5,6 +5,8 @@
  * ajax_processing.php
  */
  
+	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+ 
 	$WooDecimalProduct_Вebug_Process = 'blocks_ajax_processing';
 	
 	// $Mode 		= isset($_REQUEST['mode']) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : null; // phpcs:ignore	

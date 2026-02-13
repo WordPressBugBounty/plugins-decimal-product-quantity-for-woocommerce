@@ -4,6 +4,19 @@
  * Admin WooCommerce Order Page.
  * admin_order.php
  */
+ 
+	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+    /* WooCommerce Order Page.
+	 * Заказ (просто, для получения детальной информации, перед тем, как что-то может его изменить).
+	 * \woocommerce\includes\admin\meta-boxes\views\html-order-items.php
+    ----------------------------------------------------------------- */ 
+	add_action ('woocommerce_admin_order_item_headers', 'WooDecimalProduct_Action_ViewAdminOrder');
+	function WooDecimalProduct_Action_ViewAdminOrder ($Order) {
+		$debug_process = 'order_view_order_details';
+		
+		WooDecimalProduct_Debugger ($Order, '$Order', $debug_process, __FUNCTION__, __LINE__);
+	}
 
     /* WooCommerce Order Page.
 	 * Шаг изменения кол-ва Товара на странице Администрирования Заказа.

@@ -5,6 +5,8 @@
  * blocks.php
  */
  
+	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+	
 	function WooDecimalProduct_Blocks_Check_BlockLayots($WC_PageName = '') {
 		$debug_process = 'blocks_check_block_layots';
 		

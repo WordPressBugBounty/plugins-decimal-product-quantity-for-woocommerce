@@ -3,6 +3,8 @@
  * WPGear. Decimal Product Quantity for WooCommerce
  * options.php
  */
+ 
+	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 	
     if (!current_user_can('edit_dashboard')) {
         return;
@@ -24,11 +26,16 @@
 	$WooDecimalProduct_Max_Quantity_Default    	= get_option ('woodecimalproduct_max_qnt_default', '');  
     $WooDecimalProduct_Step_Quantity_Default   	= get_option ('woodecimalproduct_step_qnt_default', 1); 
 	$WooDecimalProduct_Item_Quantity_Default   	= get_option ('woodecimalproduct_item_qnt_default', 1);
+	
+	WooDecimalProduct_Debugger ($WooDecimalProduct_Min_Quantity_Default, '$WooDecimalProduct_Min_Quantity_Default', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
+	WooDecimalProduct_Debugger ($WooDecimalProduct_Max_Quantity_Default, '$WooDecimalProduct_Max_Quantity_Default', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
+	WooDecimalProduct_Debugger ($WooDecimalProduct_Step_Quantity_Default, '$WooDecimalProduct_Step_Quantity_Default', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
+	WooDecimalProduct_Debugger ($WooDecimalProduct_Item_Quantity_Default, '$WooDecimalProduct_Item_Quantity_Default', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
 
-$WooDecimalProduct_Min_Quantity_Default    	= WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Min_Quantity_Default );
-$WooDecimalProduct_Max_Quantity_Default    	= WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Max_Quantity_Default );
-$WooDecimalProduct_Step_Quantity_Default    = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Step_Quantity_Default );
-$WooDecimalProduct_Item_Quantity_Default    = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Item_Quantity_Default );
+	$WooDecimalProduct_Min_Quantity_Default    	= WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Min_Quantity_Default );
+	$WooDecimalProduct_Max_Quantity_Default    	= WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Max_Quantity_Default );
+	$WooDecimalProduct_Step_Quantity_Default    = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Step_Quantity_Default );
+	$WooDecimalProduct_Item_Quantity_Default    = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_Item_Quantity_Default );
 	
 	$WooDecimalProduct_ButtonsPM_Product_Enable	= get_option ('woodecimalproduct_buttonspm_product_enable', 0);
 	$WooDecimalProduct_ButtonsPM_Cart_Enable	= get_option ('woodecimalproduct_buttonspm_cart_enable', 0);
@@ -50,23 +57,23 @@ $WooDecimalProduct_Item_Quantity_Default    = WooDecimalProduct_DecimalValueForm
 	$WooDecimalProduct_Errors_Msg = array();
 	$WooDecimalProduct_RSS_Feed_Slug = 'products';
 	
-$WooDecimalProduct_Options = array(
-	'min' => $WooDecimalProduct_Min_Quantity_Default,
-	'max' => $WooDecimalProduct_Max_Quantity_Default,
-	'step' => $WooDecimalProduct_Step_Quantity_Default,
-	'default' => $WooDecimalProduct_Item_Quantity_Default,
-	'buttons_pm_product' => $WooDecimalProduct_ButtonsPM_Product_Enable,
-	'buttons_pm_cart' => $WooDecimalProduct_ButtonsPM_Cart_Enable,
-	'auto_correction' => $WooDecimalProduct_Auto_Correction_Quantity,
-	'ajax_cart_update' => $WooDecimalProduct_AJAX_Cart_Update,
-	'price_unit_labale' => $WooDecimalProduct_Price_Unit_Label,
-	'console_log_debuging' => $WooDecimalProduct_ConsoleLog_Debuging,
-	'uninstall_del_metadata' => $WooDecimalProduct_Uninstall_Del_MetaData,
-	'storage_type' => $WooDecimalProduct_StorageType,
-	'rss_feed_link' => $WooDecimalProduct_RSS_Feed_Link,
-	'rss_feed_slug' => $WooDecimalProduct_RSS_Feed_Slug,
-);
-WooDecimalProduct_Debugger ($WooDecimalProduct_Options, '$WooDecimalProduct_Options', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
+	$WooDecimalProduct_Options = array(
+		'min' => $WooDecimalProduct_Min_Quantity_Default,
+		'max' => $WooDecimalProduct_Max_Quantity_Default,
+		'step' => $WooDecimalProduct_Step_Quantity_Default,
+		'default' => $WooDecimalProduct_Item_Quantity_Default,
+		'buttons_pm_product' => $WooDecimalProduct_ButtonsPM_Product_Enable,
+		'buttons_pm_cart' => $WooDecimalProduct_ButtonsPM_Cart_Enable,
+		'auto_correction' => $WooDecimalProduct_Auto_Correction_Quantity,
+		'ajax_cart_update' => $WooDecimalProduct_AJAX_Cart_Update,
+		'price_unit_labale' => $WooDecimalProduct_Price_Unit_Label,
+		'console_log_debuging' => $WooDecimalProduct_ConsoleLog_Debuging,
+		'uninstall_del_metadata' => $WooDecimalProduct_Uninstall_Del_MetaData,
+		'storage_type' => $WooDecimalProduct_StorageType,
+		'rss_feed_link' => $WooDecimalProduct_RSS_Feed_Link,
+		'rss_feed_slug' => $WooDecimalProduct_RSS_Feed_Slug,
+	);
+	WooDecimalProduct_Debugger ($WooDecimalProduct_Options, '$WooDecimalProduct_Options', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__); // phpcs:ignore	
 	
 	if ($WooDecimalProduct_Action == 'Update') {
 		if (!wp_verify_nonce($WooDecimalProduct_NonceRequest, $WooDecimalProduct_NonceKey)) {
@@ -99,66 +106,66 @@ WooDecimalProduct_Debugger ($WooDecimalProduct_Options, '$WooDecimalProduct_Opti
 		
 		$WooDecimalProduct_New_StorageType = isset($_REQUEST['wdpq_storage_type']) ? sanitize_text_field (wp_unslash($_REQUEST['wdpq_storage_type'])) : 'local';
 
-$WooDecimalProduct_New_Min 	= WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Min);
-$WooDecimalProduct_New_Max 	= WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Max);
-$WooDecimalProduct_New_Step 	= WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Step);
-$WooDecimalProduct_New_Set 	= WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Set);	
-		
-$WooDecimalProduct_Options_New = array(
-	'min' => $WooDecimalProduct_New_Min,
-	'max' => $WooDecimalProduct_New_Max,
-	'step' => $WooDecimalProduct_New_Step,
-	'default' => $WooDecimalProduct_New_Set,
-	'buttons_pm_product' => $WooDecimalProduct_New_ButtonsPM_ProductEnable,
-	'buttons_pm_cart' => $WooDecimalProduct_New_ButtonsPM_CartEnable,
-	'auto_correction' => $WooDecimalProduct_New_AutoCorrection,
-	'ajax_cart_update' => $WooDecimalProduct_New_AJAX_CartUpdate,
-	'price_unit_labale' => $WooDecimalProduct_New_PriceUnitLabel,
-	'console_log_debuging' => $WooDecimalProduct_New_ConsoleLogDebuging,
-	'uninstall_del_metadata' => $WooDecimalProduct_New_UninstallDel_MetaData,
-	'storage_type' => $WooDecimalProduct_New_StorageType,
-	'rss_feed_link' => $WooDecimalProduct_RSS_Feed_Link,
-	'rss_feed_slug' => $WooDecimalProduct_RSS_Feed_Slug,
-);
-WooDecimalProduct_Debugger ($WooDecimalProduct_Options_New, '$WooDecimalProduct_Options_New', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__);
+		$WooDecimalProduct_New_Min 	= WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Min);
+		$WooDecimalProduct_New_Max 	= WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Max);
+		$WooDecimalProduct_New_Step = WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Step);
+		$WooDecimalProduct_New_Set 	= WooDecimalProduct_Normalize_Number ($WooDecimalProduct_New_Set);	
+				
+		$WooDecimalProduct_Options_New = array(
+			'min' => $WooDecimalProduct_New_Min,
+			'max' => $WooDecimalProduct_New_Max,
+			'step' => $WooDecimalProduct_New_Step,
+			'default' => $WooDecimalProduct_New_Set,
+			'buttons_pm_product' => $WooDecimalProduct_New_ButtonsPM_ProductEnable,
+			'buttons_pm_cart' => $WooDecimalProduct_New_ButtonsPM_CartEnable,
+			'auto_correction' => $WooDecimalProduct_New_AutoCorrection,
+			'ajax_cart_update' => $WooDecimalProduct_New_AJAX_CartUpdate,
+			'price_unit_labale' => $WooDecimalProduct_New_PriceUnitLabel,
+			'console_log_debuging' => $WooDecimalProduct_New_ConsoleLogDebuging,
+			'uninstall_del_metadata' => $WooDecimalProduct_New_UninstallDel_MetaData,
+			'storage_type' => $WooDecimalProduct_New_StorageType,
+			'rss_feed_link' => $WooDecimalProduct_RSS_Feed_Link,
+			'rss_feed_slug' => $WooDecimalProduct_RSS_Feed_Slug,
+		);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_Options_New, '$WooDecimalProduct_Options_New', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__);
 
-$WooDecimalProduct_Input_Parameters = array();
+		$WooDecimalProduct_Input_Parameters = array();
 
-$WooDecimalProduct_Input_Parameters['new_min'] 	= $WooDecimalProduct_New_Min;
-$WooDecimalProduct_Input_Parameters['new_max'] 	= $WooDecimalProduct_New_Max;
-$WooDecimalProduct_Input_Parameters['new_step'] 	= $WooDecimalProduct_New_Step;
-$WooDecimalProduct_Input_Parameters['new_set'] 	= $WooDecimalProduct_New_Set;
+		$WooDecimalProduct_Input_Parameters['new_min'] 	= $WooDecimalProduct_New_Min;
+		$WooDecimalProduct_Input_Parameters['new_max'] 	= $WooDecimalProduct_New_Max;
+		$WooDecimalProduct_Input_Parameters['new_step'] 	= $WooDecimalProduct_New_Step;
+		$WooDecimalProduct_Input_Parameters['new_set'] 	= $WooDecimalProduct_New_Set;
 
-$WooDecimalProduct_Checked_Input_Parameters = WooDecimalProduct_Check_Input_Parameters ($WooDecimalProduct_Input_Parameters);
-WooDecimalProduct_Debugger ($WooDecimalProduct_Checked_Input_Parameters, '$WooDecimalProduct_Checked_Input_Parameters', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__);
+		$WooDecimalProduct_Checked_Input_Parameters = WooDecimalProduct_Check_Input_Parameters ($WooDecimalProduct_Input_Parameters);
+		WooDecimalProduct_Debugger ($WooDecimalProduct_Checked_Input_Parameters, '$WooDecimalProduct_Checked_Input_Parameters', $WooDecimalProduct_Debug_Process, __FUNCTION__, __LINE__);
 
-$WooDecimalProduct_New_Min 	= $WooDecimalProduct_Checked_Input_Parameters['new_min'];
-$WooDecimalProduct_New_Max 	= $WooDecimalProduct_Checked_Input_Parameters['new_max'];
-$WooDecimalProduct_New_Step = $WooDecimalProduct_Checked_Input_Parameters['new_step'];
-$WooDecimalProduct_New_Set 	= $WooDecimalProduct_Checked_Input_Parameters['new_set'];
+		$WooDecimalProduct_New_Min 	= $WooDecimalProduct_Checked_Input_Parameters['new_min'];
+		$WooDecimalProduct_New_Max 	= $WooDecimalProduct_Checked_Input_Parameters['new_max'];
+		$WooDecimalProduct_New_Step = $WooDecimalProduct_Checked_Input_Parameters['new_step'];
+		$WooDecimalProduct_New_Set 	= $WooDecimalProduct_Checked_Input_Parameters['new_set'];
 
-$WooDecimalProduct_Errors_Msg = $WooDecimalProduct_Checked_Input_Parameters['errors_msg'];
-		
-// Обновление Настроек.
-if ($WooDecimalProduct_New_Min != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Min_Quantity_Default )) {
-	$WooDecimalProduct_Min_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Min );
-	update_option('woodecimalproduct_min_qnt_default', $WooDecimalProduct_New_Min);
-}		
+		$WooDecimalProduct_Errors_Msg = $WooDecimalProduct_Checked_Input_Parameters['errors_msg'];
+				
+		// Обновление Настроек.
+		if ($WooDecimalProduct_New_Min != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Min_Quantity_Default )) {
+			$WooDecimalProduct_Min_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Min );
+			update_option('woodecimalproduct_min_qnt_default', $WooDecimalProduct_New_Min);
+		}		
 
-if ($WooDecimalProduct_New_Max != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Max_Quantity_Default )) {
-	$WooDecimalProduct_Max_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Max );
-	update_option('woodecimalproduct_max_qnt_default', $WooDecimalProduct_New_Max);
-}	
-	
-if ($WooDecimalProduct_New_Step != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Step_Quantity_Default )) {
-	$WooDecimalProduct_Step_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Step );
-	update_option('woodecimalproduct_step_qnt_default', $WooDecimalProduct_New_Step);
-}
+		if ($WooDecimalProduct_New_Max != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Max_Quantity_Default )) {
+			$WooDecimalProduct_Max_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Max );
+			update_option('woodecimalproduct_max_qnt_default', $WooDecimalProduct_New_Max);
+		}	
+			
+		if ($WooDecimalProduct_New_Step != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Step_Quantity_Default )) {
+			$WooDecimalProduct_Step_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Step );
+			update_option('woodecimalproduct_step_qnt_default', $WooDecimalProduct_New_Step);
+		}
 
-if ($WooDecimalProduct_New_Set != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Item_Quantity_Default )) {
-	$WooDecimalProduct_Item_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Set );
-	update_option('woodecimalproduct_item_qnt_default', $WooDecimalProduct_New_Set);
-}		
+		if ($WooDecimalProduct_New_Set != WooDecimalProduct_Normalize_Number ( $WooDecimalProduct_Item_Quantity_Default )) {
+			$WooDecimalProduct_Item_Quantity_Default = WooDecimalProduct_DecimalValueFormatting( $WooDecimalProduct_New_Set );
+			update_option('woodecimalproduct_item_qnt_default', $WooDecimalProduct_New_Set);
+		}		
 		
 		if ($WooDecimalProduct_New_ButtonsPM_ProductEnable != $WooDecimalProduct_ButtonsPM_Product_Enable) {
 			$WooDecimalProduct_ButtonsPM_Product_Enable = $WooDecimalProduct_New_ButtonsPM_ProductEnable;
@@ -206,9 +213,9 @@ if ($WooDecimalProduct_New_Set != WooDecimalProduct_Normalize_Number ( $WooDecim
 		<hr>	
 		
 		<?php
-if ($WooDecimalProduct_Errors_Msg) {
-	WooDecimalProduct_Check_AdminNotice_AboutCorrection( $WooDecimalProduct_Screen = null, $WooDecimalProduct_Errors_Msg );
-}
+		if ($WooDecimalProduct_Errors_Msg) {
+			WooDecimalProduct_Check_AdminNotice_AboutCorrection( $WooDecimalProduct_Screen = null, $WooDecimalProduct_Errors_Msg );
+		}
 		?>
 		
 		<div class="wdpq_options_box">
