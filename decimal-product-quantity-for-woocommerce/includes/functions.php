@@ -245,10 +245,16 @@ WooDecimalProduct_Debugger ($Result_Value_Parts, '$Result_Value_Parts', $debug_p
 $Result_Value_Parts_Decimal	= isset($Result_Value_Parts[1]) ? $Result_Value_Parts[1]: '';
 WooDecimalProduct_Debugger ($Result_Value_Parts_Decimal, '$Result_Value_Parts_Decimal', $debug_process, __FUNCTION__, __LINE__);
 
-if ($Result_Value_Parts_Decimal){
+if ($Result_Value_Parts_Decimal != ''){
 	$Result_Value_Parts_Decimal = rtrim( $Result_Value_Parts_Decimal, '0' );
+	WooDecimalProduct_Debugger ($Result_Value_Parts_Decimal, '$Result_Value_Parts_Decimal', $debug_process, __FUNCTION__, __LINE__);
 	
-	$Result_Value = $Result_Value_Parts[0] .$Locale_Delimiter .$Result_Value_Parts_Decimal;
+	if ($Result_Value_Parts_Decimal) {
+		$Result_Value = $Result_Value_Parts[0] .$Locale_Delimiter .$Result_Value_Parts_Decimal;
+		
+	} else {
+		$Result_Value = $Result_Value_Parts[0];
+	}
 } else {
 	$Result_Value = rtrim( $Result_Value, '.' );
 }
@@ -599,17 +605,32 @@ if (!empty ($WDPQ_Cart)) {
 	
 		$WooDecimalProduct_StorageType = get_option ('woodecimalproduct_storage_type', 'system');
 		
+// Странно. Woo (10.5.2 другие не проверял) PHP Функция Round не работает. Но не работает как минимум, внутри Фильтров Woo. А Вне Woo все OK.
+// Например: Quantity по непонятным причинам, неожиданно может быть вместо 0.8 -> 0.8000000000000000444089209850062616169452667236328125
+// И тогда: round( 0.8000000000000000444089209850062616169452667236328125, 2 ) = 0.8000000000000000444089209850062616169452667236328125
+// Задавать вопросы в ТП Woo не буду.
+// Делаем Коррекцию
+foreach ($Add_to_Cart as &$Item) {
+	$Product_ID = $Item['product_id'];
+
+	$QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
+	WooDecimalProduct_Debugger ($QuantityData, '$QuantityData', $debug_process, __FUNCTION__, __LINE__);
+	
+	$Quantity_Precision = isset( $QuantityData['precision'] ) ? $QuantityData['precision'] : 1;
+	
+	$Quantity = isset( $Item['quantity'] ) ? $Item['quantity'] : 1;
+	$Quantity = number_format($Quantity, $Quantity_Precision, ".", "");
+	// $Quantity = floatval($Quantity);
+	$Quantity = WooDecimalProduct_Normalize_Number($Quantity);
+	WooDecimalProduct_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
+	
+	$Item['quantity'] = $Quantity;	
+	$Item['quantity_precision'] = $Quantity_Precision;
+}
+WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+		
 		if ($WooDecimalProduct_StorageType == 'system' || $WooDecimalProduct_StorageType == 'session') {
 			// StorageType: System Storage / Session Storage
-			
-			foreach ($Add_to_Cart as &$Item) {
-				$Product_ID = $Item['product_id'];
-
-				$QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
-				WooDecimalProduct_Debugger ($QuantityData, '$QuantityData', $debug_process, __FUNCTION__, __LINE__);
-				
-				$Item['quantity_precision'] = $QuantityData['precision'];
-			}
 
 			WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);	
 		}
@@ -623,15 +644,6 @@ if (!empty ($WDPQ_Cart)) {
 				$Cart_Name = 'wdpq_draft_cart';
 			} 
 			WooDecimalProduct_Debugger ($Cart_Name, '$Cart_Name', $debug_process, __FUNCTION__, __LINE__);
-			
-			foreach ($Add_to_Cart as &$Item) {
-				$Product_ID = $Item['product_id'];
-
-				$QuantityData = WooDecimalProduct_Get_QuantityData_by_ProductID ($Product_ID);
-				WooDecimalProduct_Debugger ($QuantityData, '$QuantityData', $debug_process, __FUNCTION__, __LINE__);
-				
-				$Item['quantity_precision'] = $QuantityData['precision'];
-			}
 			
 			$Add_to_Cart = wp_json_encode( $Add_to_Cart );
 			WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);

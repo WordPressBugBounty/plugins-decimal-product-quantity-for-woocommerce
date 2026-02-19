@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 20.63
+Version: 20.64
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -279,6 +279,8 @@ License: GPLv2
 				WooDecimalProduct_Debugger ($Cart_Item_Key, '$Cart_Item_Key', $debug_process, __FUNCTION__, __LINE__);
 				
 				$Item_Price = 0;
+				
+$QNT_Precision = 1;				
 									
 				if ($Variation_ID) {
 					//Вариативный Товар.
@@ -292,11 +294,17 @@ License: GPLv2
 					
 					$Product = wc_get_product( $Variation_ID );
 					
+$QNT_Precision = WooDecimalProduct_Get_Product_QNT_Precision ($Variation_ID);
+					
 				} else {
 					//Простой Товар.
 					
 					$Product = wc_get_product( $Product_ID );
-				}	
+					
+$QNT_Precision = WooDecimalProduct_Get_Product_QNT_Precision ($Product_ID);
+				}
+
+WooDecimalProduct_Debugger ($QNT_Precision, '$QNT_Precision', $debug_process, __FUNCTION__, __LINE__);				
 
 				// WooDecimalProduct_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__);
 				if ($Product) {	
@@ -325,6 +333,7 @@ License: GPLv2
 						'product_id' => $Product_ID,
 						'variation_id' => $Variation_ID,
 						'quantity' => $Quantity,
+'quantity_precision' => $QNT_Precision,
 						'price' => $Item_Price,
 						'regular_price' => $Item_RegularPrice,
 						'sale_price' => $Item_SalePrice,
@@ -1336,7 +1345,8 @@ WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FU
 	
 	/* Cart / MiniCart. Изменение Количества в Корзине. (на величину разницы от исходного значения)
 	 * Виджеты Темы, Плагины MiniCart
-	 * Но Отключаем для Classic Cart
+	 * Только для Действий внутри MiniCart.
+	 * woocommerce\includes\class-wc-cart.php
 	----------------------------------------------------------------- */
 	add_action('woocommerce_after_cart_item_quantity_update', 'WooDecimalProduct_Action_after_cart_item_quantity_update', 9999, 4);
 	function WooDecimalProduct_Action_after_cart_item_quantity_update ($Cart_Item_Key, $Quantity, $Old_Quantity, $This) {
@@ -1347,6 +1357,44 @@ WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FU
 		WooDecimalProduct_Debugger ($Quantity, '$Quantity', $debug_process, __FUNCTION__, __LINE__);
 		WooDecimalProduct_Debugger ($Old_Quantity, '$Old_Quantity', $debug_process, __FUNCTION__, __LINE__);
 		// WooDecimalProduct_Debugger ($This, '$This', $debug_process, __FUNCTION__, __LINE__);
+		
+$is_Cart_Page =  is_cart();
+WooDecimalProduct_Debugger ($is_Cart_Page, '$is_Cart_Page', $debug_process, __FUNCTION__, __LINE__);
+
+$Request_AddToCart = isset( $_REQUEST['add-to-cart'] ) ? true : false; // phpcs:ignore
+WooDecimalProduct_Debugger ($Request_AddToCart, '$Request_AddToCart', $debug_process, __FUNCTION__, __LINE__);
+
+if ( $is_Cart_Page || $Request_AddToCart) {
+	// Это Classic Cart. Для нее имеется  другой Обработчик.
+	
+} else {
+   // Виджеты Темы, Плагины MiniCart...
+   
+	$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Cart_Item_Key);
+	WooDecimalProduct_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+	
+	if ( !empty ($WDPQ_Cart_Item) ) {
+		$Quantity_Diff = $Quantity - $Old_Quantity;
+		WooDecimalProduct_Debugger ($Quantity_Diff, '$Quantity_Diff', $debug_process, __FUNCTION__, __LINE__);
+		
+		$WDPQ_Cart_Item['quantity'] = $Quantity_Diff;
+		
+		if ($Quantity_Diff != 0) {
+			$Add_to_Cart = array();			
+			$Add_to_Cart[] = $WDPQ_Cart_Item;			
+			WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+			
+			WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_Cart, $isDraft = false);
+		} else {
+			WooDecimalProduct_Debugger ('No Need to Update', '$Quantity_Diff', $debug_process, __FUNCTION__, __LINE__);
+		}
+	}
+}
+
+// $WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();	
+// WooDecimalProduct_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+
+return;
 		
 		$Cart_Items = isset( $_REQUEST['cart'] ) ? $_REQUEST['cart'] : null; // phpcs:ignore
 
