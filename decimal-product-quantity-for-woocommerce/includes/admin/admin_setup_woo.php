@@ -77,3 +77,16 @@
 		ob_end_clean();
 		echo $contents; // phpcs:ignore 				
 	}
+	
+	/* Admin Console - Add Settings to Plugin Actions.
+	----------------------------------------------------------------- */
+	add_filter ('plugin_action_links_decimal-product-quantity-for-woocommerce/decimal-product-quantity-for-woocommerce.php', 'WooDecimalProduct_Filter_plugin_action_links');
+	function WooDecimalProduct_Filter_plugin_action_links( $Links ) {
+	   $debug_process = 'plugin_action_links';
+	   
+	   WooDecimalProduct_Debugger ($Links, '$Links', $debug_process, __FUNCTION__, __LINE__);
+	   
+	   $Links[] = '<a href="'. esc_url( get_admin_url(null, 'edit.php?post_type=product&page=decimal-product-quantity-for-woocommerce/includes/admin/options.php') ) .'">Settings</a>';
+	   
+	   return $Links;
+	}

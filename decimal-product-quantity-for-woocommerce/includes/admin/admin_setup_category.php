@@ -109,7 +109,7 @@
 		$Plugin_Data = get_plugin_data( __FILE__ );
 		$WooDecimalProduct_Plugin_Version = $Plugin_Data['Version'];
 
-		wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'admin-style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
+		wp_enqueue_style ('wdpq_admin_style', $WooDecimalProduct_Plugin_URL .'css/admin-style.css', array(), $WooDecimalProduct_Plugin_Version); // phpcs:ignore 
 				
 		if ($term == 'product_cat') {
 			// Mode: "Add new category"

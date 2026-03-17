@@ -3,7 +3,7 @@
 Plugin Name: Decimal Product Quantity for WooCommerce
 Plugin URI: https://wpgear.xyz/decimal-product-quantity-woo
 Description: Decimal Product Quantity for WooCommerce. (Piece of Product). Min, Max, Step & Default preset. Variable Products Supported. Auto correction "No valid value". Update Cart Automatically on Quantity Change (AJAX Cart Update). Read about <a href="http://wpgear.xyz/decimal-product-quantity-woo-pro/">PRO Version</a> for separate Minimum Quantity, Step of Changing & Default preset Quantity - for each Product Variation. Create XML/RSS Feed for WooCommerce. Support: "Google Merchant Center" (Product data specification) whith "Price_Unit_Label" -> [unit_pricing_measure], separate hierarchy Categories -> Products.
-Version: 20.64
+Version: 20.65
 Text Domain: decimal-product-quantity-for-woocommerce
 Domain Path: /languages
 Author: WPGear
@@ -280,7 +280,7 @@ License: GPLv2
 				
 				$Item_Price = 0;
 				
-$QNT_Precision = 1;				
+				$QNT_Precision = 1;				
 									
 				if ($Variation_ID) {
 					//Вариативный Товар.
@@ -294,17 +294,17 @@ $QNT_Precision = 1;
 					
 					$Product = wc_get_product( $Variation_ID );
 					
-$QNT_Precision = WooDecimalProduct_Get_Product_QNT_Precision ($Variation_ID);
+					$QNT_Precision = WooDecimalProduct_Get_Product_QNT_Precision ($Variation_ID);
 					
 				} else {
 					//Простой Товар.
 					
 					$Product = wc_get_product( $Product_ID );
 					
-$QNT_Precision = WooDecimalProduct_Get_Product_QNT_Precision ($Product_ID);
+					$QNT_Precision = WooDecimalProduct_Get_Product_QNT_Precision ($Product_ID);
 				}
 
-WooDecimalProduct_Debugger ($QNT_Precision, '$QNT_Precision', $debug_process, __FUNCTION__, __LINE__);				
+				WooDecimalProduct_Debugger ($QNT_Precision, '$QNT_Precision', $debug_process, __FUNCTION__, __LINE__);				
 
 				// WooDecimalProduct_Debugger ($Product, '$Product', $debug_process, __FUNCTION__, __LINE__);
 				if ($Product) {	
@@ -333,7 +333,7 @@ WooDecimalProduct_Debugger ($QNT_Precision, '$QNT_Precision', $debug_process, __
 						'product_id' => $Product_ID,
 						'variation_id' => $Variation_ID,
 						'quantity' => $Quantity,
-'quantity_precision' => $QNT_Precision,
+						'quantity_precision' => $QNT_Precision,
 						'price' => $Item_Price,
 						'regular_price' => $Item_RegularPrice,
 						'sale_price' => $Item_SalePrice,
@@ -1113,7 +1113,7 @@ WooDecimalProduct_Debugger ($QNT_Precision, '$QNT_Precision', $debug_process, __
 			// update_order_item_metadata
 			// 	update_metadata( 'order_item', $object_id, $meta_key, $meta_value, $prev_value );		
 
-WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
+			WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__, __LINE__); // phpcs:ignore
 			WooDecimalProduct_Debugger ($Order_ID, '$Order_ID', $debug_process, __FUNCTION__, __LINE__);
 			// WooDecimalProduct_Debugger ($posted_data, '$posted_data', $debug_process, __FUNCTION__, __LINE__);
 			// WooDecimalProduct_Debugger ($order, '$order', $debug_process, __FUNCTION__, __LINE__);
@@ -1136,6 +1136,20 @@ WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__
 				WooDecimalProduct_Debugger ($OrderItems, '$OrderItems', $debug_process, __FUNCTION__, __LINE__);
 				
 				if ($OrderItems) {
+					
+// Возможна ситуация, когда WDPQ-Cart не была сформирована (Особенности некоторых Mini-Cart)
+// Можно поробовать ее сформировать. В следующих Версиях.
+
+// $isWDPQ_Cart_Empty = WooDecimalProduct_is_WDPQCart_Empty ();
+// WooDecimalProduct_Debugger ($isWDPQ_Cart_Empty, '$isWDPQ_Cart_Empty', $debug_process, __FUNCTION__, __LINE__);
+		
+// $WooCart = WC() -> cart;
+// WooDecimalProduct_Debugger ($WooCart, '$WooCart', $debug_process, __FUNCTION__, __LINE__);
+
+$WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();
+WooDecimalProduct_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+					
+					
 					foreach ($OrderItems as $Item) {
 						$Item_ID 	= $Item -> order_item_id;
 						$Item_Type 	= $Item -> order_item_type;
@@ -1172,17 +1186,17 @@ WooDecimalProduct_Debugger ($_REQUEST, '$_REQUEST', $debug_process, __FUNCTION__
 								$Variation_ID = $wpdb -> get_var( $wpdb -> prepare( $Query, $Item_ID ) ); // phpcs:ignore 
 								WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
 								
-// All Meta by Product
-$Query = "
-	SELECT *
-	FROM $Table_WooOrderItemMeta 
-	WHERE (
-		order_item_id = %d
-	)
-";
+								// All Meta by Product
+								$Query = "
+									SELECT *
+									FROM $Table_WooOrderItemMeta 
+									WHERE (
+										order_item_id = %d
+									)
+								";
 
-$Product_Meta = $wpdb -> get_results( $wpdb -> prepare( $Query, $Item_ID ) ); // phpcs:ignore 
-WooDecimalProduct_Debugger ($Product_Meta, '$Product_Meta', $debug_process, __FUNCTION__, __LINE__);
+								$Product_Meta = $wpdb -> get_results( $wpdb -> prepare( $Query, $Item_ID ) ); // phpcs:ignore 
+								WooDecimalProduct_Debugger ($Product_Meta, '$Product_Meta', $debug_process, __FUNCTION__, __LINE__);
 								
 								if ($Variation_ID) {
 									//Вариативный Товар.
@@ -1198,7 +1212,9 @@ WooDecimalProduct_Debugger ($Product_Meta, '$Product_Meta', $debug_process, __FU
 									$WDPQ_CartItem = WooDecimalProduct_Get_WDPQ_CartItem_by_ProductID ($Product_ID, $isVariation);
 									WooDecimalProduct_Debugger ($WDPQ_CartItem, '$WDPQ_CartItem', $debug_process, __FUNCTION__, __LINE__);
 									
-if (!empty ($WDPQ_CartItem) ) {
+									if ( empty ($WDPQ_CartItem) ) {
+
+									} else {
 										$WDPQ_CartItem_Quantity = isset( $WDPQ_CartItem['quantity'] ) ? $WDPQ_CartItem['quantity'] : 1;
 										$WDPQ_CartItem_Price 	= isset( $WDPQ_CartItem['price'] ) ? $WDPQ_CartItem['price'] : 0;
 										
@@ -1207,20 +1223,20 @@ if (!empty ($WDPQ_CartItem) ) {
 										if ($WDPQ_CartItem_Total == 0) {
 											$WDPQ_CartItem_Total = 1;
 										}
-										
+									
 										// Сложности и Глюки с Налогами.
 										// Вынужден отключить Результаты ПостОбработки.
 										// Будем наблюдать и думать.
-										
-											// OrderMeta. Update Quantity.
-											WooDecimalProduct_Debugger ($WDPQ_CartItem_Quantity, '$WDPQ_CartItem_Quantity', $debug_process, __FUNCTION__, __LINE__);
-WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_qty', $WDPQ_CartItem_Quantity);					
+									
+										// OrderMeta. Update Quantity.
+										WooDecimalProduct_Debugger ($WDPQ_CartItem_Quantity, '$WDPQ_CartItem_Quantity', $debug_process, __FUNCTION__, __LINE__);
+										WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_qty', $WDPQ_CartItem_Quantity);					
 
-											// OrderMeta. Update SubTotal
-											// WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_subtotal', $WDPQ_CartItem_Total);	
+										// OrderMeta. Update SubTotal
+										// WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_subtotal', $WDPQ_CartItem_Total);	
 
-											// OrderMeta. Update Total
-											// WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_total', $WDPQ_CartItem_Total);
+										// OrderMeta. Update Total
+										// WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_line_total', $WDPQ_CartItem_Total);
 									}
 								}
 							}
@@ -1312,12 +1328,12 @@ WooDecimalProduct_Update_Order_Item_Meta ($Item_ID, '_qty', $WDPQ_CartItem_Quant
 					$Def_Qnt = $WooDecimalProduct_QuantityData['def_qnt'];
 					$Stp_Qnt = $WooDecimalProduct_QuantityData['stp_qnt'];
 				
-// $Quantity = $Def_Qnt;				
-$Quantity = isset ($_REQUEST['quantity'])? sanitize_text_field( wp_unslash( $_REQUEST['quantity'] ) ): $Def_Qnt; // phpcs:ignore
-$Quantity = WooDecimalProduct_Normalize_Number($Quantity);
+					// $Quantity = $Def_Qnt;				
+					$Quantity = isset ($_REQUEST['quantity'])? sanitize_text_field( wp_unslash( $_REQUEST['quantity'] ) ): $Def_Qnt; // phpcs:ignore
+					$Quantity = WooDecimalProduct_Normalize_Number($Quantity);
 
-$Variation_ID = WooDecimalProduct_Get_VariationID_by_CartItemKey ($Cart_Item_Key);
-WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
+					$Variation_ID = WooDecimalProduct_Get_VariationID_by_CartItemKey ($Cart_Item_Key);
+					WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FUNCTION__, __LINE__);
 
 					$Item = array(
 						'key' => $Cart_Item_Key,
@@ -1358,43 +1374,43 @@ WooDecimalProduct_Debugger ($Variation_ID, '$Variation_ID', $debug_process, __FU
 		WooDecimalProduct_Debugger ($Old_Quantity, '$Old_Quantity', $debug_process, __FUNCTION__, __LINE__);
 		// WooDecimalProduct_Debugger ($This, '$This', $debug_process, __FUNCTION__, __LINE__);
 		
-$is_Cart_Page =  is_cart();
-WooDecimalProduct_Debugger ($is_Cart_Page, '$is_Cart_Page', $debug_process, __FUNCTION__, __LINE__);
+		$is_Cart_Page =  is_cart();
+		WooDecimalProduct_Debugger ($is_Cart_Page, '$is_Cart_Page', $debug_process, __FUNCTION__, __LINE__);
 
-$Request_AddToCart = isset( $_REQUEST['add-to-cart'] ) ? true : false; // phpcs:ignore
-WooDecimalProduct_Debugger ($Request_AddToCart, '$Request_AddToCart', $debug_process, __FUNCTION__, __LINE__);
+		$Request_AddToCart = isset( $_REQUEST['add-to-cart'] ) ? true : false; // phpcs:ignore
+		WooDecimalProduct_Debugger ($Request_AddToCart, '$Request_AddToCart', $debug_process, __FUNCTION__, __LINE__);
 
-if ( $is_Cart_Page || $Request_AddToCart) {
-	// Это Classic Cart. Для нее имеется  другой Обработчик.
-	
-} else {
-   // Виджеты Темы, Плагины MiniCart...
-   
-	$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Cart_Item_Key);
-	WooDecimalProduct_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
-	
-	if ( !empty ($WDPQ_Cart_Item) ) {
-		$Quantity_Diff = $Quantity - $Old_Quantity;
-		WooDecimalProduct_Debugger ($Quantity_Diff, '$Quantity_Diff', $debug_process, __FUNCTION__, __LINE__);
-		
-		$WDPQ_Cart_Item['quantity'] = $Quantity_Diff;
-		
-		if ($Quantity_Diff != 0) {
-			$Add_to_Cart = array();			
-			$Add_to_Cart[] = $WDPQ_Cart_Item;			
-			WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+		if ( $is_Cart_Page || $Request_AddToCart) {
+			// Это Classic Cart. Для нее имеется  другой Обработчик.
 			
-			WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_Cart, $isDraft = false);
 		} else {
-			WooDecimalProduct_Debugger ('No Need to Update', '$Quantity_Diff', $debug_process, __FUNCTION__, __LINE__);
+		   // Виджеты Темы, Плагины MiniCart...
+		   
+			$WDPQ_Cart_Item = WooDecimalProduct_Get_WDPQ_Cart_Item_by_CartProductKey ($Cart_Item_Key);
+			WooDecimalProduct_Debugger ($WDPQ_Cart_Item, '$WDPQ_Cart_Item', $debug_process, __FUNCTION__, __LINE__);
+			
+			if ( !empty ($WDPQ_Cart_Item) ) {
+				$Quantity_Diff = $Quantity - $Old_Quantity;
+				WooDecimalProduct_Debugger ($Quantity_Diff, '$Quantity_Diff', $debug_process, __FUNCTION__, __LINE__);
+				
+				$WDPQ_Cart_Item['quantity'] = $Quantity_Diff;
+				
+				if ($Quantity_Diff != 0) {
+					$Add_to_Cart = array();			
+					$Add_to_Cart[] = $WDPQ_Cart_Item;			
+					WooDecimalProduct_Debugger ($Add_to_Cart, '$Add_to_Cart', $debug_process, __FUNCTION__, __LINE__);
+					
+					WooDecimalProduct_Update_WDPQ_CartSession ($Add_to_Cart, $isDraft = false);
+				} else {
+					WooDecimalProduct_Debugger ('No Need to Update', '$Quantity_Diff', $debug_process, __FUNCTION__, __LINE__);
+				}
+			}
 		}
-	}
-}
 
-// $WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();	
-// WooDecimalProduct_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
+		// $WDPQ_Cart = WooDecimalProduct_Get_WDPQ_CartSession();	
+		// WooDecimalProduct_Debugger ($WDPQ_Cart, '$WDPQ_Cart', $debug_process, __FUNCTION__, __LINE__);
 
-return;
+		return;
 		
 		$Cart_Items = isset( $_REQUEST['cart'] ) ? $_REQUEST['cart'] : null; // phpcs:ignore
 
